@@ -6,13 +6,6 @@ import ContactForm from '../components/ContactForm.astro';
 import { url } from '../lib/url';
 import { distributor } from '../data/site';
 
-const pillars = [
-  'Goal-Based Investing',
-  'Risk-Managed Portfolios',
-  'Disciplined Wealth Creation',
-  'Long-Term Financial Growth',
-];
-
 const schemeCards = [
   { title: 'Equity Schemes', desc: 'Long-term capital growth across large, mid, and small-cap opportunities.' },
   { title: 'Hybrid Schemes', desc: 'Balanced growth with lower volatility via equity-debt combinations.' },
@@ -25,31 +18,36 @@ const schemeCards = [
   title="Abhijit Sinha | AMFI-Registered Mutual Fund Distributor"
   description="Goal-based mutual fund distribution and disciplined portfolio allocation with Abhijit Sinha, AMFI-registered Mutual Fund Distributor (ARN-367596)."
 >
-  <!-- Hero -->
-  <section class="relative">
+  <!-- Hero: banner.png / banner-mobile.jpeg are finished graphics (logo, headline,
+       tagline, and all four pillars are already drawn into the artwork) — shown
+       whole and undistorted, with no text overlay competing with it. -->
+  <section>
     <picture>
       <source media="(max-width: 767px)" srcset={url('images/banner-mobile.jpeg')} />
-      <img src={url('images/banner.png')} alt="Abhijit Sinha — Mutual Fund Distributor" class="w-full h-[420px] sm:h-[520px] object-cover" />
+      <img
+        src={url('images/banner.png')}
+        alt="Abhijit Sinha, Mutual Fund Distributor, ARN-367596. Smart Investments, Stronger Future — SIP Today, Secure Tomorrow. Goal Based Investing. Risk Managed Portfolios. Disciplined Wealth Creation. Long Term Financial Growth."
+        loading="eager"
+        fetchpriority="high"
+        class="w-full max-w-[1600px] mx-auto block aspect-[759/1600] min-[768px]:aspect-[2/1] object-contain"
+      />
     </picture>
-    <div class="absolute inset-0 bg-slate-900/55 flex items-center">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 w-full">
-        <div class="max-w-xl text-white">
-          <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight mb-4">
-            Plan Your Investment Journey with Clarity and Discipline.
-          </h1>
-          <ul class="flex flex-wrap gap-2 mb-6 text-xs sm:text-sm">
-            {pillars.map((p) => (
-              <li class="rounded-full border border-white/40 bg-white/10 px-3 py-1.5">{p}</li>
-            ))}
-          </ul>
-          <div class="flex flex-wrap gap-3">
-            <a href={url('schedule')} class="min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-white text-slate-900 font-semibold text-sm hover:bg-slate-100 transition">
-              Schedule a 15-Minute Intro Call
-            </a>
-            <a href={url('solutions')} class="min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-lg border border-white/60 text-white font-semibold text-sm hover:bg-white/10 transition">
-              Explore Investment Solutions
-            </a>
-          </div>
+
+    <div class="bg-surface border-b border-slate-200">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6 py-10 sm:py-14 text-center">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight mb-3">
+          Plan Your Investment Journey with Clarity and Discipline.
+        </h1>
+        <p class="text-slate-600 mb-6">
+          Goal-based mutual fund distribution, structured around your timeline and risk profile.
+        </p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <a href={url('schedule')} class="min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition">
+            Schedule a 15-Minute Intro Call
+          </a>
+          <a href={url('solutions')} class="min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-100 transition">
+            Explore Investment Solutions
+          </a>
         </div>
       </div>
     </div>
@@ -64,10 +62,10 @@ const schemeCards = [
   </section>
 
   <!-- About -->
-  <section id="about" class="bg-surface border-y border-slate-200 py-14 sm:py-20 scroll-mt-28">
+  <section id="about" class="bg-surface border-y border-slate-200 py-14 sm:py-20">
     <div class="mx-auto max-w-6xl px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-10">
       <div class="lg:col-span-4 flex flex-col items-center lg:items-start text-center lg:text-left">
-        <img src={url('images/profile-pic.jpg')} alt={`${distributor.name} — Mutual Fund Distributor`} class="w-40 h-40 rounded-full object-cover border-4 border-white shadow-sm mb-4" />
+        <img src={url('images/profile-pic.jpg')} alt={`${distributor.name} — Mutual Fund Distributor`} class="w-48 h-48 rounded-full object-cover object-top border-4 border-white shadow-sm mb-4" />
         <h2 class="text-xl font-bold text-slate-900">{distributor.name}</h2>
         <div class="mt-3 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600 space-y-1">
           <p>Commerce Graduate, MBA in Finance</p>
@@ -75,6 +73,9 @@ const schemeCards = [
           <p>Former Head of Sales Management at a leading Indian AMC</p>
           <p>AMFI {distributor.arn}</p>
         </div>
+        <a href={url('schedule')} class="mt-4 inline-flex min-h-[44px] items-center justify-center px-5 py-2.5 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition">
+          Schedule a Conversation
+        </a>
       </div>
 
       <div class="lg:col-span-8 space-y-4 text-sm sm:text-base text-slate-700 leading-relaxed">
@@ -90,9 +91,6 @@ const schemeCards = [
         <p>
           I believe that successful investing is not just about selecting investments—it is about having the right understanding, maintaining discipline, and staying focused on long-term financial goals. My endeavour is to be a trusted partner in your investment journey.
         </p>
-        <a href={url('schedule')} class="inline-flex min-h-[44px] items-center justify-center px-5 py-2.5 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition">
-          Schedule a Conversation
-        </a>
       </div>
     </div>
   </section>
@@ -111,7 +109,7 @@ const schemeCards = [
   </section>
 
   <!-- Contact -->
-  <section id="contact" class="bg-surface border-y border-slate-200 py-14 sm:py-20 scroll-mt-28">
+  <section id="contact" class="bg-surface border-y border-slate-200 py-14 sm:py-20">
     <div class="mx-auto max-w-5xl px-4 sm:px-6">
       <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-10">Get in Touch</h2>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">

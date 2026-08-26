@@ -13,7 +13,7 @@ export const distributor = {
   phone: '+91-9004087549',
   phoneHref: 'tel:+919004087549',
   whatsappNumber: '919004087549', // country code, no '+' or separators
-  // TODO(confirm): placeholder from source spec, not yet confirmed by Abhijit.
+  // Confirmed against Important Docs/ARN Registration.pdf ("ARN Validity 11-AUG-2026 to 01-JUL-2029").
   arnValidity: '11/08/2026 to 01/07/2029',
   linkedin: 'https://www.linkedin.com/in/abhijit-sinha-243b7243/',
 } as const;

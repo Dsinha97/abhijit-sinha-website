@@ -2,13 +2,36 @@
 import { url } from '../lib/url';
 import { nav, primaryCta } from '../data/site';
 
-const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, '/');
+// Derive the base-free, trailing-slash-free current path so it can be
+// compared directly against nav hrefs like "/solutions". Two independent
+// slash inconsistencies have to be handled, not just one:
+// - import.meta.env.BASE_URL isn't guaranteed to carry a trailing slash (see
+//   the same caveat in src/lib/url.ts), so a plain string .replace() against
+//   it can leave a doubled leading slash ("//solutions") that never matches
+//   anything.
+// - Astro's static output renders nested pages as `/solutions/index.html`,
+//   so Astro.url.pathname carries a trailing slash there but not on the
+//   homepage — that needs stripping too (except when the result is just "/").
+const base = import.meta.env.BASE_URL.replace(/\/+$/, '');
+let currentPath = Astro.url.pathname;
+if (base && currentPath.startsWith(base)) currentPath = currentPath.slice(base.length);
+if (!currentPath.startsWith('/')) currentPath = '/' + currentPath;
+if (currentPath.length > 1) currentPath = currentPath.replace(/\/+$/, '');
+
+// Only distinct pages (not the "/#about" same-page anchor) participate in the
+// active-page highlight — About isn't a separate route, so treating it as
+// "active" whenever we're on the homepage would light up both Home and About
+// at once, which reads as broken rather than helpful.
+function isActiveNavItem(href: string): boolean {
+  if (href.includes('#')) return false;
+  return currentPath === href;
+}
 ---
 
-<header class="bg-white border-b border-slate-200">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+<header class="bg-white/95 backdrop-blur border-b border-slate-200 transition-shadow duration-200 motion-reduce:transition-none group-data-[scrolled]:shadow-sm">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 h-16 sm:h-20 group-data-[scrolled]:h-12 sm:group-data-[scrolled]:h-14 flex items-center justify-between gap-4 transition-[height] duration-200 motion-reduce:transition-none">
     <a href={url('')} class="flex items-center gap-2 shrink-0 min-h-[44px]">
-      <img src={url('images/logo.png')} alt="Abhijit Sinha logo" class="h-9 w-auto sm:h-11" />
+      <img src={url('images/logo.png')} alt="Abhijit Sinha logo" class="h-9 sm:h-11 group-data-[scrolled]:h-7 sm:group-data-[scrolled]:h-8 w-auto transition-[height] duration-200 motion-reduce:transition-none" />
       <span class="hidden sm:flex flex-col leading-tight">
         <span class="font-bold text-slate-900 text-base">Abhijit Sinha</span>
         <span class="text-xs text-slate-500">Mutual Fund Distributor</span>
@@ -16,17 +39,23 @@ const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, '/');
     </a>
 
     <nav class="hidden lg:flex items-center gap-6" aria-label="Primary">
-      {nav.map((item) => (
-        <a
-          href={url(item.href.replace(/^\//, ''))}
-          class:list={[
-            'text-sm font-medium transition-colors hover:text-slate-900 min-h-[44px] flex items-center',
-            currentPath === item.href.split('#')[0] ? 'text-slate-900' : 'text-slate-600',
-          ]}
-        >
-          {item.label}
-        </a>
-      ))}
+      {nav.map((item) => {
+        const active = isActiveNavItem(item.href);
+        return (
+          <a
+            href={url(item.href.replace(/^\//, ''))}
+            aria-current={active ? 'page' : undefined}
+            class:list={[
+              'text-sm min-h-[44px] flex items-center border-b-2 transition-colors',
+              active
+                ? 'text-slate-900 font-semibold border-accent'
+                : 'text-slate-600 font-medium border-transparent hover:text-slate-900',
+            ]}
+          >
+            {item.label}
+          </a>
+        );
+      })}
     </nav>
 
     <div class="flex items-center gap-2">
@@ -57,14 +86,23 @@ const currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, '/');
 
   <div id="mobile-menu" class="lg:hidden hidden border-t border-slate-200 bg-white">
     <nav class="px-4 py-3 flex flex-col" aria-label="Mobile Primary">
-      {nav.map((item) => (
-        <a
-          href={url(item.href.replace(/^\//, ''))}
-          class="min-h-[44px] flex items-center text-sm font-medium text-slate-700 hover:text-slate-900 border-b border-slate-100 last:border-b-0"
-        >
-          {item.label}
-        </a>
-      ))}
+      {nav.map((item) => {
+        const active = isActiveNavItem(item.href);
+        return (
+          <a
+            href={url(item.href.replace(/^\//, ''))}
+            aria-current={active ? 'page' : undefined}
+            class:list={[
+              'min-h-[44px] flex items-center text-sm pl-3 -ml-3 border-l-4 border-b border-slate-100 last:border-b-0',
+              active
+                ? 'text-slate-900 font-semibold border-l-accent bg-surface'
+                : 'text-slate-700 font-medium border-l-transparent hover:text-slate-900',
+            ]}
+          >
+            {item.label}
+          </a>
+        );
+      })}
       <a
         href={url(primaryCta.href.replace(/^\//, ''))}
         class="mt-3 min-h-[44px] flex items-center justify-center rounded-lg bg-slate-900 text-white text-sm font-semibold px-4"

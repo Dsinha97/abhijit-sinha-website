@@ -10,7 +10,7 @@ Abhijit Sinha operates as an AMFI-registered Mutual Fund Distributor, not an inv
 - **Principal place of business:** Navi Mumbai
 - **Direct email:** `abhijit.uti@gmail.com`
 - **Direct phone:** `+91-9004087549`
-- **ARN validity window:** placeholder in source — `[11/08/2026 to 01/07/2029]`, unconfirmed
+- **ARN validity window:** `11/08/2026 to 01/07/2029` — confirmed against `Important Docs/ARN Registration.pdf`
 
 Contact addresses `support@`, `contact@`, and `compliance@abhijitsinha.in` appear in the specs but no mailbox exists yet for the domain — see [contact-channels](contact-channels.md).
 

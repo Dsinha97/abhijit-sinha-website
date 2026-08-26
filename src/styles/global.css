@@ -4,7 +4,13 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 6.5rem;
+  /* Single source of truth for anchor-scroll offset (do not also add
+     scroll-mt-* on individual sections — the two stack and overshoot).
+     Sized to the header's UNSCROLLED height (regulatory strip + full-height
+     nav in Header.astro/RegulatoryStrip.astro), since that's the worst case:
+     the header only shrinks after ~32px of scroll, so a same-page anchor
+     click from near the top can still land before that threshold fires. */
+  scroll-padding-top: 7rem;
 }
 
 body {

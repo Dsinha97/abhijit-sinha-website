@@ -17,8 +17,10 @@ Route map, navigation, and the shared framework every page mounts. Sources: [des
 
 ## Shared framework (present on every page)
 
-1. **Regulatory strip** — sticky, Oxford Navy `#0F172A`. Left: "AMFI-Registered Mutual Fund Distributor \| ARN-367596". Right: "NISM Series V-A Certified".
-2. **Header** — logo (`logo.jpg` in spec; actual asset is `logo.png`) linked to `/`; center nav Home / About / Solutions / Disclosures / Investor Services; right CTA "Schedule a Meeting" → `/schedule`; mobile hamburger menu.
+1. **Regulatory strip** — Oxford Navy `#0F172A`. Left: "AMFI-Registered Mutual Fund Distributor \| ARN-367596". Right: "NISM Series V-A Certified".
+2. **Header** — logo (`logo.jpg` in spec; actual asset is `logo.png`) linked to `/`; center nav Home / About / Solutions / Disclosures / Investor Services; right CTA "Schedule a Meeting" → `/schedule`; mobile hamburger menu. The current nav item gets a visible indicator (underline on desktop, left accent bar on mobile) plus `aria-current="page"` — see [design-system](design-system.md#active-nav-state) for the mechanism.
+
+Both the strip and header live inside one `sticky top-0` wrapper (`#site-header` in `BaseLayout.astro`) that shrinks — smaller nav height, smaller logo, tighter strip padding/type — once the page scrolls past ~32px, via a `data-scrolled` attribute toggled from a plain scroll listener. The regulatory strip is never hidden while scrolled, only shrunk, to keep the AMFI/ARN proof visible per the design system's proof-first rule.
 3. **`<slot/>`** — page content.
 4. **Footer** — statutory risk warning box, distributor disclaimer, CAMS/KFintech/SEBI SCORES 2.0 links, office/registration metadata, copyright. Full text in [regulatory-compliance](regulatory-compliance.md).
 5. **Floating WhatsApp button** — bottom-right, all viewports. See [contact-channels](contact-channels.md).

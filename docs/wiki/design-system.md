@@ -39,4 +39,10 @@ These three patterns recur across pages (see [site-architecture](site-architectu
 3. **Floating quick-contact** — WhatsApp trigger, bottom-right. See [contact-channels](contact-channels.md).
 4. **Statutory footer** — risk warning, disclaimer, grievance links, registration metadata. See [regulatory-compliance](regulatory-compliance.md).
 
+## Active nav state
+
+The current page's nav link gets a persistent visual indicator, distinct from hover: a 2px accent underline on desktop, a 4px accent left-border + tinted background on mobile, plus `aria-current="page"`. Implemented in `Header.astro`'s `isActiveNavItem()` — deliberately excludes hash-only entries (`/#about`) since a same-page anchor isn't a separate route, and matching it by pathname would light up two nav items at once whenever on the homepage.
+
+**Gotcha for anyone touching this:** comparing `Astro.url.pathname` against a nav `href` needs two independent normalizations, not one — `import.meta.env.BASE_URL` isn't guaranteed to have a trailing slash, and Astro's static output gives nested pages a trailing slash that the homepage doesn't have. Skipping either produces a `//solutions` or `/solutions/` that silently never matches `/solutions`. See the comment above `isActiveNavItem` in `Header.astro` for the exact fix.
+
 Related: [site-architecture](site-architecture.md) · [regulatory-compliance](regulatory-compliance.md)

@@ -32,7 +32,7 @@ const { title, description, image } = Astro.props;
       Skip to content
     </a>
 
-    <div class="sticky top-0 z-40">
+    <div id="site-header" class="group sticky top-0 z-40">
       <RegulatoryStrip />
       <Header />
     </div>
@@ -43,5 +43,42 @@ const { title, description, image } = Astro.props;
 
     <Footer />
     <WhatsAppButton />
+
+    <script>
+      // Shrinks the sticky header (regulatory strip + nav) once the page has
+      // scrolled a little, via a `data-scrolled` attribute that the Tailwind
+      // `group-data-[scrolled]:` variants in Header.astro and
+      // RegulatoryStrip.astro key off. Deliberately a plain `group`, not a
+      // named "group slash header" modifier: stacking a responsive prefix in
+      // front of a named group-data variant produced CSS that Tailwind
+      // 3.4.19's JIT scanner generated but that never matched anything (the
+      // named-group form needs the literal ancestor class token to stay
+      // intact character-for-character everywhere it's referenced, including
+      // in prose, which is fragile) — the unnamed form sidesteps that
+      // entirely. The check itself is just one attribute
+      // get/set — cheap enough to run on every scroll event with no
+      // requestAnimationFrame gating. rAF gating was tried and dropped: it
+      // makes the toggle silently stop firing whenever rAF is throttled
+      // (backgrounded/minimized tabs, some mobile power-saving modes), which
+      // is a real failure mode for something this inexpensive to just run
+      // directly. scroll-padding-top in global.css is tuned to the shrunken
+      // (not expanded) header height, since that's what's on screen by the
+      // time any anchor jump matters.
+      const headerEl = document.getElementById('site-header');
+      const SCROLL_THRESHOLD = 32;
+
+      function updateScrolledState() {
+        if (!headerEl) return;
+        const isScrolled = window.scrollY > SCROLL_THRESHOLD;
+        if (isScrolled) {
+          headerEl.setAttribute('data-scrolled', '');
+        } else {
+          headerEl.removeAttribute('data-scrolled');
+        }
+      }
+
+      updateScrolledState();
+      window.addEventListener('scroll', updateScrolledState, { passive: true });
+    </script>
   </body>
 </html>

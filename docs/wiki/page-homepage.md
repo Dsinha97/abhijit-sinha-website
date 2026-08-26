@@ -4,7 +4,7 @@ Source: [homepage.md](../sources/homepage.md). Shares the framework in [site-arc
 
 ## Sections, in order
 
-1. **Hero banner** — `banner.png` (≥768px) / `banner-mobile.jpeg` (<768px). Pillars: Goal-Based Investing, Risk-Managed Portfolios, Disciplined Wealth Creation, Long-Term Financial Growth. Primary CTA "Schedule a 15-Minute Intro Call" → `/schedule`; secondary link "Explore Investment Solutions" → `/solutions`.
+1. **Hero banner** — `banner.png` (≥768px) / `banner-mobile.jpeg` (<768px), shown whole and undistorted (`aspect-ratio` per breakpoint, no crop, no dark overlay). The banner graphics are *finished designs* that already bake in the logo, headline, tagline, and all four pillars (Goal-Based Investing, Risk-Managed Portfolios, Disciplined Wealth Creation, Long-Term Financial Growth) — don't re-render that copy as an overlay on top of it; carry it instead in the image's `alt` text for accessibility/SEO. A clean CTA band sits directly below with the page's one `<h1>`, a supporting line, and the two buttons: "Schedule a 15-Minute Intro Call" → `/schedule`, "Explore Investment Solutions" → `/solutions`.
 2. **Investment philosophy** — `Buffet-quote.jpeg` with callout on discipline and structured asset allocation over market timing.
 3. **About Abhijit Sinha** (`id="about"`) — two columns:
    - Left: `profile-pic.jpg`, name, credentials box (Commerce Graduate, MBA Finance, 35 years AM industry experience, former Head of Sales Management at a leading Indian AMC, ARN-367596).
