@@ -1,0 +1,32 @@
+---
+interface Props {
+  headers: string[];
+  rows: string[][];
+  caption?: string;
+}
+const { headers, rows, caption } = Astro.props;
+---
+
+<div class="overflow-x-auto rounded-xl border border-slate-200">
+  <table class="min-w-full text-sm divide-y divide-slate-200">
+    {caption && <caption class="sr-only">{caption}</caption>}
+    <thead class="bg-slate-50">
+      <tr>
+        {headers.map((h) => (
+          <th scope="col" class="px-4 py-3 text-left font-semibold text-slate-900 whitespace-nowrap">
+            {h}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100 bg-white">
+      {rows.map((row, i) => (
+        <tr class:list={[i % 2 === 1 ? 'bg-slate-50/50' : '']}>
+          {row.map((cell) => (
+            <td class="px-4 py-3 text-slate-600 align-top">{cell}</td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

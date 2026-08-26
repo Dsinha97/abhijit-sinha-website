@@ -1,0 +1,157 @@
+---
+// Generic hosted-form component (Web3Forms/Formspree-style POST endpoint).
+// Configure src/data/site.ts `formEndpoint` (via PUBLIC_FORM_ENDPOINT) to go live.
+// Two callers: the homepage inquiry form and the Investor Services request form.
+import { site } from '../data/site';
+
+interface Props {
+  formName: string;
+  submitLabel?: string;
+  showFolioField?: boolean;
+  showServiceCategory?: boolean;
+  showGoalFields?: boolean;
+}
+
+const {
+  formName,
+  submitLabel = 'Submit Inquiry',
+  showFolioField = false,
+  showServiceCategory = false,
+  showGoalFields = false,
+} = Astro.props;
+
+const formId = `contact-form-${formName.toLowerCase().replace(/\s+/g, '-')}`;
+const hasEndpoint = Boolean(site.formEndpoint);
+---
+
+<form
+  id={formId}
+  data-endpoint={site.formEndpoint}
+  action={site.formEndpoint || undefined}
+  method="POST"
+  class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+>
+  <input type="hidden" name="form_name" value={formName} />
+  {/* Honeypot field — hidden from real users, bots tend to fill every field */}
+  <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+
+  <div class="sm:col-span-1">
+    <label for={`${formId}-name`} class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+    <input id={`${formId}-name`} name="name" type="text" required
+      class="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" />
+  </div>
+
+  <div class="sm:col-span-1">
+    <label for={`${formId}-email`} class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+    <input id={`${formId}-email`} name="email" type="email" required
+      class="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" />
+  </div>
+
+  <div class="sm:col-span-1">
+    <label for={`${formId}-mobile`} class="block text-sm font-medium text-slate-700 mb-1">Mobile Number</label>
+    <input id={`${formId}-mobile`} name="mobile" type="tel" required
+      class="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" />
+  </div>
+
+  {showFolioField && (
+    <div class="sm:col-span-1">
+      <label for={`${formId}-folio`} class="block text-sm font-medium text-slate-700 mb-1">Existing Folio Number (Optional)</label>
+      <input id={`${formId}-folio`} name="folio" type="text"
+        class="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" />
+    </div>
+  )}
+
+  {showGoalFields && (
+    <>
+      <div class="sm:col-span-1">
+        <label for={`${formId}-goal`} class="block text-sm font-medium text-slate-700 mb-1">Investment Goal</label>
+        <input id={`${formId}-goal`} name="investment_goal" type="text" placeholder="e.g. Retirement, Child's Education"
+          class="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" />
+      </div>
+      <div class="sm:col-span-1">
+        <label for={`${formId}-mode`} class="block text-sm font-medium text-slate-700 mb-1">Mode</label>
+        <select id={`${formId}-mode`} name="mode"
+          class="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent">
+          <option value="SIP">SIP</option>
+          <option value="Lump Sum">Lump Sum</option>
+        </select>
+      </div>
+    </>
+  )}
+
+  {showServiceCategory && (
+    <div class="sm:col-span-2">
+      <label for={`${formId}-category`} class="block text-sm font-medium text-slate-700 mb-1">Service Category</label>
+      <select id={`${formId}-category`} name="service_category" required
+        class="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent">
+        <option value="Statement Request">Statement Request</option>
+        <option value="SIP / Mandate Update">SIP / Mandate Update</option>
+        <option value="Bank / Nominee Detail Change">Bank / Nominee Detail Change</option>
+        <option value="Redemption / Switch Query">Redemption / Switch Query</option>
+        <option value="General Inquiry">General Inquiry</option>
+      </select>
+    </div>
+  )}
+
+  <div class="sm:col-span-2">
+    <label for={`${formId}-message`} class="block text-sm font-medium text-slate-700 mb-1">Message / Request Details</label>
+    <textarea id={`${formId}-message`} name="message" rows="4"
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"></textarea>
+  </div>
+
+  {!hasEndpoint && (
+    <p class="sm:col-span-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+      Form submissions are not yet connected to an email endpoint. Please use the WhatsApp button, phone, or email link below in the meantime.
+    </p>
+  )}
+
+  <div class="sm:col-span-2 flex flex-col gap-2">
+    <button
+      type="submit"
+      disabled={!hasEndpoint}
+      class="min-h-[44px] px-6 py-2.5 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {submitLabel}
+    </button>
+    <p data-form-status class="text-sm hidden" role="status"></p>
+  </div>
+</form>
+
+<script>
+  document.querySelectorAll('form[data-endpoint]').forEach((form) => {
+    const endpoint = form.getAttribute('data-endpoint');
+    if (!endpoint) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const statusEl = form.querySelector('[data-form-status]');
+      const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+      if (submitBtn) submitBtn.disabled = true;
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          body: new FormData(form as HTMLFormElement),
+          headers: { Accept: 'application/json' },
+        });
+        if (statusEl) {
+          statusEl.textContent = res.ok
+            ? 'Thank you — your message has been sent. We will get back to you shortly.'
+            : 'Something went wrong. Please try again or reach out via WhatsApp/phone.';
+          statusEl.classList.remove('hidden');
+          statusEl.classList.toggle('text-green-700', res.ok);
+          statusEl.classList.toggle('text-red-700', !res.ok);
+        }
+        if (res.ok) (form as HTMLFormElement).reset();
+      } catch {
+        if (statusEl) {
+          statusEl.textContent = 'Something went wrong. Please try again or reach out via WhatsApp/phone.';
+          statusEl.classList.remove('hidden');
+          statusEl.classList.add('text-red-700');
+        }
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  });
+</script>

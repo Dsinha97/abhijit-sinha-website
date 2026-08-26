@@ -1,0 +1,131 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionCard from '../components/SectionCard.astro';
+import ComplianceCallout from '../components/ComplianceCallout.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { url } from '../lib/url';
+import { distributor } from '../data/site';
+
+const pillars = [
+  'Goal-Based Investing',
+  'Risk-Managed Portfolios',
+  'Disciplined Wealth Creation',
+  'Long-Term Financial Growth',
+];
+
+const schemeCards = [
+  { title: 'Equity Schemes', desc: 'Long-term capital growth across large, mid, and small-cap opportunities.' },
+  { title: 'Hybrid Schemes', desc: 'Balanced growth with lower volatility via equity-debt combinations.' },
+  { title: 'Debt Schemes', desc: 'Steady income and capital preservation with minimal equity exposure.' },
+  { title: 'Liquid & Overnight Schemes', desc: 'High-liquidity parking for emergency funds and short-term needs.' },
+];
+---
+
+<BaseLayout
+  title="Abhijit Sinha | AMFI-Registered Mutual Fund Distributor"
+  description="Goal-based mutual fund distribution and disciplined portfolio allocation with Abhijit Sinha, AMFI-registered Mutual Fund Distributor (ARN-367596)."
+>
+  <!-- Hero -->
+  <section class="relative">
+    <picture>
+      <source media="(max-width: 767px)" srcset={url('images/banner-mobile.jpeg')} />
+      <img src={url('images/banner.png')} alt="Abhijit Sinha — Mutual Fund Distributor" class="w-full h-[420px] sm:h-[520px] object-cover" />
+    </picture>
+    <div class="absolute inset-0 bg-slate-900/55 flex items-center">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 w-full">
+        <div class="max-w-xl text-white">
+          <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight mb-4">
+            Plan Your Investment Journey with Clarity and Discipline.
+          </h1>
+          <ul class="flex flex-wrap gap-2 mb-6 text-xs sm:text-sm">
+            {pillars.map((p) => (
+              <li class="rounded-full border border-white/40 bg-white/10 px-3 py-1.5">{p}</li>
+            ))}
+          </ul>
+          <div class="flex flex-wrap gap-3">
+            <a href={url('schedule')} class="min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-white text-slate-900 font-semibold text-sm hover:bg-slate-100 transition">
+              Schedule a 15-Minute Intro Call
+            </a>
+            <a href={url('solutions')} class="min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-lg border border-white/60 text-white font-semibold text-sm hover:bg-white/10 transition">
+              Explore Investment Solutions
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Philosophy -->
+  <section class="mx-auto max-w-5xl px-4 sm:px-6 py-14 sm:py-20 grid grid-cols-1 sm:grid-cols-2 gap-8 items-center">
+    <img src={url('images/Buffet-quote.jpeg')} alt="Investment philosophy quote" class="rounded-xl border border-slate-200 w-full h-auto" />
+    <blockquote class="text-lg text-slate-700 leading-relaxed">
+      "Discipline and systematic savings form the bedrock of long-term wealth compounding. We focus on structured asset allocation and investor temperament rather than chasing short-term market noise."
+    </blockquote>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="bg-surface border-y border-slate-200 py-14 sm:py-20 scroll-mt-28">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-10">
+      <div class="lg:col-span-4 flex flex-col items-center lg:items-start text-center lg:text-left">
+        <img src={url('images/profile-pic.jpg')} alt={`${distributor.name} — Mutual Fund Distributor`} class="w-40 h-40 rounded-full object-cover border-4 border-white shadow-sm mb-4" />
+        <h2 class="text-xl font-bold text-slate-900">{distributor.name}</h2>
+        <div class="mt-3 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600 space-y-1">
+          <p>Commerce Graduate, MBA in Finance</p>
+          <p>35 Years Asset Management Experience</p>
+          <p>Former Head of Sales Management at a leading Indian AMC</p>
+          <p>AMFI {distributor.arn}</p>
+        </div>
+      </div>
+
+      <div class="lg:col-span-8 space-y-4 text-sm sm:text-base text-slate-700 leading-relaxed">
+        <p>
+          I am {distributor.name}, a commerce graduate and MBA in Finance, with 35 years of professional experience in the Asset Management industry. Over the course of my career, I had the opportunity to work with one of the leading Asset Management Companies in India and gain extensive experience across various aspects of the mutual fund business.
+        </p>
+        <p>
+          In my last assignment, I was responsible for heading the Sales Management function, where I gained valuable insights into investor needs, market dynamics, and the importance of building long-term relationships based on trust and transparency.
+        </p>
+        <p>
+          Today, I bring this experience to my role as a Mutual Fund Distributor, with the objective of helping retail investors navigate their investment journey with greater clarity and confidence. My approach is centred around understanding an investor's goals, providing relevant information, and enabling them to make well-informed investment decisions suited to their individual needs.
+        </p>
+        <p>
+          I believe that successful investing is not just about selecting investments—it is about having the right understanding, maintaining discipline, and staying focused on long-term financial goals. My endeavour is to be a trusted partner in your investment journey.
+        </p>
+        <a href={url('schedule')} class="inline-flex min-h-[44px] items-center justify-center px-5 py-2.5 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition">
+          Schedule a Conversation
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solutions summary -->
+  <section class="mx-auto max-w-6xl px-4 sm:px-6 py-14 sm:py-20">
+    <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-10">Distribution Solutions</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {schemeCards.map((card) => (
+        <SectionCard title={card.title}>{card.desc}</SectionCard>
+      ))}
+    </div>
+    <ComplianceCallout label="Regular Plan Notice">
+      All mutual fund transactions are executed in Regular Plans. Distribution commissions are received directly from Asset Management Companies as per statutory limits.
+    </ComplianceCallout>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="bg-surface border-y border-slate-200 py-14 sm:py-20 scroll-mt-28">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6">
+      <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-10">Get in Touch</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="rounded-xl border border-slate-200 bg-white p-6 sm:p-8 flex flex-col justify-center gap-4">
+          <p class="text-sm font-semibold text-accent uppercase tracking-wide">Prefer an Instant Conversation?</p>
+          <p class="text-slate-700">Pick a time slot on our calendar for a direct 1:1 conversation.</p>
+          <a href={url('schedule')} class="min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition w-fit">
+            Schedule a Meeting
+          </a>
+        </div>
+        <div class="rounded-xl border border-slate-200 bg-white p-6 sm:p-8">
+          <ContactForm formName="Homepage Inquiry" submitLabel="Submit Inquiry" showGoalFields />
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

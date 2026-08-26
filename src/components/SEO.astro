@@ -1,0 +1,58 @@
+---
+// src/components/SEO.astro
+import { url } from '../lib/url';
+import { distributor } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+}
+
+const { title, description, image = 'images/og-image.jpg' } = Astro.props;
+
+// Astro.url.pathname already includes the configured base path, so combining
+// it with Astro.site's origin (which is base-free) gives the correct
+// canonical URL without any manual base-stripping.
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const socialImageURL = new URL(url(image), Astro.site);
+---
+
+<!-- Global Metadata -->
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph / Facebook / WhatsApp -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={socialImageURL} />
+<meta property="og:site_name" content="Abhijit Sinha | AMFI-Registered MFD" />
+
+<!-- Twitter / X Cards -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonicalURL} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImageURL} />
+
+<!-- Financial Service JSON-LD Schema -->
+<script type="application/ld+json" is:inline set:html={JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FinancialService',
+  name: `${distributor.name} - AMFI-Registered Mutual Fund Distributor`,
+  url: new URL(url(''), Astro.site).toString(),
+  logo: new URL(url('images/logo.png'), Astro.site).toString(),
+  image: new URL(url('images/banner.png'), Astro.site).toString(),
+  description: 'Goal-based mutual fund distribution and disciplined portfolio allocation.',
+  identifier: distributor.arn,
+  founder: {
+    '@type': 'Person',
+    name: distributor.name,
+    jobTitle: 'Mutual Fund Distributor',
+    honorificSuffix: 'MBA in Finance',
+  },
+})}
+/>

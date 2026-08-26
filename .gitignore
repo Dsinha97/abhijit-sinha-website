@@ -1,0 +1,21 @@
+# Sensitive source documents — never commit (see CLAUDE.md)
+Important Docs/
+
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Editor/OS
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.obsidian/

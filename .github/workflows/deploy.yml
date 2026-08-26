@@ -1,0 +1,44 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install, build, and upload site
+        uses: withastro/action@v3
+        env:
+          PUBLIC_FORM_ENDPOINT: ${{ secrets.PUBLIC_FORM_ENDPOINT }}
+          # SITE_URL / BASE_PATH are intentionally left unset here so
+          # astro.config.mjs falls back to the GitHub Pages project
+          # sub-path defaults. Set both as repo variables once the
+          # custom-domain cutover in docs/wiki/deployment-domain.md happens.
+          SITE_URL: ${{ vars.SITE_URL }}
+          BASE_PATH: ${{ vars.BASE_PATH }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

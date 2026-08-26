@@ -1,0 +1,44 @@
+---
+import { url } from '../lib/url';
+import { distributor, statutory, redressalLinks, footerQuickLinks } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-slate-900 text-slate-300 mt-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 py-10 space-y-8">
+    <div class="rounded-xl border border-slate-700 bg-slate-800/60 p-4 sm:p-5">
+      <p class="text-sm sm:text-base font-semibold text-white">
+        {statutory.riskWarning}
+      </p>
+    </div>
+
+    <p class="text-sm text-slate-400 max-w-3xl">
+      {statutory.distributorDisclaimer}
+    </p>
+
+    <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+      {redressalLinks.map((link) => (
+        <a href={link.href} target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors min-h-[44px] inline-flex items-center">
+          {link.label}
+        </a>
+      ))}
+      {footerQuickLinks.map((item) => (
+        <a href={url(item.href.replace(/^\//, ''))} class="hover:text-white transition-colors min-h-[44px] inline-flex items-center">
+          {item.label}
+        </a>
+      ))}
+    </div>
+
+    <div class="border-t border-slate-700 pt-6 text-xs text-slate-500 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <p>
+        &copy; {year} {distributor.name}. All rights reserved. AMFI Registration Number: {distributor.arn}. Registered Office: {distributor.officeCity}.
+      </p>
+      <p>
+        <a href={`mailto:${distributor.email}`} class="hover:text-white">{distributor.email}</a>
+        {' | '}
+        <a href={distributor.phoneHref} class="hover:text-white">{distributor.phone}</a>
+      </p>
+    </div>
+  </div>
+</footer>

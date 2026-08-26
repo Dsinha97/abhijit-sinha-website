@@ -1,0 +1,4 @@
+# Wiki Log
+
+- 2026-08-26 — Initial build. Moved 10 raw spec files (design-overview, homepage, solutions, disclosures, investor-services, schedule, calculator, seo-tools, whatsapp-contact, privacy-policy_terms) plus empty file-structure.md from `docs/Abhijit-Sinha-Website/` into `docs/sources/`. Created wiki pages: design-system, regulatory-compliance, site-architecture, page-homepage, page-solutions, page-disclosures, page-investor-services, page-schedule, calculators, seo-and-metadata, contact-channels, legal-copy, index. Explicitly excluded `Images/` and `Important Docs/` from the wiki scope per user instruction (Important Docs is sensitive).
+- 2026-08-26 — Scaffolded the Astro+Tailwind site and added deployment-domain.md documenting the deferred custom-domain cutover (GoDaddy/Cloudflare) decision.

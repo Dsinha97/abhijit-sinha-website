@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SchedulerEmbed from '../components/SchedulerEmbed.astro';
+import { distributor } from '../data/site';
+
+const agendaPoints = [
+  { title: 'Goal Mapping', desc: "Defining timelines and cash flow requirements for milestones like retirement, children's education, or wealth creation." },
+  { title: 'Risk Profile Assessment', desc: 'Selecting suitable asset allocation across Equity, Hybrid, or Debt schemes based on your comfort with market volatility.' },
+  { title: 'Portfolio Review', desc: 'Evaluating ongoing SIPs, asset mix, and consolidation needs.' },
+  { title: 'Process Clarity', desc: 'Understanding Regular Plan distribution mechanics, AMFI compliance guidelines, and lifecycle servicing.' },
+];
+---
+
+<BaseLayout
+  title="Schedule a Meeting | Abhijit Sinha (ARN-367596)"
+  description="Reserve a 1:1 conversation with AMFI-registered Mutual Fund Distributor Abhijit Sinha to discuss goal-based mutual fund allocations and portfolio structuring."
+>
+  <section class="mx-auto max-w-6xl px-4 sm:px-6 py-14 sm:py-20 grid grid-cols-1 lg:grid-cols-2 gap-10">
+    <div>
+      <p class="text-xs font-semibold tracking-wide text-accent uppercase mb-2">1:1 Introductory Conversation</p>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">Plan Your Investment Journey with Clarity.</h1>
+      <p class="text-slate-600 mb-8">
+        Book an exploratory discussion to evaluate your investment goals, align scheme categories with your timeline, or structure your mutual fund portfolio with discipline.
+      </p>
+
+      <div class="space-y-4 mb-8">
+        {agendaPoints.map((p) => (
+          <div class="flex gap-3">
+            <div class="mt-1 h-2 w-2 rounded-full bg-accent shrink-0"></div>
+            <div>
+              <p class="font-semibold text-slate-900">{p.title}</p>
+              <p class="text-sm text-slate-600">{p.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="rounded-xl border border-slate-200 bg-surface p-5 text-sm text-slate-700 space-y-1">
+        <p><strong class="text-slate-900">Duration:</strong> 15 – 20 Minutes</p>
+        <p><strong class="text-slate-900">Format:</strong> Google Meet Video Call or Direct Phone Call</p>
+        <p><strong class="text-slate-900">Host:</strong> {distributor.name} ({distributor.arn} | 35 Years Industry Experience)</p>
+        <p><strong class="text-slate-900">Preparation:</strong> None mandatory. Keep current investment summaries or SIP details handy if you wish to review existing holdings.</p>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-sm font-semibold text-slate-900 mb-1">Select a Date & Time</h2>
+      <p class="text-xs text-slate-500 mb-4">Available slots are shown in Indian Standard Time (IST).</p>
+      <SchedulerEmbed />
+    </div>
+  </section>
+
+  <section class="bg-surface border-t border-slate-200 py-10">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 text-center text-sm text-slate-600">
+      Need immediate assistance or have a quick query? Email
+      <a href={`mailto:${distributor.email}`} class="text-accent font-medium">{distributor.email}</a>
+      or call <a href={distributor.phoneHref} class="text-accent font-medium">{distributor.phone}</a>.
+    </div>
+  </section>
+</BaseLayout>

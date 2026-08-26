@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionCard from '../components/SectionCard.astro';
+import DataTable from '../components/DataTable.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { distributor, rtaPortals } from '../data/site';
+
+const serviceGrid = [
+  {
+    title: 'Account Statements & Portfolio Reports',
+    items: ['Consolidated Account Statements (CAS) across depositories and RTAs', 'Capital gains statements for annual tax filing', 'Active SIP and STP status summaries'],
+  },
+  {
+    title: 'Mandate & Portfolio Modifications',
+    items: ['Bank account detail updates and mandate validations', 'Contact information changes (Email, Mobile, Address)', 'Nominee addition, modification, or verification'],
+  },
+  {
+    title: 'Transaction & Liquidity Assistance',
+    items: ['Setting up new SIPs, top-ups, and lump-sum allocations', 'Systematic Withdrawal Plans (SWP) for regular cash flow', 'Processing redemption requests and switches between fund categories'],
+  },
+];
+
+const rtaRows = rtaPortals.map((r) => [r.provider, r.coveredAmcs, r.portalLabel, r.services]);
+---
+
+<BaseLayout
+  title="Investor Services & Support Desk | Abhijit Sinha (ARN-367596)"
+  description="Access routine mutual fund servicing, Registrar & Transfer Agent (RTA) portals, Statement of Account downloads, and formal grievance redressal mechanisms."
+>
+  <section class="mx-auto max-w-6xl px-4 sm:px-6 py-14 sm:py-20">
+    <p class="text-xs font-semibold tracking-wide text-accent uppercase mb-2">Client Support & Servicing</p>
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">Investor Support & Service Directory</h1>
+    <p class="text-slate-600 max-w-3xl">
+      We provide end-to-end lifecycle assistance for all mutual fund investments facilitated through our distribution desk. Access direct self-service portals, request account updates, or submit operational inquiries below.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 sm:px-6 pb-14 sm:pb-20">
+    <h2 class="text-2xl font-bold text-slate-900 mb-6">Routine Investor Services</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {serviceGrid.map((group) => (
+        <SectionCard title={group.title}>
+          <ul class="list-disc list-inside space-y-1">
+            {group.items.map((i) => <li>{i}</li>)}
+          </ul>
+        </SectionCard>
+      ))}
+    </div>
+  </section>
+
+  <section class="bg-surface border-y border-slate-200 py-14 sm:py-20">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">Centralized RTA & Self-Service Links</h2>
+      <p class="text-sm text-slate-500 mb-6">
+        For instant generation of Consolidated Account Statements (CAS), PAN-based folio tracking, and online service requests, access the authorized RTA platforms directly:
+      </p>
+      <DataTable
+        headers={['Service Provider / Depository', 'Covered AMCs', 'Direct Portal Link', 'Available Online Services']}
+        rows={rtaRows}
+        caption="Registrar and Transfer Agent portal directory"
+      />
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-4xl px-4 sm:px-6 py-14 sm:py-20">
+    <h2 class="text-2xl font-bold text-slate-900 mb-2">Grievance Redressal & Dispute Escalation</h2>
+    <p class="text-slate-600 mb-6">
+      We follow a structured dispute resolution workflow. All investor concerns regarding service delays, transaction execution, or account discrepancies are addressed promptly through the escalation matrix below.
+    </p>
+    <ol class="space-y-4">
+      <li class="rounded-xl border border-slate-200 p-4">
+        <p class="font-semibold text-slate-900 mb-1">Level 1: Direct Distributor Support Desk</p>
+        <p class="text-sm text-slate-600">Primary Contact: {distributor.name} · Email: {distributor.email} · Phone: {distributor.phone} · Response Timeline: within 2 business days.</p>
+      </li>
+      <li class="rounded-xl border border-slate-200 p-4">
+        <p class="font-semibold text-slate-900 mb-1">Level 2: Respective AMC / RTA</p>
+        <p class="text-sm text-slate-600">If a transaction or statement issue relates to fund house processing, it is formally logged with the specific AMC's investor relations department or the respective RTA (CAMS/KFintech).</p>
+      </li>
+      <li class="rounded-xl border border-slate-200 p-4">
+        <p class="font-semibold text-slate-900 mb-1">Level 3: Regulatory Dispute Escalation (SEBI SCORES 2.0)</p>
+        <p class="text-sm text-slate-600">
+          If a grievance is not resolved satisfactorily at the intermediary or AMC level, investors may lodge their complaint directly on the
+          <a href="https://scores.sebi.gov.in/" target="_blank" rel="noopener noreferrer" class="text-accent font-medium">SEBI Complaints Redress System</a>
+          or the <a href="https://smartodr.in/" target="_blank" rel="noopener noreferrer" class="text-accent font-medium">Smart ODR Portal</a>.
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="bg-surface border-y border-slate-200 py-14 sm:py-20">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6">
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">Submit a Service Request</h2>
+      <p class="text-slate-600 mb-6">Need assistance with an account update, statement download, or redemption? Fill out the form below.</p>
+      <div class="rounded-xl border border-slate-200 bg-white p-6 sm:p-8">
+        <ContactForm formName="Investor Service Request" submitLabel="Submit Service Request" showFolioField showServiceCategory />
+      </div>
+    </div>
+  </section>
+</BaseLayout>

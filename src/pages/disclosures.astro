@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DataTable from '../components/DataTable.astro';
+import SectionCard from '../components/SectionCard.astro';
+import ComplianceCallout from '../components/ComplianceCallout.astro';
+import { distributor, commissionSchedule } from '../data/site';
+
+const tableRows = commissionSchedule.map((r) => [r.assetClass, r.subCategories, r.year1, r.year2Plus]);
+
+const conductGrid = [
+  { title: 'Suitability-First Approach', desc: 'Ensuring every recommended scheme aligns with the client\'s documented financial goals, liquidity needs, and risk profile.' },
+  { title: 'Conflict of Interest Mitigation', desc: 'Maintaining complete operational independence. No scheme is recommended based on higher distributor payout incentives.' },
+  { title: 'Transparent Documentation', desc: 'Ensuring investors receive complete scheme information, Key Information Memorandums (KIM), and Scheme Information Documents (SID) prior to transaction execution.' },
+];
+---
+
+<BaseLayout
+  title="Regulatory Disclosures & Commission Structure | Abhijit Sinha (ARN-367596)"
+  description="Statutory disclosures, remuneration structure, and regulatory compliance details for AMFI-registered Mutual Fund Distributor Abhijit Sinha."
+>
+  <section class="mx-auto max-w-6xl px-4 sm:px-6 py-14 sm:py-20">
+    <p class="text-xs font-semibold tracking-wide text-accent uppercase mb-2">Regulatory Transparency</p>
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">Statutory Disclosures & Remuneration Structure</h1>
+    <p class="text-slate-600 max-w-3xl">
+      In accordance with SEBI circular SEBI/IMD/CIR No. 4/168230/09 and the AMFI Code of Conduct, mutual fund distributors are required to disclose their business model, plan execution type, and all commission rates received from Asset Management Companies (AMCs) to prospective and existing investors.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 sm:px-6 pb-14 sm:pb-20">
+    <h2 class="text-2xl font-bold text-slate-900 mb-6">How Mutual Fund Distribution Remuneration Works</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SectionCard title="100% Trail-Only Structure">
+        Remuneration is paid solely via trail commissions disbursed by respective Asset Management Companies (AMCs) out of the scheme's Total Expense Ratio (TER). No upfront commissions, advisory fees, or platform handling charges are levied directly on the investor.
+      </SectionCard>
+      <SectionCard title="Regular Plan Execution">
+        All transactions facilitated under {distributor.arn} are executed in Regular Plans. Investors have the option to invest directly with AMCs in Direct Plans, which carry lower expense ratios due to the absence of distribution commissions.
+      </SectionCard>
+      <SectionCard title="Independent Allocation">
+        Fund categories and scheme suggestions are determined strictly by investor suitability, investment horizon, and risk tolerance. Commission differentials across AMCs or asset classes do not influence scheme selection.
+      </SectionCard>
+      <SectionCard title="CAS Verification">
+        The exact gross commission paid to the distributor for your specific portfolio is transparently reported on your monthly or half-yearly Consolidated Account Statement (CAS) issued by depositories (NSDL/CDSL) or RTAs (CAMS/KFintech).
+      </SectionCard>
+    </div>
+  </section>
+
+  <section class="bg-surface border-y border-slate-200 py-14 sm:py-20">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">Indicative Annual Trail Commission Schedule</h2>
+      <p class="text-sm text-slate-500 mb-6">
+        Rates are indicative ranges across empanelled AMCs and are subject to periodic revision based on AMC rate cards and regulatory caps.
+      </p>
+      <DataTable
+        headers={['Asset Class / Classification', 'Sub-Categories Included', 'Indicative Trail Commission (Year 1)', 'Indicative Trail Commission (Year 2 Onwards)']}
+        rows={tableRows}
+        caption="Indicative annual trail commission schedule by asset class"
+      />
+      <p class="text-xs text-slate-400 italic mt-3">Note: figures shown are placeholders pending finalized AMC empanelment agreements.</p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 sm:px-6 py-14 sm:py-20">
+    <h2 class="text-2xl font-bold text-slate-900 mb-6">Professional Standards & Regulatory Adherence</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {conductGrid.map((item) => <SectionCard title={item.title}>{item.desc}</SectionCard>)}
+    </div>
+  </section>
+
+  <section class="bg-surface border-y border-slate-200 py-14 sm:py-20">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6">
+      <h2 class="text-2xl font-bold text-slate-900 mb-6">Official Distributor Credentials</h2>
+      <div class="rounded-xl border border-slate-200 bg-white p-6 space-y-2 text-sm text-slate-700">
+        <p><strong class="text-slate-900">Distributor Name:</strong> {distributor.name}</p>
+        <p><strong class="text-slate-900">AMFI Registration Number:</strong> {distributor.arn}</p>
+        <p><strong class="text-slate-900">EUIN:</strong> {distributor.euin}</p>
+        <p><strong class="text-slate-900">Current ARN Validity:</strong> {distributor.arnValidity} <span class="text-xs text-slate-400 italic">(pending confirmation)</span></p>
+        <p><strong class="text-slate-900">Certification:</strong> {distributor.certification}</p>
+        <p><strong class="text-slate-900">Principal Place of Business:</strong> {distributor.officeCity}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-4 sm:px-6 py-14 sm:py-20">
+    <ComplianceCallout label="Distributor Disclaimer">
+      {distributor.name} is an AMFI-registered Mutual Fund Distributor ({distributor.arn}). The schemes and asset categories mentioned are for informational and distribution purposes only. Past performance does not guarantee future results.
+    </ComplianceCallout>
+  </section>
+</BaseLayout>

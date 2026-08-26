@@ -1,0 +1,13 @@
+---
+interface Props {
+  label?: string;
+}
+const { label = 'Compliance Notice' } = Astro.props;
+---
+
+<div class="rounded-xl border border-slate-200 bg-blue-50/40 border-l-4 border-l-accent p-4 sm:p-5">
+  <p class="text-xs font-semibold text-accent uppercase tracking-wide mb-1">{label}</p>
+  <div class="text-sm text-slate-700">
+    <slot />
+  </div>
+</div>
