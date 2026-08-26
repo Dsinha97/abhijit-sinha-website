@@ -15,14 +15,14 @@ This is a deliberately deferred decision, not a forgotten one. The site currentl
 **Option A — Keep GitHub Pages, point GoDaddy DNS at it**
 1. At GoDaddy: add `A` records for `abhijitsinha.in` to GitHub Pages' IPs, plus a `CNAME` record for `www` → `dsinha97.github.io`.
 2. Add back `public/CNAME` containing `abhijitsinha.in`.
-3. Set repo variables `SITE_URL=https://abhijitsinha.in` and `BASE_PATH=` (empty) so Astro builds without a sub-path.
+3. Set the repo variable `SITE_URL=https://abhijitsinha.in`. `astro.config.mjs` automatically defaults `BASE_PATH` to root (`''`) once `SITE_URL` is set to anything — no need to also set `BASE_PATH` unless you want a non-root path for some reason.
 4. In GitHub repo Settings → Pages, set the custom domain and enable "Enforce HTTPS".
 5. Update `public/robots.txt`'s sitemap URL to match.
 
 **Option B — Move to Cloudflare**
 1. Either keep DNS at GoDaddy and just add Cloudflare Pages as a second deploy target reading the domain via a Cloudflare-side custom domain, or transfer/point nameservers for `abhijitsinha.in` to Cloudflare entirely (more control, free SSL/CDN, faster in India).
 2. Connect the GitHub repo to Cloudflare Pages (auto-builds on push, replacing or running alongside the current GitHub Actions workflow).
-3. Same `SITE_URL`/`BASE_PATH` env-var change as Option A — Cloudflare Pages serves from the domain root too.
+3. Same `SITE_URL` env-var change as Option A — Cloudflare Pages serves from the domain root too, and `BASE_PATH` defaults to root automatically once `SITE_URL` is set.
 
 Both options are one-time config changes because the codebase never hardcodes a domain-relative path (see `src/lib/url.ts` and `CLAUDE.md`). Neither requires touching component or page templates.
 
