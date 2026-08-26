@@ -2,6 +2,15 @@
 import { url } from '../lib/url';
 import { nav, primaryCta } from '../data/site';
 
+interface Props {
+  // True only on the homepage hero, where the header sits out-of-flow over
+  // the banner artwork instead of occupying its own space — see
+  // BaseLayout.astro. Governs the header's resting (pre-scroll) background;
+  // the post-scroll "solid" state is unaffected and identical either way.
+  overlay?: boolean;
+}
+const { overlay = false } = Astro.props;
+
 // Derive the base-free, trailing-slash-free current path so it can be
 // compared directly against nav hrefs like "/solutions". Two independent
 // slash inconsistencies have to be handled, not just one:
@@ -18,17 +27,38 @@ if (base && currentPath.startsWith(base)) currentPath = currentPath.slice(base.l
 if (!currentPath.startsWith('/')) currentPath = '/' + currentPath;
 if (currentPath.length > 1) currentPath = currentPath.replace(/\/+$/, '');
 
-// Only distinct pages (not the "/#about" same-page anchor) participate in the
-// active-page highlight — About isn't a separate route, so treating it as
-// "active" whenever we're on the homepage would light up both Home and About
-// at once, which reads as broken rather than helpful.
+// Only distinct pages (not the "/#about" same-page anchor) are highlighted
+// from this server-rendered pass — About isn't a separate route, so treating
+// it as "active" whenever we're on the homepage would light up both Home and
+// About at once on first paint. The homepage's own scroll-spy script (in
+// BaseLayout.astro) takes over from here once the page can actually tell
+// whether the visitor has scrolled into the About section.
 function isActiveNavItem(href: string): boolean {
   if (href.includes('#')) return false;
   return currentPath === href;
 }
+
+// Active-item styling now lives entirely in these aria-[current=page]:
+// variants rather than being computed per-item in JS/ternaries — the
+// scroll-spy script only ever has to flip one attribute, and the
+// server-rendered pass and the client-side one both drive the exact same
+// CSS. A single-level attribute variant like this also sidesteps the
+// group-data-plus-responsive-prefix gap hit elsewhere in this file's history
+// (see BaseLayout.astro's scroll-shrink comment) — there's no group/variant
+// stacking here to go wrong.
+const desktopNavLinkClass =
+  'text-sm min-h-[44px] flex items-center border-b-2 border-transparent text-slate-600 font-medium transition-colors hover:text-slate-900 aria-[current=page]:text-slate-900 aria-[current=page]:font-semibold aria-[current=page]:border-accent';
+const mobileNavLinkClass =
+  'min-h-[44px] flex items-center text-sm pl-3 -ml-3 border-l-4 border-l-transparent border-b border-slate-100 last:border-b-0 text-slate-700 font-medium hover:text-slate-900 aria-[current=page]:text-slate-900 aria-[current=page]:font-semibold aria-[current=page]:border-l-accent aria-[current=page]:bg-surface';
 ---
 
-<header class="bg-white/95 backdrop-blur border-b border-slate-200 transition-shadow duration-200 motion-reduce:transition-none group-data-[scrolled]:shadow-sm">
+<header
+  class:list={[
+    'transition-[background-color,border-color,box-shadow] duration-200 motion-reduce:transition-none',
+    'group-data-[scrolled]:bg-white/95 group-data-[scrolled]:backdrop-blur group-data-[scrolled]:border-b group-data-[scrolled]:border-slate-200 group-data-[scrolled]:shadow-sm',
+    overlay ? 'bg-white/40 backdrop-blur-md border-b border-transparent' : 'bg-white/95 backdrop-blur border-b border-slate-200',
+  ]}
+>
   <div class="mx-auto max-w-7xl px-4 sm:px-6 h-16 sm:h-20 group-data-[scrolled]:h-12 sm:group-data-[scrolled]:h-14 flex items-center justify-between gap-4 transition-[height] duration-200 motion-reduce:transition-none">
     <a href={url('')} class="flex items-center gap-2 shrink-0 min-h-[44px]">
       <img src={url('images/logo.png')} alt="Abhijit Sinha logo" class="h-9 sm:h-11 group-data-[scrolled]:h-7 sm:group-data-[scrolled]:h-8 w-auto transition-[height] duration-200 motion-reduce:transition-none" />
@@ -39,23 +69,16 @@ function isActiveNavItem(href: string): boolean {
     </a>
 
     <nav class="hidden lg:flex items-center gap-6" aria-label="Primary">
-      {nav.map((item) => {
-        const active = isActiveNavItem(item.href);
-        return (
-          <a
-            href={url(item.href.replace(/^\//, ''))}
-            aria-current={active ? 'page' : undefined}
-            class:list={[
-              'text-sm min-h-[44px] flex items-center border-b-2 transition-colors',
-              active
-                ? 'text-slate-900 font-semibold border-accent'
-                : 'text-slate-600 font-medium border-transparent hover:text-slate-900',
-            ]}
-          >
-            {item.label}
-          </a>
-        );
-      })}
+      {nav.map((item) => (
+        <a
+          href={url(item.href.replace(/^\//, ''))}
+          data-nav-href={item.href}
+          aria-current={isActiveNavItem(item.href) ? 'page' : undefined}
+          class={desktopNavLinkClass}
+        >
+          {item.label}
+        </a>
+      ))}
     </nav>
 
     <div class="flex items-center gap-2">
@@ -86,23 +109,16 @@ function isActiveNavItem(href: string): boolean {
 
   <div id="mobile-menu" class="lg:hidden hidden border-t border-slate-200 bg-white">
     <nav class="px-4 py-3 flex flex-col" aria-label="Mobile Primary">
-      {nav.map((item) => {
-        const active = isActiveNavItem(item.href);
-        return (
-          <a
-            href={url(item.href.replace(/^\//, ''))}
-            aria-current={active ? 'page' : undefined}
-            class:list={[
-              'min-h-[44px] flex items-center text-sm pl-3 -ml-3 border-l-4 border-b border-slate-100 last:border-b-0',
-              active
-                ? 'text-slate-900 font-semibold border-l-accent bg-surface'
-                : 'text-slate-700 font-medium border-l-transparent hover:text-slate-900',
-            ]}
-          >
-            {item.label}
-          </a>
-        );
-      })}
+      {nav.map((item) => (
+        <a
+          href={url(item.href.replace(/^\//, ''))}
+          data-nav-href={item.href}
+          aria-current={isActiveNavItem(item.href) ? 'page' : undefined}
+          class={mobileNavLinkClass}
+        >
+          {item.label}
+        </a>
+      ))}
       <a
         href={url(primaryCta.href.replace(/^\//, ''))}
         class="mt-3 min-h-[44px] flex items-center justify-center rounded-lg bg-slate-900 text-white text-sm font-semibold px-4"

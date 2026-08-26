@@ -17,11 +17,22 @@ const schemeCards = [
 <BaseLayout
   title="Abhijit Sinha | AMFI-Registered Mutual Fund Distributor"
   description="Goal-based mutual fund distribution and disciplined portfolio allocation with Abhijit Sinha, AMFI-registered Mutual Fund Distributor (ARN-367596)."
+  overlayHeader
 >
   <!-- Hero: banner.png / banner-mobile.jpeg are finished graphics (logo, headline,
        tagline, and all four pillars are already drawn into the artwork) — shown
-       whole and undistorted, with no text overlay competing with it. -->
-  <section>
+       whole and undistorted, with no text overlay competing with it. The header
+       is out-of-flow here (overlayHeader on BaseLayout) so the image runs all
+       the way to the top of the page, behind the translucent regulatory strip
+       and nav.
+
+       The banner is 2:1, so at typical desktop widths it renders far taller
+       than the viewport — the CTA band below is `sticky bottom-0` as the
+       section's last child, which pins it to the bottom of the window while
+       the image scrolls past above it, and lets it settle into normal flow
+       the instant the section (image + band) ends. No hardcoded height/margin
+       math: the browser works out exactly when to release it. -->
+  <section class="relative">
     <picture>
       <source media="(max-width: 767px)" srcset={url('images/banner-mobile.jpeg')} />
       <img
@@ -33,19 +44,19 @@ const schemeCards = [
       />
     </picture>
 
-    <div class="bg-surface border-b border-slate-200">
-      <div class="mx-auto max-w-3xl px-4 sm:px-6 py-10 sm:py-14 text-center">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight mb-3">
+    <div class="sticky bottom-0 z-30 bg-white/90 backdrop-blur border-t border-slate-200 shadow-lg">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6 py-4 sm:py-6 text-center">
+        <h1 class="text-lg sm:text-2xl font-extrabold text-slate-900 leading-tight mb-1.5">
           Plan Your Investment Journey with Clarity and Discipline.
         </h1>
-        <p class="text-slate-600 mb-6">
+        <p class="text-sm text-slate-600 mb-3">
           Goal-based mutual fund distribution, structured around your timeline and risk profile.
         </p>
-        <div class="flex flex-wrap justify-center gap-3">
-          <a href={url('schedule')} class="min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition">
+        <div class="flex flex-wrap justify-center gap-2.5">
+          <a href={url('schedule')} class="min-h-[44px] inline-flex items-center justify-center px-4 py-2 rounded-lg bg-slate-900 text-white font-semibold text-sm hover:bg-slate-800 transition">
             Schedule a 15-Minute Intro Call
           </a>
-          <a href={url('solutions')} class="min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-100 transition">
+          <a href={url('solutions')} class="min-h-[44px] inline-flex items-center justify-center px-4 py-2 rounded-lg border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-100 transition">
             Explore Investment Solutions
           </a>
         </div>
@@ -73,9 +84,23 @@ const schemeCards = [
           <p>Former Head of Sales Management at a leading Indian AMC</p>
           <p>AMFI {distributor.arn}</p>
         </div>
-        <a href={url('schedule')} class="mt-4 inline-flex min-h-[44px] items-center justify-center px-5 py-2.5 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition">
-          Schedule a Conversation
-        </a>
+        <div class="mt-4 flex flex-col items-center lg:items-start gap-2">
+          <a href={url('schedule')} class="inline-flex min-h-[44px] items-center justify-center px-5 py-2.5 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition">
+            Schedule a Conversation
+          </a>
+          <a
+            href={distributor.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${distributor.name} on LinkedIn (opens in a new tab)`}
+            class="inline-flex min-h-[44px] items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-100 transition"
+          >
+            <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.446-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path>
+            </svg>
+            Connect on LinkedIn
+          </a>
+        </div>
       </div>
 
       <div class="lg:col-span-8 space-y-4 text-sm sm:text-base text-slate-700 leading-relaxed">
