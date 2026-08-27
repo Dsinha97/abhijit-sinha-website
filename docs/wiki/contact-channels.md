@@ -6,9 +6,9 @@ How a visitor reaches Abhijit across the site. Sources: [whatsapp-contact.md](..
 
 | Channel | Detail | Where it appears |
 |---|---|---|
-| Floating WhatsApp button | `wa.me/919004087549`, prefilled message "Hello Abhijit, I would like to know more about mutual fund investments and SIPs." | Every page, bottom-right, fixed position |
-| Direct email | `abhijit.uti@gmail.com` | Footer, `/schedule`, `/disclosures` |
-| Direct phone | `+91-9004087549` (Mon–Fri 10am–6pm IST) | Footer, `/schedule` |
+| Floating WhatsApp button | `wa.me/918976539234`, prefilled message "Hello Abhijit, I would like to know more about mutual fund investments and SIPs." | Every page, bottom-right, fixed position |
+| Direct email | `support@abhijitsinha.in` | Footer, `/schedule`, `/disclosures` |
+| Direct phone | `+91-8976539234` (Mon–Fri 10am–6pm IST) | Footer, `/schedule` |
 | Homepage inquiry form | Name, Email, Mobile, Investment Goal, Mode (SIP/Lump Sum) | `/` `#contact` |
 | Investor Services request form | Name, Email, Mobile, Folio (optional), Service Category dropdown, Message | `/investor-services` |
 | Scheduler | Booking UI, tool TBD (Cal.com / Calendly / Google Calendar) | `/schedule` — see [page-schedule](page-schedule.md) |
@@ -24,6 +24,6 @@ The specs describe form *fields* but not a backend. Since this is a static site 
 
 ## Unconfirmed mailboxes
 
-`support@abhijitsinha.in`, `contact@abhijitsinha.in`, and `compliance@abhijitsinha.in` are referenced in the disclosures/investor-services specs but no domain mailbox exists yet — until one is set up, all mail routes to `abhijit.uti@gmail.com`.
+`support@abhijitsinha.in` is live and is the distributor's primary address (`distributor.email` in `src/data/site.ts`). `contact@abhijitsinha.in` and `compliance@abhijitsinha.in` are referenced in the disclosures/investor-services specs but are not yet provisioned — until they are, all mail routes to `support@abhijitsinha.in`.
 
 Related: [regulatory-compliance](regulatory-compliance.md) · [page-schedule](page-schedule.md) · [page-investor-services](page-investor-services.md)

@@ -9,19 +9,19 @@ export const distributor = {
   euin: 'E703717',
   certification: 'NISM Series V-A Certified',
   officeCity: 'Navi Mumbai',
-  email: 'abhijit.uti@gmail.com',
-  phone: '+91-9004087549',
-  phoneHref: 'tel:+919004087549',
-  whatsappNumber: '919004087549', // country code, no '+' or separators
+  email: 'support@abhijitsinha.in',
+  phone: '+91-8976539234',
+  phoneHref: 'tel:+918976539234',
+  whatsappNumber: '918976539234', // country code, no '+' or separators
   // Confirmed against Important Docs/ARN Registration.pdf ("ARN Validity 11-AUG-2026 to 01-JUL-2029").
   arnValidity: '11/08/2026 to 01/07/2029',
   linkedin: 'https://www.linkedin.com/in/abhijit-sinha-243b7243/',
 } as const;
 
-// Mailboxes referenced in the original specs but not yet provisioned on the
-// domain. Everything routes to distributor.email until these exist.
+// Further mailboxes referenced in the original specs but not yet provisioned
+// on the domain. Everything routes to distributor.email until these exist.
+// (support@abhijitsinha.in is live and is distributor.email.)
 export const plannedMailboxes = {
-  support: 'support@abhijitsinha.in',
   contact: 'contact@abhijitsinha.in',
   compliance: 'compliance@abhijitsinha.in',
 } as const;

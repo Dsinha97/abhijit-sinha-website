@@ -34,7 +34,7 @@ There is no test suite. Verification is: `astro check` passes, `npm run build` i
 
 ## Compliance rules (non-negotiable)
 
-- Never change these identifiers without the user explicitly providing a new value: **ARN-367596**, **EUIN E703717**, **NISM Series V-A**, principal place of business **Navi Mumbai**, phone **+91-9004087549**, email **abhijit.uti@gmail.com**.
+- Never change these identifiers without the user explicitly providing a new value: **ARN-367596**, **EUIN E703717**, **NISM Series V-A**, principal place of business **Navi Mumbai**, phone **+91-8976539234**, email **support@abhijitsinha.in**.
 - The statutory risk-warning sentence ("Mutual fund investments are subject to market risks...") and the "Regular Plans" distributor notice must appear on every page's footer — they live in `Footer.astro`, do not move them into page-specific conditionals.
 - Never write or approve copy that reads as personalized investment advice, a return guarantee, or a recommendation driven by commission rates — this site is distribution-only, and the specs are explicit about that distinction. See [docs/wiki/regulatory-compliance.md](docs/wiki/regulatory-compliance.md).
 - Numbers in brackets in the source specs (commission ranges, allocation frameworks, ARN validity dates) are **unconfirmed placeholders**. Keep them visibly marked as such in `site.ts`; do not invent real-looking figures.

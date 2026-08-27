@@ -2,15 +2,6 @@
 import { url } from '../lib/url';
 import { nav, primaryCta } from '../data/site';
 
-interface Props {
-  // True only on the homepage hero, where the header sits out-of-flow over
-  // the banner artwork instead of occupying its own space — see
-  // BaseLayout.astro. Governs the header's resting (pre-scroll) background;
-  // the post-scroll "solid" state is unaffected and identical either way.
-  overlay?: boolean;
-}
-const { overlay = false } = Astro.props;
-
 // Derive the base-free, trailing-slash-free current path so it can be
 // compared directly against nav hrefs like "/solutions". Two independent
 // slash inconsistencies have to be handled, not just one:
@@ -55,8 +46,8 @@ const mobileNavLinkClass =
 <header
   class:list={[
     'transition-[background-color,border-color,box-shadow] duration-200 motion-reduce:transition-none',
-    'group-data-[scrolled]:bg-white/95 group-data-[scrolled]:backdrop-blur group-data-[scrolled]:border-b group-data-[scrolled]:border-slate-200 group-data-[scrolled]:shadow-sm',
-    overlay ? 'bg-white/40 backdrop-blur-md border-b border-transparent' : 'bg-white/95 backdrop-blur border-b border-slate-200',
+    'group-data-[scrolled]:shadow-sm',
+    'bg-white/95 backdrop-blur border-b border-slate-200',
   ]}
 >
   <div class="mx-auto max-w-7xl px-4 sm:px-6 h-16 sm:h-20 group-data-[scrolled]:h-12 sm:group-data-[scrolled]:h-14 flex items-center justify-between gap-4 transition-[height] duration-200 motion-reduce:transition-none">

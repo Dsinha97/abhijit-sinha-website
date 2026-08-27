@@ -21,6 +21,6 @@ Source: [privacy-policy_terms.md](../sources/privacy-policy_terms.md).
 - **Accuracy/availability:** content provided "as is", no uptime guarantee.
 - **Limitation of liability:** no liability for decisions made without a formal suitability assessment, for downtime, or for third-party links (CAMS/KFintech/SEBI SCORES).
 - **Governing law:** laws of India, exclusive jurisdiction of competent Indian courts.
-- **Contact:** `abhijit.uti@gmail.com`, Navi Mumbai.
+- **Contact:** `support@abhijitsinha.in`, Navi Mumbai.
 
 Related: [regulatory-compliance](regulatory-compliance.md) · [contact-channels](contact-channels.md)

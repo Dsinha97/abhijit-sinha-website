@@ -17,14 +17,13 @@ const schemeCards = [
 <BaseLayout
   title="Abhijit Sinha | AMFI-Registered Mutual Fund Distributor"
   description="Goal-based mutual fund distribution and disciplined portfolio allocation with Abhijit Sinha, AMFI-registered Mutual Fund Distributor (ARN-367596)."
-  overlayHeader
 >
   <!-- Hero: banner.png / banner-mobile.jpeg are finished graphics (logo, headline,
        tagline, and all four pillars are already drawn into the artwork) — shown
        whole and undistorted, with no text overlay competing with it. The header
-       is out-of-flow here (overlayHeader on BaseLayout) so the image runs all
-       the way to the top of the page, behind the translucent regulatory strip
-       and nav.
+       header is in normal flow and opaque (see BaseLayout), so the logo drawn
+       into the top of the artwork starts clear of the nav rather than being
+       covered by it.
 
        The banner is 2:1, so at typical desktop widths it renders far taller
        than the viewport — the CTA band below is `sticky bottom-0` as the

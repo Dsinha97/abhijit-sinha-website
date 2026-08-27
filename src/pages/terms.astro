@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { distributor } from '../data/site';
 ---
 
 <BaseLayout
@@ -43,7 +44,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <ul>
       <li><strong>Entity:</strong> Abhijit Sinha (AMFI Registered Mutual Fund Distributor)</li>
       <li><strong>ARN:</strong> ARN-367596</li>
-      <li><strong>Email:</strong> <a href="mailto:abhijit.uti@gmail.com">abhijit.uti@gmail.com</a></li>
+      <li><strong>Email:</strong> <a href={`mailto:${distributor.email}`}>{distributor.email}</a></li>
       <li><strong>Official Address:</strong> Navi Mumbai</li>
     </ul>
   </article>

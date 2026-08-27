@@ -15,7 +15,7 @@ The source specs mention a Cal.com / Calendly placeholder integration, but the t
 
 ## Alternative direct contact section
 
-"Prefer a written inquiry or direct call?" — grid of Direct Email (`abhijit.uti@gmail.com`), Direct Phone (`+91-9004087549`, Mon–Fri 10am–6pm IST), and a link back to the homepage `#contact` form.
+"Prefer a written inquiry or direct call?" — grid of Direct Email (`support@abhijitsinha.in`), Direct Phone (`+91-8976539234`, Mon–Fri 10am–6pm IST), and a link back to the homepage `#contact` form.
 
 ## Footer
 
