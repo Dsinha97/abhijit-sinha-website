@@ -1,0 +1,92 @@
+# Admin Dashboard
+
+Authenticated dashboard at `/admin` where Abhijit reads incoming enquiries and edits the non-regulatory content of the site without touching git.
+
+**Status:** Phases 0 and 1 are built and verified. Phases 2–5 are planned, not built.
+
+Backing infrastructure: Supabase project `cebfypcoyqiegwuahmun` (`https://cebfypcoyqiegwuahmun.supabase.co`), region India. Schema reference: [data-model.md](data-model.md).
+
+---
+
+## Why this shape
+
+The site is a pure-static Astro build on GitHub Pages with no adapter and no server runtime, which rules out server-rendered admin routes and Astro Actions. Three options were weighed:
+
+| Option | Verdict |
+|---|---|
+| **Decap CMS** (git-backed) | Rejected. No concept of form submissions, so it cannot deliver the lead inbox at all. Also expects JSON/YAML collections, while content lives in a TypeScript module. Its one real advantage — a git commit per edit — is recovered in Phase 5 instead. |
+| **Sanity / Strapi** (cloud headless CMS) | Rejected as primary. Handles content but not leads, so Supabase would be needed alongside it. Two vendors for one job. |
+| **Supabase** | Adopted. Covers auth, leads, and content in one free project. |
+
+**The one deliberate deviation from a stock Supabase setup:** public pages must *not* fetch content client-side. `/disclosures` carries a statutory commission table; rendering it from client JS would make it invisible to crawlers, flash empty on load, and go blank entirely if Supabase were down or paused. Content is therefore read at **build time**, with `src/data/site.ts` as the committed fallback, and the site rebuilds via `repository_dispatch`.
+
+The dashboard itself is a client-side-only page, which works fine on static hosting because **security is enforced by Postgres Row Level Security, not by the host**. The publishable key in the bundle grants only what RLS allows.
+
+---
+
+## Access control
+
+Exactly two accounts, held in the `admin_allowlist` table:
+
+- `abhijit.uti@gmail.com` (owner)
+- `deepayansinha@gmail.com` (owner)
+
+Every admin-only RLS policy gates on `public.is_admin()`, which matches the email in the caller's JWT against that table. Adding an admin is an `INSERT` there *plus* an invite from the Supabase dashboard — a Supabase account alone grants nothing.
+
+> **Required setting:** public sign-ups must stay **disabled** in Supabase (Authentication → Providers → Email → "Allow new users to sign up" = off). The allowlist is the real gate, but leaving signups open lets strangers create accounts against the project.
+
+---
+
+## Phase 2 — Admin shell, auth, and lead inbox *(not built)*
+
+The deliverable that answers "view requests like form details."
+
+- `src/pages/admin/index.astro` — standalone page, deliberately **not** using `BaseLayout` (the regulatory strip, nav, and WhatsApp button are wrong furniture for a dashboard). Needs `<meta name="robots" content="noindex,nofollow">`.
+- Add `Disallow: /admin` to `public/robots.txt`.
+- `src/lib/supabase-client.ts` — browser `createClient` from `site.supabase.url` / `.anonKey`. **Client-side only**; importing it into page frontmatter would run it at build time.
+- Auth via magic link — no passwords to manage.
+- Inbox: newest-first table, expandable detail, status dropdown (`new` / `contacted` / `closed`), `admin_notes`, `mailto:` and `wa.me` quick actions built from the lead's own details, CSV export.
+- Use `url()` from `src/lib/url.ts` for every link — `/admin` 404s on the Pages sub-path otherwise.
+
+Only new dependency: `@supabase/supabase-js`.
+
+**Verify:** log in as an allowlisted user and see leads; log out and confirm the page shows only a login card with no lead data in the network tab; `grep -r "service_role" dist/` returns nothing.
+
+> **Cleanup owed (carried from Phase 1):** `leads` row **id 5** is a live end-to-end test record from 2026-08-28, holding a real email address and mobile number. It was deliberately kept so the inbox UI could be built and styled against a real row rather than a fixture. **Delete it as the final step of Phase 2**, once the inbox is verified: `delete from public.leads where id = 5;`  Leaving it in place past Phase 2 means shipping a dashboard whose first visible enquiry is fake, and holding personal data with no business reason to retain it.
+
+## Phase 3 — Editable content, rendered at build time *(not built)*
+
+`src/lib/content.ts` fetches `site_content` at build time and **falls back to the committed values in `src/data/site.ts`** when Supabase is unreachable or paused. That fallback is the whole point: a build must never ship an empty statutory table. The `CommissionRow`, `RtaPortalRow`, and `SchedulerProvider` types stay in `site.ts` and are reused unchanged.
+
+Migrate easiest-first: `scheduler` → `rta_portals` → `commission_schedule`. Call sites: `src/pages/disclosures.astro:8`, `src/pages/investor-services.astro:23`, `src/components/SchedulerEmbed.astro`.
+
+**Commission-rate guardrail.** Rates are the one editable field with regulatory weight. The editor must surface the `unconfirmed` flag as an explicit toggle rather than letting the placeholder caveat silently vanish, require a typed confirmation to save, and write to `content_audit`. The UI must expose **no** field for ARN, EUIN, certification, office city, or the `statutory` strings — those stay hardcoded per [regulatory-compliance.md](regulatory-compliance.md).
+
+**Publish/rebuild.** A `trigger-rebuild` edge function calls the GitHub API with a fine-grained PAT held as a Supabase secret (never in the browser). Add to `.github/workflows/deploy.yml`:
+
+```yaml
+on:
+  repository_dispatch:
+    types: [content-updated]
+```
+
+**Verify:** edit a rate, publish, then confirm the new value appears in **view-source** on `/disclosures`, not just the rendered DOM. Then break the Supabase URL locally and confirm `npm run build` still succeeds on the fallback.
+
+## Phase 4 — Videos and notes *(not built)*
+
+- **Videos:** admin CRUD over the `videos` table. A `VideoGrid.astro` renders `youtube-nocookie.com` embeds, lazy-loaded behind a poster image so no third-party request fires until the visitor clicks. URLs only — no file uploads.
+- **Notes/blog:** `src/pages/notes/index.astro` and `notes/[slug].astro` via `getStaticPaths()` over published `posts`. Render markdown at build time (`marked`), never client-side. Add "Notes" to `nav`.
+- **Compliance gate:** free-text posts are the highest-risk surface on this site — they drift into what reads as personalised investment advice, which is prohibited. Every post page must render `ComplianceCallout.astro`, and the editor should show that requirement before publishing.
+
+## Phase 5 — Audit trail and hardening *(not built)*
+
+- **Git-visible history.** Have the rebuild workflow commit the fetched content to `src/data/content.snapshot.json`. This restores Decap's one genuine advantage — a git diff per published change on a regulated site — and doubles as disaster recovery if the Supabase project is lost.
+- **Keep-alive.** Supabase pauses free projects after ~7 days of inactivity. Visitors degrade gracefully (the build falls back to `site.ts`) but **admin login breaks**. Add a scheduled GitHub Action that pings the project every few days.
+- **Lead retention.** Scheduled purge of enquiries older than 24 months, to match the commitment now published in the Privacy Policy. This is an obligation, not polish.
+- Add Cloudflare Turnstile to `submit-lead` if spam appears.
+
+---
+
+## Accepted security warning
+
+Supabase's linter reports that `public.is_admin()` is executable by the `authenticated` role via `/rest/v1/rpc/is_admin`. This is intentional and cannot be removed: RLS policy expressions are evaluated with the caller's privileges, so signed-in users must be able to execute it. Calling it reveals only whether *you* are an admin. The `anon` role and both trigger functions have had their EXECUTE grants revoked.

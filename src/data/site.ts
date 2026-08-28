@@ -162,9 +162,20 @@ export const site = {
   scheduler,
   rtaPortals,
   commissionSchedule,
-  // Form endpoint for Web3Forms/Formspree-style hosted form handling.
-  // Set PUBLIC_FORM_ENDPOINT in .env (see .env.example). Empty until configured.
+  // POST endpoint for the contact forms — the Supabase `submit-lead` edge
+  // function. Set PUBLIC_FORM_ENDPOINT in .env (see .env.example). When empty,
+  // ContactForm.astro renders in a disabled/informational state.
   formEndpoint: import.meta.env.PUBLIC_FORM_ENDPOINT ?? '',
+
+  // Supabase connection for the /admin dashboard and the build-time content
+  // fetch. Both values are public by design — Row Level Security is what
+  // protects the data, and every admin table is gated on the caller's email
+  // appearing in the `admin_allowlist` table. The service_role key must NEVER
+  // appear in this file or anywhere else under src/ or public/.
+  supabase: {
+    url: import.meta.env.PUBLIC_SUPABASE_URL ?? '',
+    anonKey: import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? '',
+  },
 };
 
 export default site;

@@ -20,7 +20,11 @@ Standard SVG icon, `aria-label` for screen readers, visible focus ring, 44–48p
 
 ## Form submission handling (not specified in source docs)
 
-The specs describe form *fields* but not a backend. Since this is a static site with no server, form submissions need a hosted form endpoint (e.g. Web3Forms/Formspree) that emails submissions to Abhijit — this is an implementation decision layered on top of the source specs, not something the specs themselves prescribe.
+The specs describe form *fields* but not a backend — the handling below is an implementation decision layered on top of them, not something the specs prescribe.
+
+Both forms POST to the Supabase `submit-lead` edge function (`PUBLIC_FORM_ENDPOINT`), which validates the submission, stores it in the `leads` table, and emails a copy. See [data-model.md](data-model.md) for the endpoint contract and [admin-dashboard.md](admin-dashboard.md) for the inbox that reads it. When `PUBLIC_FORM_ENDPOINT` is empty, `ContactForm.astro` still degrades to its original disabled/informational state.
+
+**The folio-number field was removed** from the Investor Services form. Folio numbers are financial identifiers, and collecting them through a web form means storing sensitive account data at rest for no operational gain; they are collected over WhatsApp or phone once contact is established. The form copy now says so explicitly, and Privacy Policy §5.1 asks visitors not to enter account identifiers. Do not reintroduce the field without a retention policy and a matching disclosure.
 
 ## Unconfirmed mailboxes
 
