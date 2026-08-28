@@ -4,7 +4,7 @@ Source: [seo-tools.md](../sources/seo-tools.md).
 
 ## Sitemap & robots
 
-`@astrojs/sitemap` integration, configured with `site: 'https://abhijitsinha.in'` in the source spec. Note: the actual first deployment target is a GitHub Pages project sub-path, not the bare custom domain — see the project's `CLAUDE.md` and `docs/wiki/deployment-domain.md` for the real `site`/`base` values in effect. `public/robots.txt` allows all crawlers and points to `/sitemap-index.xml`.
+`@astrojs/sitemap` integration. `site` is `https://abhijitsinha.in` and `base` is the domain root, matching the source spec — the site is served from the root on Vercel, so sitemap and canonical URLs need no sub-path allowance. Both values are env-overridable; see [deployment-domain](deployment-domain.md). `public/robots.txt` allows all crawlers and points to `/sitemap-index.xml`; its `Sitemap:` line is the one hardcoded absolute URL in the repo and must be edited by hand if the domain ever changes.
 
 ## Social preview
 

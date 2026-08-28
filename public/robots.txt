@@ -1,4 +1,8 @@
+# Serving from a temporary *.vercel.app hostname until abhijitsinha.in is cut
+# over (see docs/wiki/deployment-domain.md). Indexing is disabled so a throwaway
+# hostname never enters the index — remove the Disallow line and point Sitemap at
+# https://abhijitsinha.in/sitemap-index.xml at cutover.
 User-agent: *
-Allow: /
+Disallow: /
 
-Sitemap: https://dsinha97.github.io/abhijit-sinha-website/sitemap-index.xml
+Sitemap: https://abhijit-sinha-website.vercel.app/sitemap-index.xml

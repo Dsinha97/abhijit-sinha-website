@@ -55,7 +55,7 @@ Both trigger functions have EXECUTE revoked from `public`, `anon`, and `authenti
 
 Accepts `multipart/form-data` (what `ContactForm.astro` sends) and JSON (so it is testable with curl). Returns `{ ok, message?, error? }`; `ContactForm.astro` surfaces `error` directly so validation problems tell the visitor what to fix.
 
-CORS reflects the request origin **only when allowlisted** (Pages origin, both `abhijitsinha.in` forms, localhost), never an arbitrary one. Override with the `ALLOWED_ORIGINS` secret.
+CORS reflects the request origin **only when allowlisted** (both `abhijitsinha.in` forms, Vercel `*.vercel.app` preview deployments for this project, localhost), never an arbitrary one. Preview origins are matched by pattern rather than listed, because Vercel mints a new hostname per deployment. Override with the `ALLOWED_ORIGINS` secret.
 
 A filled honeypot returns HTTP 200 and stores nothing — bots get no signal that they were caught.
 
@@ -67,4 +67,4 @@ A filled honeypot returns HTTP 200 and stores nothing — bots get no signal tha
 | `ALLOWED_ORIGINS` | Optional CORS override | Optional |
 | `GITHUB_DISPATCH_TOKEN` | Phase 3 rebuild trigger | Phase 3 |
 
-Web3Forms is used for the notification email rather than Resend because Resend requires verifying `abhijitsinha.in`, which is still parked at GoDaddy with no DNS pointing anywhere. Revisit after the [domain cutover](deployment-domain.md).
+Web3Forms is used for the notification email rather than Resend because Resend requires verifying `abhijitsinha.in`, which was still parked at GoDaddy when this was built. The [domain cutover](deployment-domain.md) has since pointed the domain at Vercel, so Resend is now viable — it needs DKIM/SPF TXT records added at GoDaddy.

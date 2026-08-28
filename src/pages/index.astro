@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionCard from '../components/SectionCard.astro';
-import ComplianceCallout from '../components/ComplianceCallout.astro';
 import ContactForm from '../components/ContactForm.astro';
 import { url } from '../lib/url';
 import { distributor } from '../data/site';
@@ -127,9 +126,6 @@ const schemeCards = [
         <SectionCard title={card.title}>{card.desc}</SectionCard>
       ))}
     </div>
-    <ComplianceCallout label="Regular Plan Notice">
-      All mutual fund transactions are executed in Regular Plans. Distribution commissions are received directly from Asset Management Companies as per statutory limits.
-    </ComplianceCallout>
   </section>
 
   <!-- Contact -->

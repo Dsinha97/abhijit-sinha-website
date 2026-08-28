@@ -26,11 +26,11 @@ See [CLAUDE.md](CLAUDE.md) for architecture and compliance rules future contribu
 ## Configuration you'll likely need to change
 
 - **Scheduler** (`/schedule` page): edit `scheduler` in [`src/data/site.ts`](src/data/site.ts) — set `provider` to `'cal'`, `'calendly'`, or `'google'` and `url` to your booking page's embeddable URL once an account exists. Ships as a contact-card placeholder until then.
-- **Contact forms**: set `PUBLIC_FORM_ENDPOINT` (local `.env`, and as a `PUBLIC_FORM_ENDPOINT` repository secret for the deploy workflow).
+- **Contact forms**: set `PUBLIC_FORM_ENDPOINT` (local `.env`, and as a Vercel environment variable for deployed builds).
 - **Regulatory/contact details, commission table, RTA links**: all in `src/data/site.ts` — this is the single source of truth, don't hardcode these elsewhere.
 
 ## Deploy
 
-Pushing to `main` runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml), which builds with Astro and publishes via GitHub Pages. In the repo's Settings → Pages, set **Source: GitHub Actions**.
+Pushing to `main` triggers a **Vercel** build and deploy (static Astro output, no adapter). The site is served from the domain root at `https://abhijitsinha.in`; the domain is registered and DNS-hosted at **GoDaddy**, with records pointing at Vercel.
 
-The site currently ships to the default project URL `https://dsinha97.github.io/abhijit-sinha-website/` — no DNS changes needed. The custom domain `abhijitsinha.in` is registered at GoDaddy but not yet pointed here; see [docs/wiki/deployment-domain.md](docs/wiki/deployment-domain.md) for the deferred cutover plan (GitHub Pages custom domain vs. moving to Cloudflare Pages) before touching `SITE_URL`/`BASE_PATH`.
+Build-time environment variables (`PUBLIC_FORM_ENDPOINT`, `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY`, `SITE_URL`) live in the Vercel project settings. See [docs/wiki/deployment-domain.md](docs/wiki/deployment-domain.md) for the DNS records, the apex/`www` redirect, and what not to touch before changing `SITE_URL`/`BASE_PATH`.

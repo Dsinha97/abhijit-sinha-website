@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-This is the marketing/service site for **Abhijit Sinha**, an AMFI-registered Mutual Fund Distributor (ARN-367596) in India, built as a static **Astro + Tailwind** site. Target repo: `https://github.com/Dsinha97/abhijit-sinha-website.git`. Deployed via GitHub Pages/Actions; current live URL and the eventual custom-domain (`abhijitsinha.in`, currently parked at GoDaddy) cutover plan are in [docs/wiki/deployment-domain.md](docs/wiki/deployment-domain.md).
+This is the marketing/service site for **Abhijit Sinha**, an AMFI-registered Mutual Fund Distributor (ARN-367596) in India, built as a static **Astro + Tailwind** site. Target repo: `https://github.com/Dsinha97/abhijit-sinha-website.git`. Deployed on **Vercel** (static output, no adapter) at `https://abhijitsinha.in`; the domain is registered and DNS-hosted at **GoDaddy**, with records pointing at Vercel. DNS records, environment variables, and the apex/`www` redirect are in [docs/wiki/deployment-domain.md](docs/wiki/deployment-domain.md).
 
 This is a regulated-content site: every page carries statutory disclosures and must not read as investment advice. See "Compliance rules" below before editing any page copy.
 
@@ -23,7 +23,7 @@ There is no test suite. Verification is: `astro check` passes, `npm run build` i
 
 - `src/layouts/BaseLayout.astro` — the shell every page uses. Mounts `SEO.astro` in `<head>`, then `RegulatoryStrip` → `Header` → `<slot/>` → `Footer` → `WhatsAppButton` in `<body>`. Pages should stay thin: supply `title`/`description` and page-specific sections only — shared chrome always comes from this layout, never duplicated per-page.
 - `src/data/site.ts` — the **single source of truth** for every regulatory identifier, contact detail, nav entry, footer link, RTA table row, commission-table row, and the scheduler config. Components and pages read from here; never hardcode ARN/EUIN/phone/email/commission numbers inline.
-- `src/lib/url.ts` — a `url()` helper that prefixes `import.meta.env.BASE_URL`. **Use it for every internal link, image `src`, and asset reference.** The site currently deploys to a GitHub Pages *project sub-path* (not the domain root), so a raw `/solutions`-style path will 404 in production even though it works fine in `npm run dev`. This is the single most common way this site breaks silently.
+- `src/lib/url.ts` — a `url()` helper that prefixes `import.meta.env.BASE_URL`. **Use it for every internal link, image `src`, and asset reference.** The site now deploys at the domain root (`base` is `''`), so a raw `/solutions`-style path happens to work today — but `url()` remains mandatory, because it is the only thing that kept the site portable across the Pages sub-path and would do so again for any future sub-path or preview host. Don't reintroduce raw paths on the grounds that they currently render.
 - `src/components/SchedulerEmbed.astro` — provider-agnostic booking widget. Switches on `site.scheduler.provider` (`'cal' | 'calendly' | 'google' | 'none'`) to render the right iframe embed, or a contact-card placeholder when no scheduler is configured yet. Swapping providers is a one-line edit to `site.ts`, never a template change.
 - `src/components/Calculators.astro` — SIP growth + goal-planner calculators (two-tab UI, client-side compounding math). Formulas and reference values are documented in [docs/wiki/calculators.md](docs/wiki/calculators.md); use that to sanity-check any change to the math.
 - Reusable content modules: `SectionCard.astro`, `ComplianceCallout.astro`, `DataTable.astro` (wrap wide tables in `overflow-x-auto`).
@@ -63,4 +63,6 @@ Oxford Navy `#0F172A` primary, off-white surfaces, 8–12px rounded corners, no 
 
 ## Deploy
 
-Push to `main` triggers `.github/workflows/deploy.yml` (Astro build → GitHub Pages). The site currently ships to the default Pages sub-path, not the custom domain — see [docs/wiki/deployment-domain.md](docs/wiki/deployment-domain.md) for the deferred GoDaddy/Cloudflare domain-cutover plan before touching `astro.config.mjs`'s `site`/`base` values.
+Push to `main` triggers a Vercel build and deploy (`npm run build` → `dist/`). There is no GitHub Actions workflow and no GitHub Pages source — do not reintroduce either; a second live copy of a regulated-content site is a compliance problem, not just an SEO one.
+
+`site`/`base` in `astro.config.mjs` default to `https://abhijitsinha.in` and the domain root, and are overridable via the `SITE_URL`/`BASE_PATH` env vars set in Vercel. `public/robots.txt`'s `Sitemap:` line is the only hardcoded absolute URL in the repo and is not env-driven — edit it by hand if the domain changes. Never create `public/CNAME` (a GitHub Pages artifact). See [docs/wiki/deployment-domain.md](docs/wiki/deployment-domain.md).
