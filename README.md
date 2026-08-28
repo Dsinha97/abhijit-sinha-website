@@ -31,6 +31,6 @@ See [CLAUDE.md](CLAUDE.md) for architecture and compliance rules future contribu
 
 ## Deploy
 
-Pushing to `main` triggers a **Vercel** build and deploy (static Astro output, no adapter). The site is served from the domain root at `https://abhijitsinha.in`; the domain is registered and DNS-hosted at **GoDaddy**, with records pointing at Vercel.
+Pushing to `main` triggers a **Vercel** build and deploy (static Astro output, no adapter). The site is served from the domain root, currently at `https://abhijit-sinha-website.vercel.app`. The custom domain `abhijitsinha.in` is registered at **GoDaddy** and still parked; the cutover is deferred until the content is ready. Search indexing is disabled until then.
 
-Build-time environment variables (`PUBLIC_FORM_ENDPOINT`, `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY`, `SITE_URL`) live in the Vercel project settings. See [docs/wiki/deployment-domain.md](docs/wiki/deployment-domain.md) for the DNS records, the apex/`www` redirect, and what not to touch before changing `SITE_URL`/`BASE_PATH`.
+Build-time environment variables (`PUBLIC_FORM_ENDPOINT`, `PUBLIC_SUPABASE_URL`, `PUBLIC_SUPABASE_ANON_KEY`, `SITE_URL`) live in the Vercel project settings. See [docs/wiki/deployment-domain.md](docs/wiki/deployment-domain.md) for the step-by-step domain cutover runbook, the GoDaddy DNS records, and what not to touch before changing `SITE_URL`/`BASE_PATH`.

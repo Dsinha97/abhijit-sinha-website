@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-This is the marketing/service site for **Abhijit Sinha**, an AMFI-registered Mutual Fund Distributor (ARN-367596) in India, built as a static **Astro + Tailwind** site. Target repo: `https://github.com/Dsinha97/abhijit-sinha-website.git`. Deployed on **Vercel** (static output, no adapter) at `https://abhijitsinha.in`; the domain is registered and DNS-hosted at **GoDaddy**, with records pointing at Vercel. DNS records, environment variables, and the apex/`www` redirect are in [docs/wiki/deployment-domain.md](docs/wiki/deployment-domain.md).
+This is the marketing/service site for **Abhijit Sinha**, an AMFI-registered Mutual Fund Distributor (ARN-367596) in India, built as a static **Astro + Tailwind** site. Target repo: `https://github.com/Dsinha97/abhijit-sinha-website.git`. Deployed on **Vercel** (static output, no adapter), currently live at `https://abhijit-sinha-website.vercel.app`. The custom domain `abhijitsinha.in` is registered at **GoDaddy** and still parked — the cutover is deferred until the site's content is ready, and the full runbook for it is in [docs/wiki/deployment-domain.md](docs/wiki/deployment-domain.md). Indexing is disabled (`robots.txt` `Disallow: /`) while on the temporary hostname.
 
 This is a regulated-content site: every page carries statutory disclosures and must not read as investment advice. See "Compliance rules" below before editing any page copy.
 
@@ -65,4 +65,6 @@ Oxford Navy `#0F172A` primary, off-white surfaces, 8–12px rounded corners, no 
 
 Push to `main` triggers a Vercel build and deploy (`npm run build` → `dist/`). There is no GitHub Actions workflow and no GitHub Pages source — do not reintroduce either; a second live copy of a regulated-content site is a compliance problem, not just an SEO one.
 
-`site`/`base` in `astro.config.mjs` default to `https://abhijitsinha.in` and the domain root, and are overridable via the `SITE_URL`/`BASE_PATH` env vars set in Vercel. `public/robots.txt`'s `Sitemap:` line is the only hardcoded absolute URL in the repo and is not env-driven — edit it by hand if the domain changes. Never create `public/CNAME` (a GitHub Pages artifact). See [docs/wiki/deployment-domain.md](docs/wiki/deployment-domain.md).
+`site`/`base` in `astro.config.mjs` default to `https://abhijitsinha.in` and the domain root, overridable via the `SITE_URL`/`BASE_PATH` env vars set in Vercel — `SITE_URL` is currently overridden to the vercel.app hostname so canonicals and the sitemap match the host actually serving them.
+
+**`base` must stay at the domain root.** Vercel serves `dist/` from the root, and pages are emitted at the root regardless of `base`, so a non-empty `BASE_PATH` yields a site whose pages load while every stylesheet, image, and link 404s — a clean build and a broken site. `public/robots.txt`'s `Sitemap:` line is the only hardcoded absolute URL in the repo and is not env-driven; edit it by hand if the domain changes. Never create `public/CNAME` (a GitHub Pages artifact). See [docs/wiki/deployment-domain.md](docs/wiki/deployment-domain.md).
