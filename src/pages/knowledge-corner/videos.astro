@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ComplianceCallout from '../../components/ComplianceCallout.astro';
+import VideoCard from '../../components/knowledge/VideoCard.astro';
+import { getKnowledge } from '../../lib/knowledge';
+import { url } from '../../lib/url';
+
+// Static route, resolved ahead of [slug].astro - see the note in articles.astro.
+const { videos } = await getKnowledge();
+---
+
+<BaseLayout
+  title="Videos | Knowledge Corner | Abhijit Sinha"
+  description="Every video shared in the Knowledge Corner on mutual fund investing, market outlooks and goal planning."
+>
+  <section class="mx-auto max-w-6xl px-4 pt-10 pb-8 sm:px-6 sm:pt-14">
+    <a
+      href={url('knowledge-corner')}
+      class="inline-flex min-h-[44px] items-center text-sm text-slate-500 transition hover:text-slate-900"
+    >
+      &larr; Knowledge Corner
+    </a>
+
+    <h1 class="mt-3 text-3xl font-bold text-slate-900 sm:text-4xl">Videos</h1>
+    <p class="mt-3 text-slate-600">{videos.length} video{videos.length === 1 ? '' : 's'}</p>
+
+    <div class="mt-6 max-w-3xl">
+      <ComplianceCallout label="Educational Content Only">
+        These videos are produced by Asset Management Companies and other third parties and are
+        shared for general education. They are not investment advice, not a recommendation of any
+        scheme, and sharing them is not an endorsement of the views expressed.
+      </ComplianceCallout>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+    {
+      videos.length > 0 ? (
+        <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {videos.map((v) => (
+            <li>
+              <VideoCard
+                id={v.id}
+                title={v.title}
+                description={v.description}
+                videoUrl={v.video_url}
+              />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
+          No videos have been published yet.
+        </p>
+      )
+    }
+  </section>
+</BaseLayout>
+
+<script>
+  import '../../scripts/knowledge';
+</script>

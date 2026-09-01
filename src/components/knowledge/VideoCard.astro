@@ -7,24 +7,27 @@
 // this origin — hotlinking it would fire, on page load and for every video at
 // once, exactly the third-party request this component exists to avoid.
 //
-// The poster sits on top of the gradient rather than replacing it, so a video
-// with no available thumbnail falls back to the gradient with no broken image.
+// The card carries no caption about that: it is a promise the site keeps, not
+// something a visitor needs explained on every thumbnail. The behaviour is
+// disclosed in Privacy Policy 5.3 for anyone who cares to check.
 import { youtubeId } from '../../lib/youtube';
 import { url } from '../../lib/url';
+import Clamp from './Clamp.astro';
 
 interface Props {
+  id: number;
   title: string;
   description?: string | null;
   videoUrl: string;
 }
 
-const { title, description, videoUrl } = Astro.props;
+const { id: rowId, title, description, videoUrl } = Astro.props;
 const id = youtubeId(videoUrl);
 ---
 
 {
   id && (
-    <article class="rounded-xl border border-slate-200 bg-white overflow-hidden flex flex-col">
+    <article class="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
       <div
         class="relative aspect-video bg-slate-900 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700"
         data-yt-slot
@@ -33,39 +36,39 @@ const id = youtubeId(videoUrl);
             the wrapper's gradient. They must be on separate elements: an inline
             style beats a utility class, so putting both on the button would
             replace the gradient outright and leave nothing to fall back to when
-            a poster is missing. The file is fetched at build time and served
-            from this origin - see scripts/youtube-thumbnails.mjs - so nothing
-            reaches Google before the visitor clicks. */}
+            a poster is missing. */}
         <button
           type="button"
           data-yt-id={id}
           data-track="video"
           data-track-label={title}
           style={`background-image:url('${url(`images/video-thumbs/${id}.jpg`)}')`}
-          class="group absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-3 bg-cover bg-center text-white focus:outline-none focus-visible:ring-4 focus-visible:ring-accent/60"
+          class="group absolute inset-0 flex h-full w-full items-center justify-center bg-cover bg-center focus:outline-none focus-visible:ring-4 focus-visible:ring-accent/60"
           aria-label={`Play video: ${title}`}
         >
-          {/* Scrim: keeps the play control and caption legible over a bright
-              thumbnail, and lifts slightly on hover. */}
+          {/* Light scrim: enough to keep the play control visible on a bright
+              frame, without dulling the thumbnail itself. */}
           <span
-            class="absolute inset-0 bg-slate-950/45 transition-colors group-hover:bg-slate-950/30"
+            class="absolute inset-0 bg-slate-950/10 transition-colors group-hover:bg-slate-950/25"
             aria-hidden="true"
-          ></span>
-
-          <span class="relative flex h-14 w-14 items-center justify-center rounded-full bg-white/20 ring-1 ring-white/40 backdrop-blur-sm transition group-hover:bg-white/30 group-hover:scale-105">
+          />
+          <span class="relative flex h-14 w-14 items-center justify-center rounded-full bg-slate-950/45 ring-1 ring-white/50 backdrop-blur-sm transition group-hover:scale-105 group-hover:bg-slate-950/60">
             <svg viewBox="0 0 24 24" class="h-7 w-7 translate-x-[2px] fill-white" aria-hidden="true">
               <path d="M8 5v14l11-7z" />
             </svg>
           </span>
-          <span class="relative px-4 text-center text-xs font-medium text-slate-100 drop-shadow">
-            Click to play &middot; loads YouTube only on click
-          </span>
         </button>
       </div>
 
-      <div class="p-4 flex-1">
-        <h3 class="font-semibold text-slate-900 leading-snug">{title}</h3>
-        {description && <p class="mt-1.5 text-sm text-slate-600">{description}</p>}
+      <div class="flex flex-1 flex-col p-4">
+        <h3 class="font-semibold leading-snug text-slate-900">{title}</h3>
+        {description && (
+          <Clamp
+            id={`video-desc-${rowId}`}
+            text={description}
+            class="mt-1.5 text-sm text-slate-600"
+          />
+        )}
       </div>
     </article>
   )

@@ -1,78 +1,87 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ComplianceCallout from '../../components/ComplianceCallout.astro';
-import ArticleCard from '../../components/knowledge/ArticleCard.astro';
+import Carousel from '../../components/knowledge/Carousel.astro';
+import ReadingCard from '../../components/knowledge/ReadingCard.astro';
 import VideoCard from '../../components/knowledge/VideoCard.astro';
-import ResourceLinkCard from '../../components/knowledge/ResourceLinkCard.astro';
-import { getKnowledge } from '../../lib/knowledge';
+import { getKnowledge, toReadingItems } from '../../lib/knowledge';
 import { url } from '../../lib/url';
 
 // Fetched at build time and rendered into static HTML, so the page works with
 // JavaScript disabled and is fully visible to search engines. getKnowledge()
-// never throws and falls back to the committed snapshot — see src/lib/knowledge.ts.
-const { posts, videos, links } = await getKnowledge();
+// never throws and falls back to the committed snapshot.
+const content = await getKnowledge();
+const reading = toReadingItems(content);
+const videos = content.videos;
 
-const sections = [
-  { id: 'articles', label: 'Articles', count: posts.length },
-  { id: 'videos', label: 'Videos', count: videos.length },
-  { id: 'reading', label: 'Further Reading', count: links.length },
-];
+// The landing page previews each section; the listing pages hold everything.
+const PREVIEW = 6;
+
+// One card per viewport tier. Kept in one constant because the carousel's
+// scroll step is derived from the rendered card width, so the two must agree.
+const CARD = 'shrink-0 w-[82%] sm:w-[46%] lg:w-[31.5%]';
 ---
 
 <BaseLayout
   title="Knowledge Corner | Abhijit Sinha (ARN-367596)"
   description="Educational articles, videos and curated reading on mutual fund investing, goal planning and portfolio discipline, from AMFI-registered distributor Abhijit Sinha."
 >
-  <section class="mx-auto max-w-6xl px-4 sm:px-6 pt-10 sm:pt-14 pb-8">
+  <section class="mx-auto max-w-6xl px-4 pt-10 pb-8 sm:px-6 sm:pt-14">
     <p class="text-xs font-semibold uppercase tracking-widest text-accent">Learn</p>
-    <h1 class="mt-2 text-3xl sm:text-4xl font-bold text-slate-900">Knowledge Corner</h1>
+    <h1 class="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">Knowledge Corner</h1>
     <p class="mt-4 max-w-3xl text-slate-600">
       Plain-language explanations of how mutual funds, systematic investing and goal planning
       actually work. Everything here is educational material published for general readers.
     </p>
 
-    <nav class="mt-6 flex flex-wrap gap-2" aria-label="Knowledge Corner sections">
-      {
-        sections.map((s) => (
-          <a
-            href={`#${s.id}`}
-            class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-slate-400 hover:text-slate-900 transition min-h-[44px] inline-flex items-center"
-          >
-            {s.label}
-            <span class="ml-2 text-xs text-slate-400">{s.count}</span>
-          </a>
-        ))
-      }
-    </nav>
-
     <div class="mt-8 max-w-3xl">
       <ComplianceCallout label="Educational Content Only">
         Articles, videos and linked material on this page are for general education. They are not
         investment advice, not a recommendation of any scheme, and take no account of your personal
-        circumstances. Third-party links are provided for reference and are not endorsements.
-        Mutual fund investments are subject to market risks &mdash; read all scheme related
-        documents carefully.
+        circumstances. Material from other publishers is provided for reference and is not an
+        endorsement. Mutual fund investments are subject to market risks &mdash; read all scheme
+        related documents carefully.
       </ComplianceCallout>
     </div>
   </section>
 
-  <!-- Articles -->
-  <section id="articles" class="bg-surface border-y border-slate-200 py-12 sm:py-16 scroll-mt-28">
+  <!-- Reading: own articles and curated third-party links together -->
+  <section id="articles" class="scroll-mt-28 border-y border-slate-200 bg-surface py-12 sm:py-16">
     <div class="mx-auto max-w-6xl px-4 sm:px-6">
-      <h2 class="text-2xl font-bold text-slate-900 mb-6">Articles</h2>
+      <div class="mb-6 flex flex-wrap items-baseline justify-between gap-3">
+        <h2 class="text-2xl font-bold text-slate-900">Articles &amp; Reading</h2>
+        {
+          reading.length > 0 && (
+            <a
+              href={url('knowledge-corner/articles')}
+              data-track="nav"
+              data-track-label="View all articles"
+              class="inline-flex min-h-[44px] items-center text-sm font-medium text-accent hover:underline"
+            >
+              View all articles ({reading.length}) &rarr;
+            </a>
+          )
+        }
+      </div>
+
       {
-        posts.length > 0 ? (
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {posts.map((p) => (
-              <ArticleCard
-                slug={p.slug}
-                title={p.title}
-                excerpt={p.excerpt}
-                publishedAt={p.published_at}
-                tags={p.tags}
-              />
+        reading.length > 0 ? (
+          <Carousel id="reading-carousel" label="Articles and reading">
+            {reading.slice(0, PREVIEW).map((item) => (
+              <li class={CARD}>
+                <ReadingCard
+                  kind={item.kind}
+                  id={item.id}
+                  title={item.title}
+                  href={item.href}
+                  description={item.description}
+                  sourceName={item.sourceName}
+                  publishedAt={item.publishedAt}
+                  tags={item.tags}
+                />
+              </li>
             ))}
-          </div>
+          </Carousel>
         ) : (
           <p class="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
             Articles are being written and will appear here shortly. In the meantime, the{' '}
@@ -87,20 +96,38 @@ const sections = [
   </section>
 
   <!-- Videos -->
-  <section id="videos" class="py-12 sm:py-16 scroll-mt-28">
+  <section id="videos" class="scroll-mt-28 py-12 sm:py-16">
     <div class="mx-auto max-w-6xl px-4 sm:px-6">
-      <h2 class="text-2xl font-bold text-slate-900 mb-2">Videos</h2>
-      <p class="text-sm text-slate-500 mb-6">
-        Videos load from YouTube only after you click play, so nothing is requested from Google
-        until you choose to watch.
-      </p>
+      <div class="mb-6 flex flex-wrap items-baseline justify-between gap-3">
+        <h2 class="text-2xl font-bold text-slate-900">Videos</h2>
+        {
+          videos.length > 0 && (
+            <a
+              href={url('knowledge-corner/videos')}
+              data-track="nav"
+              data-track-label="View all videos"
+              class="inline-flex min-h-[44px] items-center text-sm font-medium text-accent hover:underline"
+            >
+              View all videos ({videos.length}) &rarr;
+            </a>
+          )
+        }
+      </div>
+
       {
         videos.length > 0 ? (
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {videos.map((v) => (
-              <VideoCard title={v.title} description={v.description} videoUrl={v.video_url} />
+          <Carousel id="videos-carousel" label="Videos">
+            {videos.slice(0, PREVIEW).map((v) => (
+              <li class={CARD}>
+                <VideoCard
+                  id={v.id}
+                  title={v.title}
+                  description={v.description}
+                  videoUrl={v.video_url}
+                />
+              </li>
             ))}
-          </div>
+          </Carousel>
         ) : (
           <p class="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
             No videos have been published yet.
@@ -110,36 +137,7 @@ const sections = [
     </div>
   </section>
 
-  <!-- Curated reading -->
-  <section id="reading" class="bg-surface border-y border-slate-200 py-12 sm:py-16 scroll-mt-28">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6">
-      <h2 class="text-2xl font-bold text-slate-900 mb-2">Further Reading</h2>
-      <p class="text-sm text-slate-500 mb-6">
-        Material published elsewhere that is worth your time. Listing a source is not an endorsement
-        of it, of its author, or of any product it mentions.
-      </p>
-      {
-        links.length > 0 ? (
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {links.map((l) => (
-              <ResourceLinkCard
-                title={l.title}
-                href={l.url}
-                sourceName={l.source_name}
-                note={l.note}
-              />
-            ))}
-          </div>
-        ) : (
-          <p class="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
-            No reading links have been published yet.
-          </p>
-        )
-      }
-    </div>
-  </section>
-
-  <section class="mx-auto max-w-3xl px-4 sm:px-6 py-12 sm:py-16 text-center">
+  <section class="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6 sm:py-16">
     <h2 class="text-2xl font-bold text-slate-900">Have a question about any of this?</h2>
     <p class="mt-3 text-slate-600">
       General reading only goes so far. A conversation can cover what actually applies to your
@@ -155,3 +153,7 @@ const sections = [
     </a>
   </section>
 </BaseLayout>
+
+<script>
+  import '../../scripts/knowledge';
+</script>

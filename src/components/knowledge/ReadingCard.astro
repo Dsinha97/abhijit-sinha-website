@@ -1,0 +1,100 @@
+---
+/**
+ * One card for both kinds of reading material.
+ *
+ * Articles written here and links to other people's work now sit in the same
+ * section, so the distinction has to be carried by the card itself rather than
+ * by which heading it happens to sit under. That is a compliance point, not a
+ * styling one: a visitor must never be left thinking a third-party piece is the
+ * distributor's own view, or that linking it implies agreement with it.
+ *
+ * Three signals do that work: a badge naming the author or publisher, an
+ * outbound arrow, and — for external items — the target/rel treatment that makes
+ * leaving the site obvious. The badge reads with the author's own name rather
+ * than a label like "written here", so the attribution is unambiguous wherever
+ * the card appears.
+ */
+import { url } from '../../lib/url';
+import { distributor } from '../../data/site';
+import Clamp from './Clamp.astro';
+
+interface Props {
+  kind: 'own' | 'external';
+  id: string;
+  title: string;
+  /** Slug for own articles; absolute URL for external ones. */
+  href: string;
+  description?: string | null;
+  /** Publisher name, external only. */
+  sourceName?: string | null;
+  publishedAt?: string | null;
+  tags?: string[];
+}
+
+const { kind, id, title, href, description, sourceName, publishedAt, tags = [] } = Astro.props;
+
+const isOwn = kind === 'own';
+const linkHref = isOwn ? url(`knowledge-corner/${href}`) : href;
+
+const dateLabel = publishedAt
+  ? new Date(publishedAt).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    })
+  : null;
+---
+
+<article class="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-5 transition hover:border-slate-300">
+  <div class="flex flex-wrap items-center gap-2">
+    <span
+      class:list={[
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide',
+        isOwn ? 'bg-navy text-white' : 'bg-surfaceAlt text-muted',
+      ]}
+    >
+      {isOwn ? distributor.name : (sourceName ?? 'External')}
+    </span>
+    {dateLabel && <span class="text-xs text-slate-500">{dateLabel}</span>}
+  </div>
+
+  <h3 class="mt-2 font-semibold leading-snug text-slate-900">
+    <a
+      href={linkHref}
+      target={isOwn ? undefined : '_blank'}
+      rel={isOwn ? undefined : 'noopener noreferrer nofollow'}
+      data-track={isOwn ? 'nav' : 'resource'}
+      data-track-label={title}
+      class="rounded hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+    >
+      {title}
+      {!isOwn && (
+        <>
+          <span class="sr-only">(opens in a new tab)</span>
+          <svg
+            viewBox="0 0 20 20"
+            class="ml-0.5 inline h-3.5 w-3.5 -translate-y-px fill-current"
+            aria-hidden="true"
+          >
+            <path d="M11 3h6v6h-2V6.41l-7.29 7.3-1.42-1.42 7.3-7.29H11V3Z" />
+            <path d="M5 5h3v2H5v8h8v-3h2v5H3V5h2Z" />
+          </svg>
+        </>
+      )}
+    </a>
+  </h3>
+
+  {description && (
+    <Clamp id={`reading-desc-${id}`} text={description} class="mt-2 text-sm text-slate-600" />
+  )}
+
+  {tags.length > 0 && (
+    <ul class="mt-auto flex flex-wrap gap-1.5 pt-3">
+      {tags.slice(0, 4).map((tag) => (
+        <li class="rounded-full bg-surfaceAlt px-2.5 py-0.5 text-[11px] font-medium text-muted">
+          {tag}
+        </li>
+      ))}
+    </ul>
+  )}
+</article>

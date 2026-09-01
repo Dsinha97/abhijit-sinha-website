@@ -132,3 +132,52 @@ async function load(): Promise<KcContent> {
     return fromSnapshot();
   }
 }
+
+/** One reading item, from either source. Articles written here and curated
+ *  third-party links share a section, so they need a common shape — but `kind`
+ *  is preserved so the card can keep them visually distinct, which is a
+ *  compliance requirement, not a presentational preference. */
+export type ReadingItem = {
+  kind: 'own' | 'external';
+  id: string;
+  title: string;
+  /** Slug for own articles, absolute URL for external ones. */
+  href: string;
+  description: string | null;
+  sourceName: string | null;
+  publishedAt: string | null;
+  tags: string[];
+  /** Sort key only. */
+  sortAt: number;
+};
+
+/** Merges posts and resource_links into a single newest-first list. */
+export function toReadingItems(content: KcContent): ReadingItem[] {
+  const own: ReadingItem[] = content.posts.map((p) => ({
+    kind: 'own',
+    id: `post-${p.slug}`,
+    title: p.title,
+    href: p.slug,
+    description: p.excerpt,
+    sourceName: null,
+    publishedAt: p.published_at,
+    tags: p.tags ?? [],
+    sortAt: p.published_at ? new Date(p.published_at).getTime() : 0,
+  }));
+
+  const external: ReadingItem[] = content.links.map((l) => ({
+    kind: 'external',
+    id: `link-${l.id}`,
+    title: l.title,
+    href: l.url,
+    description: l.note,
+    sourceName: l.source_name,
+    publishedAt: null,
+    tags: [],
+    // Curated links carry no publication date, so they order by the admin's
+    // explicit sort_order, interleaved after dated articles.
+    sortAt: -l.sort_order,
+  }));
+
+  return [...own, ...external].sort((a, b) => b.sortAt - a.sortAt);
+}

@@ -1,0 +1,37 @@
+---
+/**
+ * Three-line description with a "Show more" toggle.
+ *
+ * The button is rendered hidden and only revealed by script once the text is
+ * measured as actually overflowing. Deciding from character count instead would
+ * be wrong at any width other than the one it was tuned for — the same string
+ * wraps to two lines on desktop and five on a phone.
+ *
+ * With no JavaScript the text stays clamped and the toggle never appears, which
+ * is a clean degradation: the summary is still readable and the full text is on
+ * the destination page anyway.
+ */
+
+interface Props {
+  text: string;
+  /** Distinguishes multiple clamps on one page for aria-controls. */
+  id: string;
+  class?: string;
+}
+
+const { text, id, class: className = '' } = Astro.props;
+---
+
+<div data-clamp>
+  <p id={id} data-clamp-text class={`line-clamp-3 ${className}`}>{text}</p>
+  <button
+    type="button"
+    data-clamp-toggle
+    aria-controls={id}
+    aria-expanded="false"
+    hidden
+    class="mt-1 inline-flex min-h-[44px] items-center text-sm font-medium text-accent hover:underline"
+  >
+    Show more
+  </button>
+</div>

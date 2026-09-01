@@ -55,6 +55,10 @@ let videos: Video[] = [];
 let links: Link[] = [];
 let editingPost: Post | null = null;
 
+// Set when the hovering bar is dismissed, cleared by the next content change,
+// so closing it silences the current prompt rather than the feature.
+let rebuildBarDismissed = false;
+
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -146,6 +150,7 @@ function renderPostList(): void {
             const { error } = await supabase!.from('posts').delete().eq('id', p.id);
             if (err(error)) return;
             toast(wasLive ? 'Article deleted. Site rebuilding…' : 'Article deleted.');
+            contentChanged();
             await loadAll();
             // A draft was never on the site, so deleting it needs no rebuild.
             if (wasLive) await triggerBuild(true);
@@ -290,6 +295,7 @@ async function savePost(publish: boolean): Promise<void> {
         ? 'Unpublished. Site rebuilding…'
         : 'Draft saved.',
   );
+  contentChanged();
   editingPost = null;
   openPost(null);
   await loadAll();
@@ -335,6 +341,7 @@ function renderVideoList(): void {
               .update({ published: !v.published })
               .eq('id', v.id);
             if (err(error)) return;
+            contentChanged();
             await loadAll();
             // Changes what visitors see, so rebuild without a second click.
             await triggerBuild(true);
@@ -358,6 +365,7 @@ function renderVideoList(): void {
             const { error } = await supabase!.from('videos').delete().eq('id', v.id);
             if (err(error)) return;
             toast(wasLive ? 'Video deleted. Site rebuilding…' : 'Video deleted.');
+            contentChanged();
             await loadAll();
             // A draft was never on the site, so deleting it needs no rebuild.
             if (wasLive) await triggerBuild(true);
@@ -408,6 +416,7 @@ function renderLinkList(): void {
               .update({ published: !l.published })
               .eq('id', l.id);
             if (err(error)) return;
+            contentChanged();
             await loadAll();
             await triggerBuild(true);
             toast(l.published ? 'Removed. Site rebuilding…' : 'Published. Site rebuilding…');
@@ -430,6 +439,7 @@ function renderLinkList(): void {
             const { error } = await supabase!.from('resource_links').delete().eq('id', l.id);
             if (err(error)) return;
             toast(wasLive ? 'Link deleted. Site rebuilding…' : 'Link deleted.');
+            contentChanged();
             await loadAll();
             // A draft was never on the site, so deleting it needs no rebuild.
             if (wasLive) await triggerBuild(true);
@@ -460,6 +470,11 @@ async function loadAll(): Promise<void> {
   renderVideoList();
   renderLinkList();
   void refreshPublishState();
+}
+
+/** Called after any write, so a dismissed bar returns for the next change. */
+function contentChanged(): void {
+  rebuildBarDismissed = false;
 }
 
 /**
@@ -545,6 +560,19 @@ async function refreshPublishState(): Promise<void> {
       ? 'Some saved changes are not on the public site yet. Press “Rebuild site now” if they do not appear shortly.'
       : '';
   }
+
+  const bar = $('rebuild-bar');
+  if (bar) {
+    // A build fired automatically clears `pending`, so the bar disappears on
+    // its own once the deploy is logged; no need to dismiss it manually.
+    bar.classList.toggle('hidden', !pending || rebuildBarDismissed);
+    const detail = $('rebuild-bar-detail');
+    if (detail) {
+      detail.textContent = lastDeploy
+        ? 'A rebuild usually starts automatically and takes a minute or two.'
+        : 'This content has never been published to the site.';
+    }
+  }
 }
 
 // ------------------------------------------------------------------- wiring
@@ -593,6 +621,7 @@ document.addEventListener('admin:ready', () => {
     title.value = '';
     url!.value = '';
     if (desc) desc.value = '';
+    contentChanged();
     toast('Video added as a draft.');
     await loadAll();
   });
@@ -620,17 +649,25 @@ document.addEventListener('admin:ready', () => {
     url!.value = '';
     source.value = '';
     if (note) note.value = '';
+    contentChanged();
     toast('Link added as a draft.');
     await loadAll();
   });
 
-  // --- manual rebuild ---
-  $('publish-site')?.addEventListener('click', async () => {
-    const btn = $<HTMLButtonElement>('publish-site');
-    if (!btn) return;
-    btn.disabled = true;
-    await triggerBuild(false);
-    btn.disabled = false;
+  // --- manual rebuild, from either control ---
+  for (const buttonId of ['publish-site', 'rebuild-bar-go']) {
+    $(buttonId)?.addEventListener('click', async () => {
+      const btn = $<HTMLButtonElement>(buttonId);
+      if (!btn) return;
+      btn.disabled = true;
+      await triggerBuild(false);
+      btn.disabled = false;
+    });
+  }
+
+  $('rebuild-bar-close')?.addEventListener('click', () => {
+    rebuildBarDismissed = true;
+    $('rebuild-bar')?.classList.add('hidden');
   });
 
   void (async () => {

@@ -1,0 +1,80 @@
+---
+/**
+ * Horizontal scroll-snap carousel.
+ *
+ * Built on native overflow scrolling rather than a slider library: it works
+ * with no JavaScript at all (the track is simply scrollable), supports touch
+ * swipe and trackpad gestures for free, and stays keyboard-reachable because
+ * the cards remain ordinary focusable content in document order.
+ *
+ * The arrow buttons are progressive enhancement. They are hidden until the
+ * script confirms the track actually overflows, so a section with two cards on
+ * a wide screen shows no controls.
+ *
+ * No `scroll-smooth` class and no scroll-snap, both deliberate. The script
+ * owns the scroll animation (see animateScroll in src/scripts/knowledge.ts) so
+ * that it can fall back to an instant jump when frame callbacks are suspended;
+ * a CSS `scroll-behavior: smooth` would override that and reintroduce the
+ * dependency. Snapping is omitted because the arrows already step a card at a
+ * time, so it would only add a constraint that has to agree with the step
+ * arithmetic. It was tried in both mandatory and proximity
+ * modes and fought the layout: with three cards visible the whole scroll range
+ * (~335px) is smaller than a single card step (~364px), so the only reachable
+ * snap point is the first one and every programmatic scroll was dragged back to
+ * the start - the arrows appeared to do nothing. Free scrolling behaves
+ * predictably, and with the arrows stepping a card at a time the alignment
+ * snapping would have provided is not missed.
+ */
+
+interface Props {
+  id: string;
+  /** Describes the track for screen readers, e.g. "Videos". */
+  label: string;
+}
+
+const { id, label } = Astro.props;
+---
+
+<div class="relative">
+  <ul
+    id={id}
+    data-carousel
+    aria-label={label}
+    class="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4 sm:-mx-1 sm:px-1"
+  >
+    <slot />
+  </ul>
+
+  <button
+    type="button"
+    data-carousel-prev={id}
+    aria-label={`Scroll ${label} left`}
+    class="absolute left-0 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 -translate-x-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-md transition hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-0"
+  >
+    <svg viewBox="0 0 20 20" class="h-5 w-5 fill-current" aria-hidden="true">
+      <path d="M12.5 4.2 6.7 10l5.8 5.8 1.1-1.1L8.9 10l4.7-4.7z" />
+    </svg>
+  </button>
+
+  <button
+    type="button"
+    data-carousel-next={id}
+    aria-label={`Scroll ${label} right`}
+    class="absolute right-0 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-md transition hover:bg-slate-50 disabled:pointer-events-none disabled:opacity-0"
+  >
+    <svg viewBox="0 0 20 20" class="h-5 w-5 fill-current" aria-hidden="true">
+      <path d="M7.5 4.2 13.3 10l-5.8 5.8-1.1-1.1L11.1 10 6.4 5.3z" />
+    </svg>
+  </button>
+</div>
+
+<style>
+  /* A visible scrollbar under a card row reads as chrome, not content, but the
+     track must stay scrollable for anyone without the arrow buttons. */
+  ul[data-carousel] {
+    scrollbar-width: none;
+  }
+  ul[data-carousel]::-webkit-scrollbar {
+    display: none;
+  }
+</style>

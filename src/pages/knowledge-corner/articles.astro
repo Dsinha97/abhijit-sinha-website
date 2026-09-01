@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ComplianceCallout from '../../components/ComplianceCallout.astro';
+import ReadingCard from '../../components/knowledge/ReadingCard.astro';
+import { getKnowledge, toReadingItems } from '../../lib/knowledge';
+import { url } from '../../lib/url';
+
+// NOTE: this is a static route, and Astro resolves it ahead of [slug].astro.
+// A post with the slug "articles" would therefore be unreachable, which is why
+// the posts_slug_not_reserved constraint forbids it in the database.
+const content = await getKnowledge();
+const reading = toReadingItems(content);
+
+const ownCount = reading.filter((r) => r.kind === 'own').length;
+const externalCount = reading.length - ownCount;
+---
+
+<BaseLayout
+  title="Articles & Reading | Knowledge Corner | Abhijit Sinha"
+  description="Every educational article published here, alongside curated reading from other publishers on mutual fund investing and goal planning."
+>
+  <section class="mx-auto max-w-6xl px-4 pt-10 pb-8 sm:px-6 sm:pt-14">
+    <a
+      href={url('knowledge-corner')}
+      class="inline-flex min-h-[44px] items-center text-sm text-slate-500 transition hover:text-slate-900"
+    >
+      &larr; Knowledge Corner
+    </a>
+
+    <h1 class="mt-3 text-3xl font-bold text-slate-900 sm:text-4xl">Articles &amp; Reading</h1>
+    <p class="mt-3 text-slate-600">
+      {ownCount} written here &middot; {externalCount} from other publishers
+    </p>
+
+    <div class="mt-6 max-w-3xl">
+      <ComplianceCallout label="Educational Content Only">
+        Everything below is general education, not investment advice, and is not a recommendation
+        of any scheme. Items marked with a publisher name were written by someone else and are
+        linked for reference only &mdash; listing them is not an endorsement of the publisher, the
+        author, or any product mentioned.
+      </ComplianceCallout>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+    {
+      reading.length > 0 ? (
+        <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {reading.map((item) => (
+            <li>
+              <ReadingCard
+                kind={item.kind}
+                id={item.id}
+                title={item.title}
+                href={item.href}
+                description={item.description}
+                sourceName={item.sourceName}
+                publishedAt={item.publishedAt}
+                tags={item.tags}
+              />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
+          Nothing has been published yet.
+        </p>
+      )
+    }
+  </section>
+</BaseLayout>
+
+<script>
+  import '../../scripts/knowledge';
+</script>
