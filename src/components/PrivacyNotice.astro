@@ -1,0 +1,112 @@
+---
+/**
+ * Bottom privacy notice.
+ *
+ * Deliberately NOT a "we use cookies" banner, because this site sets no
+ * cookies. Analytics here are cookieless and store no IP address, user-agent or
+ * location, and nothing is written to browser storage on any public page. A
+ * banner claiming otherwise would be a false disclosure — on a regulated
+ * financial site that is worse than having no banner at all.
+ *
+ * So this states what is actually true and offers a genuine choice: an opt-out
+ * that really does stop measurement, rather than an "Accept" button that does
+ * nothing either way. The one thing it stores is the visitor's own choice,
+ * which is the storage every consent regime treats as strictly necessary.
+ *
+ * It is a notice, not a gate: it never covers the page content, traps focus, or
+ * blocks reading. Anonymous measurement runs unless the visitor opts out.
+ */
+import { url } from '../lib/url';
+---
+
+<div
+  id="privacy-notice"
+  role="region"
+  aria-label="Privacy notice"
+  hidden
+  class="fixed inset-x-0 bottom-0 z-[60] translate-y-full border-t border-slate-200 bg-white shadow-[0_-4px_24px_rgba(15,23,42,0.12)] transition-transform duration-300 motion-reduce:transition-none"
+>
+  <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center">
+    <div class="min-w-0 flex-1 text-sm text-slate-700">
+      <p class="font-semibold text-slate-900">Your privacy on this site</p>
+      <p class="mt-1">
+        This website uses <strong>no cookies</strong> and does not track you across other sites. To
+        see which pages are useful we count visits in a way that stores no IP address, no browser
+        fingerprint and no personal data, using an identifier that changes daily and cannot be
+        traced back to you. Read the{' '}
+        <a
+          href={url('privacy-policy')}
+          class="text-accent underline underline-offset-2 hover:no-underline"
+        >
+          Privacy Policy
+        </a>.
+      </p>
+    </div>
+
+    <div class="flex shrink-0 flex-wrap gap-2">
+      <button
+        id="privacy-optout"
+        type="button"
+        class="min-h-[44px] rounded-lg border border-slate-300 px-4 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+      >
+        Don&rsquo;t count my visit
+      </button>
+      <button
+        id="privacy-accept"
+        type="button"
+        class="min-h-[44px] rounded-lg bg-slate-900 px-5 text-sm font-medium text-white transition hover:bg-slate-800"
+      >
+        Got it
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { CHOICE_KEY, readChoice, writeChoice } from '../scripts/privacy-choice';
+
+  const notice = document.getElementById('privacy-notice');
+  const accept = document.getElementById('privacy-accept');
+  const optOut = document.getElementById('privacy-optout');
+
+  function hide(): void {
+    if (!notice) return;
+    notice.classList.add('translate-y-full');
+    // Wait for the slide-out before removing it from the tree, so the
+    // transition is visible rather than the element vanishing instantly.
+    window.setTimeout(() => {
+      notice.hidden = true;
+    }, 300);
+  }
+
+  function show(): void {
+    if (!notice) return;
+    notice.hidden = false;
+    // Two frames: the element must be laid out in its off-screen position
+    // before the class is removed, or the browser skips the transition.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => notice.classList.remove('translate-y-full'));
+    });
+    // If frame callbacks are suspended the notice must still appear, just
+    // without the slide.
+    window.setTimeout(() => notice.classList.remove('translate-y-full'), 400);
+  }
+
+  if (notice && !readChoice()) show();
+
+  accept?.addEventListener('click', () => {
+    writeChoice('acknowledged');
+    hide();
+  });
+
+  optOut?.addEventListener('click', () => {
+    writeChoice('opted-out');
+    hide();
+  });
+
+  // Lets the footer link reopen the notice so a choice can be changed later.
+  document.addEventListener('privacy:reopen', show);
+
+  // Keep the key referenced so its name stays discoverable from this file.
+  void CHOICE_KEY;
+</script>

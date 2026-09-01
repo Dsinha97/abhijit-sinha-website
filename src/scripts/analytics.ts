@@ -2,11 +2,14 @@
  * First-party, cookieless page and click tracking.
  *
  * Mounted once from BaseLayout.astro as a bundled module, so it is deferred and
- * never blocks parse or render. It sets no cookie, writes nothing to
- * localStorage or sessionStorage, and performs no fingerprinting: the only
- * identifier is computed server-side in the `track` edge function and rotates
- * daily. See docs/wiki/data-model.md.
+ * never blocks parse or render. It sets no cookie and performs no
+ * fingerprinting; the only identifier is computed server-side in the `track`
+ * edge function and rotates daily. The single thing written to browser storage
+ * is the visitor's own opt-out choice, from the privacy notice.
+ * See docs/wiki/data-model.md.
  */
+
+import { hasOptedOut } from './privacy-choice';
 
 type Payload = {
   t: 'pageview' | 'click';
@@ -30,6 +33,10 @@ function disabled(): boolean {
   const host = location.hostname;
   if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return true;
   if (location.pathname === '/admin' || location.pathname.startsWith('/admin/')) return true;
+  // An explicit opt-out from the privacy notice. Checked before anything else
+  // that could produce a request, so choosing it really does stop measurement
+  // rather than merely hiding the banner.
+  if (hasOptedOut()) return true;
   // Do Not Track is honoured even though this tracker collects no personal
   // data: a visitor who asked not to be measured should not be measured.
   const dnt =

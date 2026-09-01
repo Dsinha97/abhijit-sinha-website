@@ -31,6 +31,15 @@ const year = new Date().getFullYear();
           {item.label}
         </a>
       ))}
+      {/* Reopens the privacy notice so a choice can be changed at any time.
+          An opt-out a visitor cannot revisit is not much of a choice. */}
+      <button
+        id="privacy-reopen"
+        type="button"
+        class="hover:text-white transition-colors min-h-[44px] inline-flex items-center"
+      >
+        Privacy Choices
+      </button>
     </div>
 
     <div>
@@ -77,3 +86,9 @@ const year = new Date().getFullYear();
     </div>
   </div>
 </footer>
+
+<script>
+  document.getElementById('privacy-reopen')?.addEventListener('click', () => {
+    document.dispatchEvent(new CustomEvent('privacy:reopen'));
+  });
+</script>

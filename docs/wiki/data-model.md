@@ -133,3 +133,26 @@ Admin SELECT only, no INSERT policy.
 `VERCEL_DEPLOY_HOOK_URL` must be set in Supabase for publishing to work; until then `publish-site`
 returns a 503 explaining exactly what to create. `GITHUB_DISPATCH_TOKEN` should be **deleted** and
 its PAT revoked — the `repository_dispatch` mechanism it served no longer exists.
+
+
+## Privacy notice and opt-out (added 2026-09-01)
+
+`src/components/PrivacyNotice.astro` slides up from the bottom of every public
+page on a visitor's first visit. It is **not** a cookie banner, because the site
+sets no cookies — a banner claiming otherwise would be a false disclosure on a
+regulated site. It states what is actually true and offers a real choice.
+
+The opt-out is enforced, not cosmetic: `src/scripts/privacy-choice.ts` stores the
+choice under `as-privacy-choice` (`acknowledged` | `opted-out`), and
+`src/scripts/analytics.ts` checks `hasOptedOut()` in `disabled()` before anything
+that could produce a request. Verified end to end: opting out takes the tracker
+from one request per page view to zero.
+
+That preference is the only thing any public page writes to browser storage, and
+it exists solely to remember a choice the visitor made — the category every
+consent regime treats as strictly necessary. Every access is wrapped in
+try/catch, since `localStorage` throws outright in some privacy modes.
+
+A **Privacy Choices** button in the footer re-dispatches `privacy:reopen` so the
+choice can be changed later; an opt-out a visitor cannot revisit is not a choice.
+The notice is mounted from `BaseLayout`, so it never appears on `/admin`.
