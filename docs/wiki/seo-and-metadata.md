@@ -26,3 +26,16 @@ Mounted inside `BaseLayout.astro`'s `<head>`. See [site-architecture](site-archi
 LinkedIn: `https://www.linkedin.com/in/abhijit-sinha-243b7243/` — noted in the source for potential `sameAs` schema linkage or footer link, not yet placed in any page spec.
 
 Related: [site-architecture](site-architecture.md) · [regulatory-compliance](regulatory-compliance.md)
+
+
+## Additions 2026-09-01
+
+- `SEO.astro` gained two optional, backwards-compatible props: `ogType` (default `'website'`) and
+  `jsonLd` (default the site-wide `FinancialService` node). Knowledge Corner article pages pass
+  `ogType="article"` and a `BlogPosting` node, so a post is described as content rather than as the
+  business. Every existing caller is unaffected.
+- `astro.config.mjs` now filters `/admin` out of the sitemap. This is **not optional**: without it
+  the admin URLs are advertised in `sitemap-index.xml` the moment the blanket `Disallow` is lifted
+  at cutover.
+- `public/robots.txt` carries `Disallow: /admin` above the blanket `Disallow: /`, so the cutover
+  edit cannot accidentally expose it.

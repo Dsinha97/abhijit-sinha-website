@@ -151,3 +151,21 @@ After step 5, rolling back means reverting the robots.txt commit and setting `SI
 - **Don't lift the `Disallow` early** as a way to "test SEO". It cannot be undone for anything already crawled, and it puts a throwaway hostname into the index.
 
 Related: [site-architecture](site-architecture.md) · [seo-and-metadata](seo-and-metadata.md) · [data-model](data-model.md)
+
+
+## Additions to the cutover checklist (2026-09-01)
+
+The admin panel, analytics and Knowledge Corner add three things the runbook above predates:
+
+1. **`robots.txt` already carries `Disallow: /admin`**, added ahead of time precisely so step 5
+   cannot forget it. When you delete the blanket `Disallow: /`, **keep the `/admin` line.**
+2. **Supabase Auth redirect allowlist** must include `https://abhijitsinha.in/admin` alongside the
+   vercel.app URL, or admin magic-link sign-in breaks silently after the cutover. The `track` and
+   `publish-site` functions already allowlist both hostnames.
+3. **`VERCEL_DEPLOY_HOOK_URL`** — create a Deploy Hook (Vercel → Settings → Git → Deploy Hooks,
+   branch `main`) and save the URL as a Supabase secret. Until then the admin Publish button returns
+   a 503 explaining this. The hook URL is a bearer credential: it must never reach the browser or
+   the repo.
+
+Post-cutover verification gains two checks: `/knowledge-corner` and one article URL must both return
+200 and show their content in **view-source**, and `dist/sitemap-0.xml` must contain no `/admin` URL.

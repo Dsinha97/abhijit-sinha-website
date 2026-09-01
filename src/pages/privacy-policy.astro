@@ -19,7 +19,8 @@ import { distributor } from '../data/site';
       <li><strong>Contact Data:</strong> Full name, email address, phone number, and city of residence.</li>
       <li><strong>Financial Profile & Goals:</strong> Investment horizons, target asset brackets, risk preferences, and existing SIP records shared during consultations.</li>
       <li><strong>KYC & Regulatory Information:</strong> PAN, date of birth, bank account details, and address proofs required strictly during transaction onboarding.</li>
-      <li><strong>Technical Logs:</strong> Basic server logs such as browser type, device operating system, and IP address collected automatically to ensure website security.</li>
+      <li><strong>Technical Logs:</strong> Our hosting provider processes basic request data, including IP address, transiently for security and abuse prevention. This is separate from the website measurement described in Section 5.2, which stores no IP address at all.</li>
+      <li><strong>Website Usage:</strong> Anonymous, cookieless measurement of which pages are viewed and which links are clicked — see Section 5.2.</li>
     </ul>
 
     <h2>3. Purpose and Legal Basis for Processing</h2>
@@ -45,6 +46,19 @@ import { distributor } from '../data/site';
     <p>Access to these submissions is restricted to Abhijit Sinha and authorised website administrators, who must sign in individually; the records are not publicly accessible. Enquiry records are retained only for as long as needed to respond to and follow up on your request, after which they are deleted. Submissions that do not lead to an ongoing engagement are removed within 24 months.</p>
     <p><strong>Please do not enter folio numbers, PAN, bank account details, or other account identifiers into website forms.</strong> These forms are not designed to carry that information, and we do not ask for it here. Where such details are genuinely required, they are collected separately during regulated onboarding through the AMC or RTA channels described in Section 4.</p>
     <p>You may ask us to delete your enquiry record at any time using the contact address below, subject to the statutory retention requirements noted in Section 6.</p>
+
+    <h3>5.2 Website Analytics</h3>
+    <p>We measure how this website is used so we can tell which pages are useful and which are not. This measurement is <strong>first-party and cookieless</strong>. It sets no cookie, stores nothing in your browser, and is not shared with any advertising network or analytics company.</p>
+    <p>For each page view or link click we record: the page path (with any query string removed), the domain name of the website that referred you (never the full referring address), a broad device category derived from your window width (mobile, tablet or desktop), the label and destination of the link or button clicked, and any campaign tag present in the address.</p>
+    <p><strong>We do not store your IP address, your browser's user-agent string, your location, or any advertising identifier</strong>, and we do not build a profile of you. To distinguish one visit from another we use a scrambled identifier calculated on our server, which changes every day and cannot be reversed or linked back to you — so the same visitor returning tomorrow is counted as a new one. There is no tracking across other websites.</p>
+    <p>This data is stored in the same Supabase database in India described in Section 5.1, is readable only by authorised administrators, and is automatically deleted after 13 months. Visits to the administrator pages are never recorded.</p>
+    <p>If your browser sends a &ldquo;Do Not Track&rdquo; signal, no measurement request is made at all. You may also object to this measurement by writing to the address at the end of this policy.</p>
+
+    <h3>5.3 Embedded Video</h3>
+    <p>Videos in the Knowledge Corner are hosted on YouTube and embedded through <code>youtube-nocookie.com</code>. Nothing is requested from Google until you click play — the preview you see before clicking is drawn by this website and involves no third party. Once you choose to play a video, YouTube receives that request and it is governed by Google&rsquo;s own privacy policy.</p>
+
+    <h3>5.4 Links to Other Websites</h3>
+    <p>The Knowledge Corner links to material published elsewhere. Those websites are outside our control and have their own privacy practices. Listing a source is not an endorsement of it.</p>
 
     <h2>6. Your Data Rights</h2>
     <p>Subject to mandatory statutory retention requirements under Indian financial regulations, you maintain the right to:</p>

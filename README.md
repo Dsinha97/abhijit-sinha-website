@@ -12,7 +12,7 @@ npm run preview   # serve the production build locally
 npm run check     # astro check only
 ```
 
-Copy `.env.example` to `.env` and set `PUBLIC_FORM_ENDPOINT` (a Web3Forms/Formspree-style endpoint) to enable the contact and service-request forms locally.
+Copy `.env.example` to `.env` and set `PUBLIC_FORM_ENDPOINT` (the Supabase `submit-lead` edge function, which stores the submission in the `leads` table and sends the notification email server-side) to enable the contact and service-request forms locally.
 
 ## Where content lives
 

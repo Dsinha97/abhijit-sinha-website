@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import DataTable from '../components/DataTable.astro';
 import SectionCard from '../components/SectionCard.astro';
 import ComplianceCallout from '../components/ComplianceCallout.astro';
-import { distributor, commissionSchedule } from '../data/site';
+import { distributor, commissionSchedule, commissionPeriod, empanelledAmcs } from '../data/site';
 
 const tableRows = commissionSchedule.map((r) => [r.assetClass, r.subCategories, r.year1, r.year2Plus]);
 
@@ -46,23 +46,70 @@ const conductGrid = [
 
   <section class="bg-surface border-y border-slate-200 py-14 sm:py-20">
     <div class="mx-auto max-w-6xl px-4 sm:px-6">
-      <h2 class="text-2xl font-bold text-slate-900 mb-2">Indicative Annual Trail Commission Schedule</h2>
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">Annual Trail Commission Schedule</h2>
       <p class="text-sm text-slate-500 mb-6">
-        Rates are indicative ranges across empanelled AMCs and are subject to periodic revision based on AMC rate cards and regulatory caps.
+        Ranges below are the lowest and highest base trail commission payable across every scheme in the
+        published rate cards of the empanelled AMCs ({empanelledAmcs.join(', ')}) for the period {commissionPeriod}.
       </p>
       <DataTable
-        headers={['Asset Class / Classification', 'Sub-Categories Included', 'Indicative Trail Commission (Year 1)', 'Indicative Trail Commission (Year 2 Onwards)']}
+        headers={['Asset Class / Classification', 'Sub-Categories Included', 'Trail Commission (Years 1–3)', 'Trail Commission (Year 4 Onwards)']}
         rows={tableRows}
-        caption="Indicative annual trail commission schedule by asset class"
+        caption="Annual trail commission schedule by asset class, across empanelled AMCs"
       />
-      <p class="text-xs text-slate-400 italic mt-3">Note: figures shown are placeholders pending finalized AMC empanelment agreements.</p>
+      <div class="text-xs text-slate-500 mt-4 space-y-2 max-w-4xl">
+        <p>
+          All figures are <strong>base trail commission per annum, excluding GST</strong>, calculated by each AMC on the
+          daily average assets held under ARN-367596 and paid monthly in arrears. GST is charged separately at
+          the applicable statutory rate.
+        </p>
+        <p>
+          The year at which the rate steps down varies by AMC — some reduce from year 4, others from year 5, and
+          some hold a single rate throughout. The two columns show the higher early-year band and the
+          longer-holding band respectively.
+        </p>
+        <p>
+          AMCs revise these rate cards periodically and at their own discretion, and rates are also revised
+          downward automatically if a scheme's Total Expense Ratio falls. No commission of any kind is payable
+          on Direct Plans.
+        </p>
+      </div>
     </div>
   </section>
 
   <section class="mx-auto max-w-6xl px-4 sm:px-6 py-14 sm:py-20">
+    <h2 class="text-2xl font-bold text-slate-900 mb-2">Additional B-30 and Women Investor Incentive</h2>
+    <p class="text-sm text-slate-500 mb-6">
+      Beyond the trail commission above, AMCs pay a one-time incentive on certain first-time investments.
+      It is disclosed here in full because it is a payment the distributor receives in connection with your
+      investment.
+    </p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <SectionCard title="What Is Payable">
+        Under SEBI circular HO/(83)2025-IMD-POD-1/I/152/2025 dated 27 November 2025, effective 1 March 2026,
+        an additional incentive of 1% of the first investment — capped at ₹2,000 — is payable on onboarding a
+        new investor from a B-30 (beyond top-30) city or a woman investor, in each case a PAN new to the mutual
+        fund industry. For SIPs it is 1% of the total invested in the first year, subject to the same ₹2,000 cap.
+      </SectionCard>
+      <SectionCard title="Conditions and Exclusions">
+        The incentive is paid only after the investment completes one year, and lapses on full redemption,
+        switch-out, or a change of distributor within that year. It does not apply to investments held in a
+        minor's name, to Exchange Traded Funds, to domestic Fund-of-Funds investing over 80% in domestic
+        schemes, or to Overnight, Liquid, Ultra Short Duration and Low Duration funds.
+      </SectionCard>
+    </div>
+    <p class="text-xs text-slate-500 italic mt-4 max-w-4xl">
+      This incentive is determined entirely by an investor's location, gender and prior investment history — not
+      by scheme selection — and therefore does not influence which scheme is discussed with any investor.
+      B-30 classification follows the T-30 pin code list published by AMFI.
+    </p>
+  </section>
+
+  <section class="bg-surface border-y border-slate-200 py-14 sm:py-20">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
     <h2 class="text-2xl font-bold text-slate-900 mb-6">Professional Standards & Regulatory Adherence</h2>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {conductGrid.map((item) => <SectionCard title={item.title}>{item.desc}</SectionCard>)}
+    </div>
     </div>
   </section>
 

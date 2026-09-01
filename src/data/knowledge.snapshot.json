@@ -1,0 +1,38 @@
+{
+  "_comment": "Last known-good Knowledge Corner content, committed so a Supabase outage degrades to stale content rather than to a green build that 404s every live article. Regenerate with `npm run sync:knowledge`. Never hand-edit.",
+  "generated_at": "2026-09-01T17:41:37.811Z",
+  "posts": [
+    {
+      "slug": "why-sips-work",
+      "title": "Why SIPs Work",
+      "excerpt": "A short look at rupee cost averaging and why consistency matters more than timing.",
+      "body_markdown": "## The core idea\n\nInvesting a fixed amount every month means you buy more units when prices are low and fewer when they are high.\n\n> Market timing is difficult even for professionals.\n\n<script>alert(1)</script>\n\nSee [AMFI](https://www.amfiindia.com) for scheme documents.",
+      "published_at": "2026-09-01T17:40:25.661568+00:00",
+      "updated_at": "2026-09-01T17:40:25.661568+00:00",
+      "tags": [
+        "SIP",
+        "Basics"
+      ],
+      "seo_description": "How systematic investment plans smooth out market volatility."
+    }
+  ],
+  "videos": [
+    {
+      "id": 1,
+      "title": "What is a Mutual Fund?",
+      "description": "A short primer on how pooled investing works.",
+      "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "sort_order": 1
+    }
+  ],
+  "links": [
+    {
+      "id": 1,
+      "title": "Investor Education Portal",
+      "url": "https://www.amfiindia.com/investor-corner",
+      "source_name": "AMFI",
+      "note": "AMFI's own investor education material, including scheme categorisation and KYC guidance.",
+      "sort_order": 1
+    }
+  ]
+}

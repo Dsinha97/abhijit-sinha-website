@@ -1,0 +1,36 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+
+const filters = ['all', 'new', 'contacted', 'closed'];
+---
+
+<AdminLayout title="Enquiries" active="leads">
+  <div class="flex flex-wrap items-center gap-2">
+    {
+      filters.map((f) => (
+        <button
+          type="button"
+          data-filter={f}
+          class="min-h-[44px] rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700"
+        >
+          {f}
+        </button>
+      ))
+    }
+    <span id="leads-count" class="ml-auto text-sm text-slate-500"></span>
+    <button
+      id="export-csv"
+      type="button"
+      class="min-h-[44px] rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50"
+    >
+      Export CSV
+    </button>
+  </div>
+
+  <ul id="leads-list" class="mt-4 space-y-2"></ul>
+  <p id="leads-empty" class="hidden mt-4 text-sm text-slate-500">No enquiries match this filter.</p>
+</AdminLayout>
+
+<script>
+  import '../../scripts/admin/leads';
+</script>

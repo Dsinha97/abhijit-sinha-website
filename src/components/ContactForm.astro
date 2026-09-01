@@ -108,6 +108,8 @@ const sourcePage = Astro.url.pathname;
     <button
       type="submit"
       disabled={!hasEndpoint}
+      data-track="cta"
+      data-track-label={formName}
       class="min-h-[44px] px-6 py-2.5 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
     >
       {submitLabel}

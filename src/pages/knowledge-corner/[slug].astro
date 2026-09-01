@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ComplianceCallout from '../../components/ComplianceCallout.astro';
+import { getKnowledge, type KcPost } from '../../lib/knowledge';
+import { renderMarkdown } from '../../lib/markdown';
+import { url } from '../../lib/url';
+import { distributor } from '../../data/site';
+
+// When Supabase is unreachable AND the snapshot is empty this returns [], so no
+// article routes are emitted and the build still succeeds. That degradation is
+// deliberate — see the fallback reasoning in src/lib/knowledge.ts.
+export async function getStaticPaths() {
+  const { posts } = await getKnowledge();
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+interface Props {
+  post: KcPost;
+}
+
+const { post } = Astro.props;
+
+// Markdown is rendered here, at build time, never in the browser. Raw HTML in
+// the source is dropped by the renderer in src/lib/markdown.ts.
+const html = renderMarkdown(post.body_markdown);
+
+const published = post.published_at ? new Date(post.published_at) : null;
+const updated = post.updated_at ? new Date(post.updated_at) : null;
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+
+// Describes the post as content rather than reusing the site-wide
+// FinancialService node, which would misdescribe an article as the business.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.title,
+  description: post.seo_description ?? post.excerpt ?? undefined,
+  datePublished: post.published_at ?? undefined,
+  dateModified: post.updated_at ?? post.published_at ?? undefined,
+  author: { '@type': 'Person', name: distributor.name },
+  publisher: { '@type': 'Organization', name: `${distributor.name} (${distributor.arn})` },
+  mainEntityOfPage: new URL(url(`knowledge-corner/${post.slug}`), Astro.site).toString(),
+};
+---
+
+<BaseLayout
+  title={`${post.title} | Knowledge Corner | Abhijit Sinha`}
+  description={post.seo_description ?? post.excerpt ?? `${post.title} — educational article.`}
+  ogType="article"
+  jsonLd={jsonLd}
+>
+  <article class="mx-auto max-w-3xl px-4 sm:px-6 pt-10 sm:pt-14 pb-16">
+    <a
+      href={url('knowledge-corner')}
+      class="inline-flex min-h-[44px] items-center text-sm text-slate-500 hover:text-slate-900 transition"
+    >
+      &larr; Knowledge Corner
+    </a>
+
+    <h1 class="mt-3 text-3xl sm:text-4xl font-bold text-slate-900 leading-tight">{post.title}</h1>
+
+    <p class="mt-3 text-sm text-slate-500">
+      {published && <span>Published {fmt(published)}</span>}
+      {updated && published && updated.getTime() - published.getTime() > 86_400_000 && (
+        <span> &middot; Updated {fmt(updated)}</span>
+      )}
+    </p>
+
+    {post.excerpt && <p class="mt-5 text-lg text-slate-700 leading-relaxed">{post.excerpt}</p>}
+
+    <div class="mt-6">
+      <ComplianceCallout label="Educational Content Only">
+        This article is general education, not investment advice. It is not a recommendation of any
+        scheme and does not consider your individual financial situation, objectives or risk
+        tolerance. Mutual fund investments are subject to market risks &mdash; read all scheme
+        related documents carefully.
+      </ComplianceCallout>
+    </div>
+
+    <div
+      class="prose prose-slate mt-8 max-w-none prose-headings:font-semibold prose-headings:text-slate-900 prose-a:text-accent prose-a:underline-offset-2"
+      set:html={html}
+    />
+
+    {
+      post.tags && post.tags.length > 0 && (
+        <ul class="mt-10 flex flex-wrap gap-1.5">
+          {post.tags.map((tag) => (
+            <li class="rounded-full bg-surfaceAlt px-2.5 py-0.5 text-[11px] font-medium text-muted">
+              {tag}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <div class="mt-10 rounded-xl border border-slate-200 bg-surface p-6">
+      <h2 class="font-semibold text-slate-900">Want to discuss how this applies to you?</h2>
+      <p class="mt-2 text-sm text-slate-600">
+        General reading cannot account for your goals, timeline or cash flow. A conversation can.
+      </p>
+      <a
+        href={url('schedule')}
+        data-track="cta"
+        data-track-label={`Article CTA: ${post.title}`}
+        class="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
+      >
+        Schedule a Meeting
+      </a>
+    </div>
+  </article>
+</BaseLayout>

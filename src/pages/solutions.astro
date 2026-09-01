@@ -17,7 +17,6 @@ const assetClasses = [
       'Large Cap & Index Solutions — core stability tracking bellwether indices',
       'Tax-Saving Schemes (ELSS) — equity exposure with tax deduction benefits under Section 80C',
     ],
-    allocation: '60% Large Cap / 40% Mid-Small Cap (placeholder)',
   },
   {
     title: 'Balanced Growth & Downside Cushion (Hybrid Schemes)',
@@ -29,7 +28,6 @@ const assetClasses = [
       'Multi-Asset Allocation Funds — diversification across equity, fixed income, gold, and more',
       'Aggressive / Conservative Hybrid Funds — fixed allocation mixes matching risk appetite',
     ],
-    allocation: '65% Equity / 35% Debt & Gold (placeholder)',
   },
   {
     title: 'Income Generation & Capital Preservation (Debt Schemes)',
@@ -41,7 +39,6 @@ const assetClasses = [
       'Short Duration & Low Duration Funds — managing interest rate risk',
       'Money Market Funds — short-term fixed income instruments',
     ],
-    allocation: '100% High-Grade Fixed Income Instruments (placeholder)',
   },
   {
     title: 'Short-Term Liquidity & Contingency Parking (Liquid Schemes)',
@@ -53,14 +50,13 @@ const assetClasses = [
       'Overnight Funds — 1-day maturity paper for zero credit and interest rate risk',
       'Ultra Short Duration Funds — 3 to 6 months parking with convenient withdrawal',
     ],
-    allocation: 'STP into Equity/Hybrid Funds (placeholder deployment route)',
   },
 ];
 
 const steps = [
   { title: 'Financial Goal Discovery', desc: 'We map your specific milestone, timeline, and cash flow requirements.' },
   { title: 'Risk-Horizon Alignment', desc: 'We match your comfort with volatility to the appropriate asset class category.' },
-  { title: 'Systematic Execution & Review', desc: 'We set up disciplined SIP/STP transactions and review portfolio progress annually.' },
+  { title: 'Systematic Execution & Review', desc: 'We set up disciplined SIP/STP or lumpsum transactions and review portfolio progress annually.' },
 ];
 ---
 
@@ -91,7 +87,6 @@ const steps = [
           <ul class="list-disc list-inside space-y-1">
             {cls.subCategories.map((s) => <li>{s}</li>)}
           </ul>
-          <p class="text-xs text-slate-400 italic">Suggested allocation: {cls.allocation}</p>
         </div>
       </SectionCard>
     ))}

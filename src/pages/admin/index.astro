@@ -1,0 +1,105 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { url } from '../../lib/url';
+
+const cards = [
+  {
+    href: 'admin/leads',
+    title: 'Enquiries',
+    desc: 'Contact-form submissions, with status tracking, notes and CSV export.',
+    tile: 'stat-leads',
+  },
+  {
+    href: 'admin/knowledge',
+    title: 'Knowledge Corner',
+    desc: 'Write articles, add videos and curate reading links, then publish to the live site.',
+    tile: 'stat-posts',
+  },
+  {
+    href: 'admin/analytics',
+    title: 'Website Metrics',
+    desc: 'Pages visited, links clicked, referrers and devices over the last 30 days.',
+    tile: 'stat-views',
+  },
+];
+---
+
+<AdminLayout title="Overview" active="overview">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    {
+      cards.map((c) => (
+        <a
+          href={url(c.href)}
+          class="rounded-xl border border-slate-200 bg-white p-5 transition hover:border-slate-400"
+        >
+          <p class="text-3xl font-bold text-slate-900" id={c.tile}>&mdash;</p>
+          <h2 class="mt-2 font-semibold text-slate-900">{c.title}</h2>
+          <p class="mt-1 text-sm text-slate-600">{c.desc}</p>
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="mt-6 rounded-xl border border-slate-200 bg-white p-5">
+    <h2 class="font-semibold text-slate-900">New enquiries</h2>
+    <ul id="recent-leads" class="mt-3 space-y-2"></ul>
+  </div>
+
+  <div class="mt-6 rounded-xl border border-slate-200 bg-blue-50/40 p-5 text-sm text-slate-700">
+    <p class="font-semibold text-slate-900">A note on what this panel can change</p>
+    <p class="mt-1">
+      Regulatory identifiers &mdash; ARN, EUIN, NISM certification, principal place of business,
+      phone and email &mdash; are deliberately not editable here. They are fixed in the codebase so
+      they cannot be altered by accident or by anyone who gains access to this dashboard.
+    </p>
+  </div>
+</AdminLayout>
+
+<script>
+  import { getSupabase } from '../../lib/supabase-client';
+  import { $, el, fmtDateTime } from '../../scripts/admin/dom';
+
+  const supabase = getSupabase();
+
+  document.addEventListener('admin:ready', async () => {
+    if (!supabase) return;
+
+    const since = new Date(Date.now() - 30 * 86_400_000).toISOString();
+
+    const [leads, posts, views] = await Promise.all([
+      supabase.from('leads').select('*', { count: 'exact' }).eq('status', 'new'),
+      supabase.from('posts').select('id', { count: 'exact', head: true }).eq('published', true),
+      supabase
+        .from('analytics_events')
+        .select('id', { count: 'exact', head: true })
+        .eq('event_type', 'pageview')
+        .gte('occurred_at', since),
+    ]);
+
+    const set = (id: string, v: number | null | undefined) => {
+      const node = $(id);
+      if (node) node.textContent = String(v ?? 0);
+    };
+    set('stat-leads', leads.count);
+    set('stat-posts', posts.count);
+    set('stat-views', views.count);
+
+    const list = $('recent-leads');
+    if (!list) return;
+    const rows = (leads.data ?? []).slice(0, 5);
+    if (rows.length === 0) {
+      list.replaceChildren(el('li', { class: 'text-sm text-slate-500' }, 'No new enquiries.'));
+      return;
+    }
+    list.replaceChildren(
+      ...rows.map((l: Record<string, string>) =>
+        el(
+          'li',
+          { class: 'rounded-lg border border-slate-200 p-3' },
+          el('span', { class: 'block font-medium text-slate-900' }, l.name),
+          el('span', { class: 'block text-xs text-slate-500' }, `${l.email} · ${fmtDateTime(l.created_at)}`),
+        ),
+      ),
+    );
+  });
+</script>

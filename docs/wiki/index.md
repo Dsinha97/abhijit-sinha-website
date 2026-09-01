@@ -25,3 +25,5 @@ Synthesized map of the design specs for abhijitsinha.in, an AMFI-registered Mutu
 `Images/` (site assets) and `Important Docs/` (ARN registration & NISM certificate PDFs — sensitive, excluded) are outside this wiki's scope by design. See [Regulatory Compliance](regulatory-compliance.md#sensitive-source-documents--handling-rule).
 
 See [log.md](log.md) for the change history.
+
+- [page-knowledge-corner](page-knowledge-corner.md) — `/knowledge-corner` and `/knowledge-corner/[slug]`: articles, click-to-load videos, curated links, and the article publishing compliance control.

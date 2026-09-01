@@ -75,6 +75,8 @@ const mobileNavLinkClass =
     <div class="flex items-center gap-2">
       <a
         href={url(primaryCta.href.replace(/^\//, ''))}
+        data-track="cta"
+        data-track-label="Header CTA"
         class="hidden sm:inline-flex items-center justify-center min-h-[44px] px-4 py-2 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition-colors"
       >
         {primaryCta.label}
@@ -112,6 +114,8 @@ const mobileNavLinkClass =
       ))}
       <a
         href={url(primaryCta.href.replace(/^\//, ''))}
+        data-track="cta"
+        data-track-label="Mobile menu CTA"
         class="mt-3 min-h-[44px] flex items-center justify-center rounded-lg bg-slate-900 text-white text-sm font-semibold px-4"
       >
         {primaryCta.label}

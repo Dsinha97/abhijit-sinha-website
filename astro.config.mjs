@@ -15,5 +15,8 @@ const BASE_PATH = process.env.BASE_PATH || '';
 export default defineConfig({
   site: SITE_URL,
   base: BASE_PATH,
-  integrations: [tailwind(), sitemap()],
+  // The admin panel must never be advertised in the sitemap. This matters the
+  // moment the site becomes indexable at cutover, when robots.txt's blanket
+  // Disallow is lifted.
+  integrations: [tailwind(), sitemap({ filter: (page) => !page.includes('/admin') })],
 });

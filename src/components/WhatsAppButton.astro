@@ -19,6 +19,8 @@ const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 <aside class="fixed bottom-6 right-6 z-50">
   <a
     href={whatsappUrl}
+    data-track="whatsapp"
+    data-track-label="Floating WhatsApp button"
     target="_blank"
     rel="noopener noreferrer"
     aria-label="Chat directly with Abhijit Sinha on WhatsApp (opens in a new tab)"

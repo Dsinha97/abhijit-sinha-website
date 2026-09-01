@@ -42,3 +42,5 @@ The same prop is forwarded to `RegulatoryStrip`/`Header` as `overlay`, which onl
 The specs reference `logo.jpg` / `banner.jpg`, but the actual files in `Images/` are `logo.png` / `banner.png`. Any implementation must use the real `.png` filenames — this note exists so that discrepancy isn't silently reintroduced from the source docs.
 
 Related: [design-system](design-system.md) · [seo-and-metadata](seo-and-metadata.md) · [contact-channels](contact-channels.md)
+
+- [page-knowledge-corner](page-knowledge-corner.md) — `/knowledge-corner` and `/knowledge-corner/[slug]`: articles, click-to-load videos, curated links, and the article publishing compliance control.

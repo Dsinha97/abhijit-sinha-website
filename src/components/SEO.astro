@@ -7,9 +7,20 @@ interface Props {
   title: string;
   description: string;
   image?: string;
+  /** 'article' for Knowledge Corner posts; every other page is a 'website'. */
+  ogType?: string;
+  /** Replaces the default FinancialService node. Article pages pass a
+   *  BlogPosting so a post is described as content, not as the business. */
+  jsonLd?: Record<string, unknown>;
 }
 
-const { title, description, image = 'images/og-image.jpg' } = Astro.props;
+const {
+  title,
+  description,
+  image = 'images/og-image.jpg',
+  ogType = 'website',
+  jsonLd,
+} = Astro.props;
 
 // Astro.url.pathname already includes the configured base path, so combining
 // it with Astro.site's origin (which is base-free) gives the correct
@@ -24,7 +35,7 @@ const socialImageURL = new URL(url(image), Astro.site);
 <link rel="canonical" href={canonicalURL} />
 
 <!-- Open Graph / Facebook / WhatsApp -->
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
@@ -38,8 +49,9 @@ const socialImageURL = new URL(url(image), Astro.site);
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={socialImageURL} />
 
-<!-- Financial Service JSON-LD Schema -->
-<script type="application/ld+json" is:inline set:html={JSON.stringify({
+<!-- Structured data: the FinancialService business node by default, or a
+     page-specific node (e.g. BlogPosting) when a page supplies one. -->
+<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd ?? {
   '@context': 'https://schema.org',
   '@type': 'FinancialService',
   name: `${distributor.name} - AMFI-Registered Mutual Fund Distributor`,

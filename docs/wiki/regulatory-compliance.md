@@ -54,3 +54,37 @@ Privacy Policy and Terms of Use are full statutory documents — see [legal-copy
 `Important Docs/ARN Registration.pdf` and `Important Docs/NISM Certificate.pdf` live outside this wiki's scope. Their factual contents (the identifiers above) may be read and transcribed as text into the site; **the PDF files themselves must never be committed to git or copied into the public site build.**
 
 Related: [design-system](design-system.md) · [contact-channels](contact-channels.md) · [legal-copy](legal-copy.md)
+
+
+## Article publishing control (added 2026-09-01)
+
+Knowledge Corner articles are free text written in the admin panel, which makes them the easiest
+place on the site for distribution-only copy to drift into personalised advice, a return guarantee,
+or a specific buy recommendation. Three layers, only the first two of which are binding:
+
+1. **`posts_publish_requires_ack`** — a Postgres CHECK constraint. `published = true` is impossible
+   without `compliance_ack = true`, so an article cannot go live without someone explicitly
+   confirming it carries no personalised advice, no return guarantee and no scheme recommendation.
+2. **`assert_post_compliance()`** — a BEFORE trigger scanning title, excerpt and body on publish
+   against a banned-phrase list ("guaranteed returns", "risk-free", "I recommend", "best fund to
+   buy", "safe as a fixed deposit", and others). It raises `check_violation` naming the phrase, and
+   the editor surfaces that message verbatim.
+3. **`src/lib/compliance-lint.ts`** — the same list linted live while typing, with Publish disabled
+   until it is clean. Convenience only. **If you edit this list, edit the trigger too.**
+
+Every article page renders `ComplianceCallout.astro`, and third-party links carry a non-endorsement
+statement on the page and in Terms §5.
+
+## Commission disclosure provenance (updated 2026-09-01)
+
+The trail-commission table on `/disclosures` is no longer placeholder data. It is derived from the
+Aug–Sep 2026 brokerage rate cards of the four empanelled AMCs (Nippon India, ICICI Prudential, DSP,
+WhiteOak Capital) held in `Important Docs/Commission Structure/`, which are **never committed**.
+Figures are base trail per annum excluding GST, taken as the min/max across every scheme row, with
+minimums rounded down and maximums rounded up so the published range always encloses actual rates.
+
+`/disclosures` also now discloses the SEBI B-30 / women-investor incentive (1% of the first
+investment, capped at ₹2,000, payable after one year), which is a real payment received in
+connection with an investment and was previously undisclosed.
+
+**These figures go stale when new rate cards arrive.** Re-derive them rather than editing by hand.

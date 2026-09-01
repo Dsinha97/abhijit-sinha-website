@@ -1,0 +1,34 @@
+---
+interface Props {
+  title: string;
+  href: string;
+  sourceName: string;
+  note?: string | null;
+}
+
+const { title, href, sourceName, note } = Astro.props;
+---
+
+<article class="rounded-xl border border-slate-200 bg-white p-5 flex flex-col">
+  <p class="text-xs font-medium uppercase tracking-wide text-slate-500">{sourceName}</p>
+
+  <h3 class="mt-1 font-semibold text-slate-900 leading-snug">
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+      class="hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded"
+      data-track="resource"
+      data-track-label={title}
+    >
+      {title}
+      <span class="sr-only">(opens in a new tab)</span>
+      <svg viewBox="0 0 20 20" class="inline h-3.5 w-3.5 ml-0.5 -translate-y-px fill-current" aria-hidden="true">
+        <path d="M11 3h6v6h-2V6.41l-7.29 7.3-1.42-1.42 7.3-7.29H11V3Z" />
+        <path d="M5 5h3v2H5v8h8v-3h2v5H3V5h2Z" />
+      </svg>
+    </a>
+  </h3>
+
+  {note && <p class="mt-2 text-sm text-slate-600 flex-1">{note}</p>}
+</article>

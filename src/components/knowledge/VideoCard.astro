@@ -1,0 +1,75 @@
+---
+// Click-to-load YouTube facade.
+//
+// Nothing here touches a Google domain until the visitor clicks: no iframe, no
+// hotlinked i.ytimg.com thumbnail, no preconnect. That is why the poster is a
+// CSS gradient rather than a real thumbnail — pulling the thumbnail would fire
+// the very third-party request this component exists to avoid, and would do it
+// on page load for every video at once.
+import { youtubeId } from '../../lib/youtube';
+
+interface Props {
+  title: string;
+  description?: string | null;
+  videoUrl: string;
+}
+
+const { title, description, videoUrl } = Astro.props;
+const id = youtubeId(videoUrl);
+---
+
+{
+  id && (
+    <article class="rounded-xl border border-slate-200 bg-white overflow-hidden flex flex-col">
+      <div class="relative aspect-video bg-slate-900" data-yt-slot>
+        <button
+          type="button"
+          data-yt-id={id}
+          data-track="video"
+          data-track-label={title}
+          class="group absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white transition hover:from-slate-800 hover:to-slate-600 focus:outline-none focus-visible:ring-4 focus-visible:ring-accent/60"
+          aria-label={`Play video: ${title}`}
+        >
+          <span class="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/30 backdrop-blur-sm transition group-hover:bg-white/25">
+            <svg viewBox="0 0 24 24" class="h-7 w-7 translate-x-[2px] fill-white" aria-hidden="true">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </span>
+          <span class="px-4 text-center text-xs font-medium text-slate-200">
+            Click to play &middot; loads YouTube only on click
+          </span>
+        </button>
+      </div>
+
+      <div class="p-4 flex-1">
+        <h3 class="font-semibold text-slate-900 leading-snug">{title}</h3>
+        {description && <p class="mt-1.5 text-sm text-slate-600">{description}</p>}
+      </div>
+    </article>
+  )
+}
+
+<script>
+  // Delegated so one listener covers every card on the page.
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const btn = target.closest('[data-yt-id]');
+    if (!(btn instanceof HTMLElement)) return;
+
+    const id = btn.getAttribute('data-yt-id');
+    const slot = btn.closest('[data-yt-slot]');
+    if (!id || !slot) return;
+
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+    iframe.title = btn.getAttribute('aria-label') || 'Video';
+    iframe.className = 'absolute inset-0 h-full w-full';
+    iframe.loading = 'lazy';
+    iframe.referrerPolicy = 'strict-origin';
+    iframe.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
+    iframe.allowFullscreen = true;
+
+    slot.replaceChildren(iframe);
+  });
+</script>

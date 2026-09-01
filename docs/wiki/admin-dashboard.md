@@ -2,7 +2,7 @@
 
 Authenticated dashboard at `/admin` where Abhijit reads incoming enquiries and edits the non-regulatory content of the site without touching git.
 
-**Status:** Phases 0 and 1 are built and verified. Phases 2–5 are planned, not built.
+**Status:** Phases 0–4 are built and verified (2026-09-01). Phase 5 (committed content snapshot) is partly done — see the note at the end of this file.
 
 Backing infrastructure: Supabase project `cebfypcoyqiegwuahmun` (`https://cebfypcoyqiegwuahmun.supabase.co`), region India. Schema reference: [data-model.md](data-model.md).
 
@@ -90,3 +90,60 @@ on:
 ## Accepted security warning
 
 Supabase's linter reports that `public.is_admin()` is executable by the `authenticated` role via `/rest/v1/rpc/is_admin`. This is intentional and cannot be removed: RLS policy expressions are evaluated with the caller's privileges, so signed-in users must be able to execute it. Calling it reveals only whether *you* are an admin. The `anon` role and both trigger functions have had their EXECUTE grants revoked.
+
+
+## Status update — 2026-09-01
+
+The dashboard is built. Corrections to what this file says above:
+
+- **Phase 3's publish mechanism was wrong and is now replaced.** It described adding
+  `repository_dispatch` to `.github/workflows/deploy.yml`. That workflow was deleted during the
+  Vercel migration and CLAUDE.md forbids reintroducing it. Publishing now calls the `publish-site`
+  edge function, which POSTs a **Vercel Deploy Hook** URL held as a Supabase secret. Delete the
+  `GITHUB_DISPATCH_TOKEN` secret and revoke its PAT.
+- **Phase 5's keep-alive GitHub Action is unnecessary.** Continuous analytics ingest keeps the free
+  project from pausing, provided there is real traffic. During the pre-launch period, when
+  `robots.txt` blocks everything and traffic is near zero, occasional manual unpausing may still be
+  needed — that breaks admin login, not the public site.
+- **Phase 5's content snapshot is implemented** as `src/data/knowledge.snapshot.json`, refreshed by
+  `npm run sync:knowledge` and committed. It is deliberately not part of `npm run build`, so Vercel
+  builds stay deterministic and never write into the repo.
+- **`site_content` editing (the scheduler / RTA / commission tables) is not built.** The commission
+  ranges are now real, document-derived figures in `src/data/site.ts` rather than placeholders, so
+  the urgency has dropped, but updating them is still a code change today.
+
+### What was built
+
+`src/layouts/AdminLayout.astro` (standalone, noindex) plus `/admin`, `/admin/leads`,
+`/admin/knowledge`, `/admin/analytics`. Auth is magic-link, then `rpc('is_admin')`; the client-side
+check is UX only and RLS is the real control. Page scripts live in `src/scripts/admin/`.
+
+### Verified
+
+Signed out, `/admin/leads` shows only the login card and no lead data reaches the browser. Anon
+REST returns `[]` for `leads`, `analytics_events`, `analytics_salt` and `deploy_log`, and `42501`
+for the analytics RPCs. `dist/` contains no service_role key and the sitemap excludes `/admin`. The
+`submit-lead` function was never redeployed and both contact forms still work end to end.
+
+### Outstanding
+
+- `VERCEL_DEPLOY_HOOK_URL` is not set yet, so the Publish button returns an explanatory 503.
+- Supabase Auth redirect allowlist must include both the vercel.app host and `abhijitsinha.in`, or
+  magic-link sign-in breaks silently after the domain cutover.
+- Signed-in admin flows (inbox rendering, editor round-trip, charts with real data) have not been
+  exercised, because that needs a magic link delivered to a real inbox.
+
+
+### Accepted advisor warnings (re-checked 2026-09-01)
+
+The Supabase linter reports two things after this work. Both are intentional; do not "fix" them.
+
+- **`rls_enabled_no_policy` on `public.analytics_salt` (INFO).** That is precisely the design: RLS
+  on with zero policies means no role reachable through the API can read the table, and only
+  service_role (the `track` function) can. Adding a policy would weaken it.
+- **`authenticated_security_definer_function_executable` (WARN) on the six `analytics_*` functions
+  and on `is_admin()`.** PostgREST can only expose an RPC that `authenticated` may EXECUTE, so this
+  grant is unavoidable for the dashboard to work at all. Each analytics function re-checks
+  `public.is_admin()` in its own body and raises `42501` otherwise, because `security definer`
+  bypasses RLS and the guard therefore has to be explicit. A signed-in non-admin gets an error, not
+  rows. This is the same accepted trade-off already documented for `is_admin()` itself.

@@ -30,7 +30,7 @@ There is no test suite. Verification is: `astro check` passes, `npm run build` i
 
 ### Routes
 
-`/`, `/solutions`, `/disclosures`, `/investor-services`, `/schedule`, `/privacy-policy`, `/terms`, `/404`. Full per-page section breakdown is in [docs/wiki/site-architecture.md](docs/wiki/site-architecture.md) and the individual `docs/wiki/page-*.md` notes.
+`/`, `/solutions`, `/disclosures`, `/investor-services`, `/knowledge-corner`, `/knowledge-corner/[slug]`, `/schedule`, `/privacy-policy`, `/terms`, `/404`, plus the noindex admin pages `/admin`, `/admin/leads`, `/admin/knowledge`, `/admin/analytics`. Full per-page section breakdown is in [docs/wiki/site-architecture.md](docs/wiki/site-architecture.md) and the individual `docs/wiki/page-*.md` notes.
 
 ## Compliance rules (non-negotiable)
 
@@ -48,7 +48,20 @@ The site is static with no adapter, so `/admin` is a client-side-only page and *
 - Contact forms POST to the Supabase `submit-lead` edge function (`PUBLIC_FORM_ENDPOINT`), which stores submissions in `leads`. The `leads` table has **no INSERT policy** by design — only the edge function's service_role key can write to it.
 - The **publishable/anon key is public by design** and belongs in the bundle. The **service_role key bypasses RLS entirely** and must never appear under `src/`, `public/`, or `.env` — only in Supabase edge-function secrets.
 - Admin access is the two emails in the `admin_allowlist` table, enforced by `is_admin()`. A Supabase account alone grants nothing. Public sign-ups must stay disabled.
-- Phases 2–5 (dashboard UI, build-time editable content, videos/notes, audit snapshot) are **planned but not built** — see the roadmap. Any content moved into Supabase must keep `site.ts` as the build-time fallback, so a Supabase outage never ships an empty statutory table.
+- The `/admin` panel is **built**: lead inbox, first-party analytics, and Knowledge Corner CRUD. Publishing content calls the `publish-site` edge function, which POSTs a **Vercel Deploy Hook** (secret `VERCEL_DEPLOY_HOOK_URL`). The old `repository_dispatch` plan is dead — the workflow file it needed no longer exists.
+- **Never redeploy the `submit-lead` edge function.** Its live version is the only working lead path on the site and is verified end to end. New shared logic (CORS, origin allowlists) is duplicated into new functions rather than extracted, specifically to avoid touching it.
+- `supabase/functions/` holds the source for `track` and `publish-site`. `supabase/` is excluded from `tsconfig.json`: those are Deno files, and `npm run build` runs `astro check` first, so leaving them in would fail every site deploy on phantom type errors.
+- Any content moved into Supabase must keep a committed build-time fallback, so a Supabase outage never ships an empty statutory table. For the Knowledge Corner that fallback is `src/data/knowledge.snapshot.json`, refreshed with `npm run sync:knowledge` and committed — without it, an outage produces a *green build that 404s every live article*.
+
+## Knowledge Corner
+
+`src/lib/knowledge.ts` fetches published articles, videos and links at **build time** via plain `fetch` (not `@supabase/supabase-js`) and never throws: live → committed snapshot → empty. `src/lib/markdown.ts` renders article bodies with `marked`, dropping raw HTML entirely so pasted `<script>`/`<iframe>` cannot reach the page; `javascript:` and `data:` links degrade to plain text.
+
+Publishing an article requires **both** a clean lint (`src/lib/compliance-lint.ts`) and a ticked acknowledgement. That is enforced in Postgres by the `posts_publish_requires_ack` CHECK and the `assert_post_compliance()` trigger, not just in the UI — if you change the banned-phrase list in one place, change it in the other. Videos render as click-to-load `youtube-nocookie` facades: **no third-party request may fire before the visitor clicks**, which is why there is no thumbnail column.
+
+## Analytics
+
+First-party and cookieless, ingested by the `track` edge function into `analytics_events` and charted inside `/admin`. It stores **no IP address, no user-agent, no location**; `session_hash` is salted server-side and rotates daily. The client (`src/scripts/analytics.ts`) no-ops with zero network on localhost, on `/admin`, and under Do Not Track, and must send a `text/plain` Blob — `sendBeacon` cannot preflight, so `application/json` would silently drop every event. Retention is 13 months, enforced by a `pg_cron` job and disclosed in Privacy Policy §5.2. **Adding or widening any collection here requires a matching Privacy Policy edit.**
 
 ## Design system
 

@@ -36,10 +36,31 @@ import { url } from '../lib/url';
       </div>
       <div>
         <div class="flex justify-between text-sm font-medium text-slate-800 mb-2">
-          <span>Expected Annual Return Rate</span>
+          <span class="inline-flex items-center gap-0.5">
+            Expected Annual Return Rate
+          <span class="relative inline-flex items-center group">
+            <button
+              type="button"
+              aria-label="Why the return rate is capped at 12%"
+              aria-describedby="sip-rate-tip"
+              class="inline-flex h-11 w-11 -my-3 items-center justify-center text-slate-400 transition hover:text-slate-700 focus:outline-none focus-visible:text-slate-900"
+            >
+              <svg viewBox="0 0 20 20" class="h-4 w-4 fill-current" aria-hidden="true">
+                <path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 3.25a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2ZM11.1 14.5H8.9v-5.5h2.2v5.5Z" />
+              </svg>
+            </button>
+            <span
+              id="sip-rate-tip"
+              role="tooltip"
+              class="pointer-events-none absolute left-1/2 top-full z-20 w-56 -translate-x-1/2 rounded-lg bg-slate-900 px-3 py-2 text-[11px] font-normal leading-snug text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
+            >
+              Capped at 12% p.a. — illustrations must not imply higher expected returns.
+            </span>
+          </span>
+          </span>
           <span class="font-bold text-slate-900"><span id="sip-rate-val">12</span>%</span>
         </div>
-        <input type="range" id="sip-rate" min="4" max="20" step="0.5" value="12"
+        <input type="range" id="sip-rate" min="4" max="12" step="0.5" value="12"
           class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900" />
       </div>
       <div>
@@ -48,6 +69,14 @@ import { url } from '../lib/url';
           <span class="font-bold text-slate-900"><span id="sip-years-val">10</span> Years</span>
         </div>
         <input type="range" id="sip-years" min="1" max="30" step="1" value="10"
+          class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900" />
+      </div>
+      <div>
+        <div class="flex justify-between text-sm font-medium text-slate-800 mb-2">
+          <span>Expected Inflation Rate</span>
+          <span class="font-bold text-slate-900"><span id="sip-inflation-val">6</span>%</span>
+        </div>
+        <input type="range" id="sip-inflation" min="0" max="10" step="0.5" value="6"
           class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900" />
       </div>
     </div>
@@ -65,6 +94,10 @@ import { url } from '../lib/url';
         <div class="border-t border-slate-200 pt-3 flex justify-between items-baseline">
           <span class="text-slate-900 font-semibold">Total Value</span>
           <span class="text-xl font-extrabold text-slate-900">₹<span id="sip-total">23,23,391</span></span>
+        </div>
+        <div class="flex justify-between items-baseline">
+          <span class="text-slate-600">Value in Today’s Money</span>
+          <span class="font-semibold text-slate-700">₹<span id="sip-real">12,97,369</span></span>
         </div>
       </div>
       <p class="text-[11px] text-slate-500 mt-4 leading-snug">
@@ -88,10 +121,31 @@ import { url } from '../lib/url';
       </div>
       <div>
         <div class="flex justify-between text-sm font-medium text-slate-800 mb-2">
-          <span>Expected Annual Return Rate</span>
+          <span class="inline-flex items-center gap-0.5">
+            Expected Annual Return Rate
+          <span class="relative inline-flex items-center group">
+            <button
+              type="button"
+              aria-label="Why the return rate is capped at 12%"
+              aria-describedby="goal-rate-tip"
+              class="inline-flex h-11 w-11 -my-3 items-center justify-center text-slate-400 transition hover:text-slate-700 focus:outline-none focus-visible:text-slate-900"
+            >
+              <svg viewBox="0 0 20 20" class="h-4 w-4 fill-current" aria-hidden="true">
+                <path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm0 3.25a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2ZM11.1 14.5H8.9v-5.5h2.2v5.5Z" />
+              </svg>
+            </button>
+            <span
+              id="goal-rate-tip"
+              role="tooltip"
+              class="pointer-events-none absolute left-1/2 top-full z-20 w-56 -translate-x-1/2 rounded-lg bg-slate-900 px-3 py-2 text-[11px] font-normal leading-snug text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100"
+            >
+              Capped at 12% p.a. — illustrations must not imply higher expected returns.
+            </span>
+          </span>
+          </span>
           <span class="font-bold text-slate-900"><span id="goal-rate-val">12</span>%</span>
         </div>
-        <input type="range" id="goal-rate" min="4" max="20" step="0.5" value="12"
+        <input type="range" id="goal-rate" min="4" max="12" step="0.5" value="12"
           class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900" />
       </div>
       <div>
@@ -102,17 +156,29 @@ import { url } from '../lib/url';
         <input type="range" id="goal-years" min="1" max="30" step="1" value="10"
           class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900" />
       </div>
+      <div>
+        <div class="flex justify-between text-sm font-medium text-slate-800 mb-2">
+          <span>Expected Inflation Rate</span>
+          <span class="font-bold text-slate-900"><span id="goal-inflation-val">6</span>%</span>
+        </div>
+        <input type="range" id="goal-inflation" min="0" max="10" step="0.5" value="6"
+          class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-slate-900" />
+      </div>
     </div>
 
     <div class="lg:col-span-5 bg-slate-50 border border-slate-200 rounded-xl p-6 flex flex-col justify-between">
       <div class="space-y-4 text-sm">
         <div class="flex justify-between">
-          <span class="text-slate-600">Target Corpus</span>
+          <span class="text-slate-600">Goal in Today’s Money</span>
           <span class="font-bold text-slate-900">₹<span id="goal-target-out">50,00,000</span></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-600">Future Cost of This Goal</span>
+          <span class="font-bold text-slate-900">₹<span id="goal-inflated-out">89,54,238</span></span>
         </div>
         <div class="border-t border-slate-200 pt-3 flex flex-col gap-1">
           <span class="text-slate-600 text-xs">Required Monthly Investment:</span>
-          <span class="text-2xl font-black text-slate-900">₹<span id="goal-required-sip">21,521</span></span>
+          <span class="text-2xl font-black text-slate-900">₹<span id="goal-required-sip">38,540</span></span>
         </div>
       </div>
       <p class="text-[11px] text-slate-500 mt-4 leading-snug">
@@ -164,18 +230,24 @@ import { url } from '../lib/url';
   const sipInvested = document.getElementById('sip-invested');
   const sipGains = document.getElementById('sip-gains');
   const sipTotal = document.getElementById('sip-total');
+  const sipInflationInput = document.getElementById('sip-inflation') as HTMLInputElement | null;
+  const sipInflationVal = document.getElementById('sip-inflation-val');
+  const sipReal = document.getElementById('sip-real');
 
   function updateSIP() {
-    if (!sipAmountInput || !sipRateInput || !sipYearsInput) return;
+    if (!sipAmountInput || !sipRateInput || !sipYearsInput || !sipInflationInput) return;
     if (!sipAmountVal || !sipRateVal || !sipYearsVal || !sipInvested || !sipGains || !sipTotal) return;
+    if (!sipInflationVal || !sipReal) return;
 
     const p = parseFloat(sipAmountInput.value);
     const annualRate = parseFloat(sipRateInput.value);
     const years = parseFloat(sipYearsInput.value);
+    const inflation = parseFloat(sipInflationInput.value);
 
     sipAmountVal.textContent = formatINR(p);
     sipRateVal.textContent = annualRate.toString();
     sipYearsVal.textContent = years.toString();
+    sipInflationVal.textContent = inflation.toString();
 
     const i = annualRate / 12 / 100;
     const n = years * 12;
@@ -184,12 +256,18 @@ import { url } from '../lib/url';
     const invested = p * n;
     const gains = totalValue - invested;
 
+    // Purchasing power of the projected corpus expressed in present-day rupees.
+    const realValue = totalValue / Math.pow(1 + inflation / 100, years);
+
     sipInvested.textContent = formatINR(invested);
     sipGains.textContent = formatINR(gains);
     sipTotal.textContent = formatINR(totalValue);
+    sipReal.textContent = formatINR(realValue);
   }
 
-  [sipAmountInput, sipRateInput, sipYearsInput].forEach((el) => el?.addEventListener('input', updateSIP));
+  [sipAmountInput, sipRateInput, sipYearsInput, sipInflationInput].forEach((el) =>
+    el?.addEventListener('input', updateSIP),
+  );
 
   const goalAmountInput = document.getElementById('goal-amount') as HTMLInputElement | null;
   const goalRateInput = document.getElementById('goal-rate') as HTMLInputElement | null;
@@ -199,26 +277,45 @@ import { url } from '../lib/url';
   const goalYearsVal = document.getElementById('goal-years-val');
   const goalTargetOut = document.getElementById('goal-target-out');
   const goalRequiredSip = document.getElementById('goal-required-sip');
+  const goalInflationInput = document.getElementById('goal-inflation') as HTMLInputElement | null;
+  const goalInflationVal = document.getElementById('goal-inflation-val');
+  const goalInflatedOut = document.getElementById('goal-inflated-out');
 
   function updateGoal() {
-    if (!goalAmountInput || !goalRateInput || !goalYearsInput) return;
+    if (!goalAmountInput || !goalRateInput || !goalYearsInput || !goalInflationInput) return;
     if (!goalAmountVal || !goalRateVal || !goalYearsVal || !goalTargetOut || !goalRequiredSip) return;
+    if (!goalInflationVal || !goalInflatedOut) return;
 
     const target = parseFloat(goalAmountInput.value);
     const annualRate = parseFloat(goalRateInput.value);
     const years = parseFloat(goalYearsInput.value);
+    const inflation = parseFloat(goalInflationInput.value);
 
     goalAmountVal.textContent = formatINR(target);
     goalRateVal.textContent = annualRate.toString();
     goalYearsVal.textContent = years.toString();
+    goalInflationVal.textContent = inflation.toString();
     goalTargetOut.textContent = formatINR(target);
 
     const i = annualRate / 12 / 100;
     const n = years * 12;
 
-    const monthlyRequired = i === 0 ? target / n : target / (((Math.pow(1 + i, n) - 1) / i) * (1 + i));
+    // A goal costed in today's rupees will cost more by the time it is due, so
+    // the SIP is sized against the inflated figure, not the entered one.
+    const inflatedTarget = target * Math.pow(1 + inflation / 100, years);
+    goalInflatedOut.textContent = formatINR(inflatedTarget);
+
+    const monthlyRequired =
+      i === 0 ? inflatedTarget / n : inflatedTarget / (((Math.pow(1 + i, n) - 1) / i) * (1 + i));
     goalRequiredSip.textContent = formatINR(monthlyRequired);
   }
 
-  [goalAmountInput, goalRateInput, goalYearsInput].forEach((el) => el?.addEventListener('input', updateGoal));
+  [goalAmountInput, goalRateInput, goalYearsInput, goalInflationInput].forEach((el) =>
+    el?.addEventListener('input', updateGoal),
+  );
+
+  // The markup ships with the default figures baked in; running both once on
+  // load keeps them honest if a browser restores previous slider positions.
+  updateSIP();
+  updateGoal();
 </script>

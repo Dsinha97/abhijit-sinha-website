@@ -1,0 +1,157 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ComplianceCallout from '../../components/ComplianceCallout.astro';
+import ArticleCard from '../../components/knowledge/ArticleCard.astro';
+import VideoCard from '../../components/knowledge/VideoCard.astro';
+import ResourceLinkCard from '../../components/knowledge/ResourceLinkCard.astro';
+import { getKnowledge } from '../../lib/knowledge';
+import { url } from '../../lib/url';
+
+// Fetched at build time and rendered into static HTML, so the page works with
+// JavaScript disabled and is fully visible to search engines. getKnowledge()
+// never throws and falls back to the committed snapshot — see src/lib/knowledge.ts.
+const { posts, videos, links } = await getKnowledge();
+
+const sections = [
+  { id: 'articles', label: 'Articles', count: posts.length },
+  { id: 'videos', label: 'Videos', count: videos.length },
+  { id: 'reading', label: 'Further Reading', count: links.length },
+];
+---
+
+<BaseLayout
+  title="Knowledge Corner | Abhijit Sinha (ARN-367596)"
+  description="Educational articles, videos and curated reading on mutual fund investing, goal planning and portfolio discipline, from AMFI-registered distributor Abhijit Sinha."
+>
+  <section class="mx-auto max-w-6xl px-4 sm:px-6 pt-10 sm:pt-14 pb-8">
+    <p class="text-xs font-semibold uppercase tracking-widest text-accent">Learn</p>
+    <h1 class="mt-2 text-3xl sm:text-4xl font-bold text-slate-900">Knowledge Corner</h1>
+    <p class="mt-4 max-w-3xl text-slate-600">
+      Plain-language explanations of how mutual funds, systematic investing and goal planning
+      actually work. Everything here is educational material published for general readers.
+    </p>
+
+    <nav class="mt-6 flex flex-wrap gap-2" aria-label="Knowledge Corner sections">
+      {
+        sections.map((s) => (
+          <a
+            href={`#${s.id}`}
+            class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-slate-400 hover:text-slate-900 transition min-h-[44px] inline-flex items-center"
+          >
+            {s.label}
+            <span class="ml-2 text-xs text-slate-400">{s.count}</span>
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="mt-8 max-w-3xl">
+      <ComplianceCallout label="Educational Content Only">
+        Articles, videos and linked material on this page are for general education. They are not
+        investment advice, not a recommendation of any scheme, and take no account of your personal
+        circumstances. Third-party links are provided for reference and are not endorsements.
+        Mutual fund investments are subject to market risks &mdash; read all scheme related
+        documents carefully.
+      </ComplianceCallout>
+    </div>
+  </section>
+
+  <!-- Articles -->
+  <section id="articles" class="bg-surface border-y border-slate-200 py-12 sm:py-16 scroll-mt-28">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <h2 class="text-2xl font-bold text-slate-900 mb-6">Articles</h2>
+      {
+        posts.length > 0 ? (
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {posts.map((p) => (
+              <ArticleCard
+                slug={p.slug}
+                title={p.title}
+                excerpt={p.excerpt}
+                publishedAt={p.published_at}
+                tags={p.tags}
+              />
+            ))}
+          </div>
+        ) : (
+          <p class="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
+            Articles are being written and will appear here shortly. In the meantime, the{' '}
+            <a href={url('solutions')} class="text-accent underline underline-offset-2">
+              Solutions
+            </a>{' '}
+            page explains the approach in detail.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Videos -->
+  <section id="videos" class="py-12 sm:py-16 scroll-mt-28">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">Videos</h2>
+      <p class="text-sm text-slate-500 mb-6">
+        Videos load from YouTube only after you click play, so nothing is requested from Google
+        until you choose to watch.
+      </p>
+      {
+        videos.length > 0 ? (
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {videos.map((v) => (
+              <VideoCard title={v.title} description={v.description} videoUrl={v.video_url} />
+            ))}
+          </div>
+        ) : (
+          <p class="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
+            No videos have been published yet.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Curated reading -->
+  <section id="reading" class="bg-surface border-y border-slate-200 py-12 sm:py-16 scroll-mt-28">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">Further Reading</h2>
+      <p class="text-sm text-slate-500 mb-6">
+        Material published elsewhere that is worth your time. Listing a source is not an endorsement
+        of it, of its author, or of any product it mentions.
+      </p>
+      {
+        links.length > 0 ? (
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {links.map((l) => (
+              <ResourceLinkCard
+                title={l.title}
+                href={l.url}
+                sourceName={l.source_name}
+                note={l.note}
+              />
+            ))}
+          </div>
+        ) : (
+          <p class="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
+            No reading links have been published yet.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-4 sm:px-6 py-12 sm:py-16 text-center">
+    <h2 class="text-2xl font-bold text-slate-900">Have a question about any of this?</h2>
+    <p class="mt-3 text-slate-600">
+      General reading only goes so far. A conversation can cover what actually applies to your
+      goals and timeline.
+    </p>
+    <a
+      href={url('schedule')}
+      data-track="cta"
+      data-track-label="Knowledge Corner CTA"
+      class="mt-6 inline-flex min-h-[44px] items-center justify-center rounded-lg bg-slate-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-slate-800"
+    >
+      Schedule a Meeting
+    </a>
+  </section>
+</BaseLayout>

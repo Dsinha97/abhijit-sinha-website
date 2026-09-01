@@ -1,5 +1,6 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  "//": "supabase/ holds Deno edge functions. They target the Deno runtime (global Deno, jsr: imports) which this browser/Node config knows nothing about, so `astro check` would report phantom errors — and since `npm run build` runs `astro check` first, that would block every site deploy. The functions are typechecked by Deno at deploy time instead.",
+  "exclude": ["dist", "supabase"]
 }
