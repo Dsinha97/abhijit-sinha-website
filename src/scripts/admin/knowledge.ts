@@ -142,10 +142,13 @@ function renderPostList(): void {
           );
           del.addEventListener('click', async () => {
             if (!(await confirmDelete('article', p.title))) return;
+            const wasLive = p.published;
             const { error } = await supabase!.from('posts').delete().eq('id', p.id);
             if (err(error)) return;
-            toast('Article deleted.');
+            toast(wasLive ? 'Article deleted. Site rebuilding…' : 'Article deleted.');
             await loadAll();
+            // A draft was never on the site, so deleting it needs no rebuild.
+            if (wasLive) await triggerBuild(true);
           });
           return del;
         })(),
@@ -274,13 +277,23 @@ async function savePost(publish: boolean): Promise<void> {
     ? supabase!.from('posts').update(payload).eq('id', editingPost.id)
     : supabase!.from('posts').insert(payload);
 
+  const wasLive = editingPost?.published ?? false;
   const { error } = await q;
   if (err(error)) return;
 
-  toast(publish ? 'Article published.' : 'Draft saved.');
+  // Rebuild if it is now live, or if it was live and has just been unpublished.
+  const affectsSite = publish || wasLive;
+  toast(
+    publish
+      ? 'Article published. Site rebuilding…'
+      : wasLive
+        ? 'Unpublished. Site rebuilding…'
+        : 'Draft saved.',
+  );
   editingPost = null;
   openPost(null);
   await loadAll();
+  if (affectsSite) await triggerBuild(true);
 }
 
 // ------------------------------------------------------------------ videos
@@ -323,6 +336,9 @@ function renderVideoList(): void {
               .eq('id', v.id);
             if (err(error)) return;
             await loadAll();
+            // Changes what visitors see, so rebuild without a second click.
+            await triggerBuild(true);
+            toast(v.published ? 'Removed. Site rebuilding…' : 'Published. Site rebuilding…');
           });
           return t;
         })(),
@@ -338,10 +354,13 @@ function renderVideoList(): void {
           );
           del.addEventListener('click', async () => {
             if (!(await confirmDelete('video', v.title))) return;
+            const wasLive = v.published;
             const { error } = await supabase!.from('videos').delete().eq('id', v.id);
             if (err(error)) return;
-            toast('Video deleted.');
+            toast(wasLive ? 'Video deleted. Site rebuilding…' : 'Video deleted.');
             await loadAll();
+            // A draft was never on the site, so deleting it needs no rebuild.
+            if (wasLive) await triggerBuild(true);
           });
           return del;
         })(),
@@ -390,6 +409,8 @@ function renderLinkList(): void {
               .eq('id', l.id);
             if (err(error)) return;
             await loadAll();
+            await triggerBuild(true);
+            toast(l.published ? 'Removed. Site rebuilding…' : 'Published. Site rebuilding…');
           });
           return t;
         })(),
@@ -405,10 +426,13 @@ function renderLinkList(): void {
           );
           del.addEventListener('click', async () => {
             if (!(await confirmDelete('link', l.title))) return;
+            const wasLive = l.published;
             const { error } = await supabase!.from('resource_links').delete().eq('id', l.id);
             if (err(error)) return;
-            toast('Link deleted.');
+            toast(wasLive ? 'Link deleted. Site rebuilding…' : 'Link deleted.');
             await loadAll();
+            // A draft was never on the site, so deleting it needs no rebuild.
+            if (wasLive) await triggerBuild(true);
           });
           return del;
         })(),
@@ -436,6 +460,48 @@ async function loadAll(): Promise<void> {
   renderVideoList();
   renderLinkList();
   void refreshPublishState();
+}
+
+/**
+ * Asks the site to rebuild.
+ *
+ * Called automatically whenever a change affects what visitors see, and by the
+ * manual button. Two "Publish" controls - a per-item toggle and a site build -
+ * turned out to be one too many: pressing the item toggle flips a database flag
+ * and looks like it published, while the site sits unchanged. So the toggle now
+ * triggers the build itself. The edge function debounces to one build a minute,
+ * so a run of edits collapses into a single deploy.
+ *
+ * `silent` keeps routine auto-triggers quiet; the manual button reports fully.
+ */
+async function triggerBuild(silent = false): Promise<void> {
+  if (!supabase) return;
+  const status = $('publish-status');
+  if (!silent && status) status.textContent = 'Triggering build…';
+
+  const { data: sess } = await supabase.auth.getSession();
+  const token = sess.session?.access_token;
+
+  try {
+    const res = await fetch(`${import.meta.env.PUBLIC_SUPABASE_URL}/functions/v1/publish-site`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const json = await res.json();
+    if (status) status.textContent = json.message || json.error || '';
+
+    if (!json.ok) {
+      // Always surface a failure, even on an automatic trigger: the whole point
+      // is that content silently not reaching the site is the failure mode.
+      toast(json.error ?? 'Could not trigger the site build.', 'error');
+    } else if (!silent) {
+      toast(json.skipped ? 'A build is already running.' : 'Build triggered.');
+    }
+  } catch (e) {
+    toast(e instanceof Error ? e.message : 'Build request failed.', 'error');
+  } finally {
+    setTimeout(() => void refreshPublishState(), 1500);
+  }
 }
 
 /**
@@ -476,7 +542,7 @@ async function refreshPublishState(): Promise<void> {
   if (banner) {
     banner.classList.toggle('hidden', !pending);
     banner.textContent = pending
-      ? 'You have saved changes that are not on the public site yet. Press “Publish to site” to build them.'
+      ? 'Some saved changes are not on the public site yet. Press “Rebuild site now” if they do not appear shortly.'
       : '';
   }
 }
@@ -558,37 +624,13 @@ document.addEventListener('admin:ready', () => {
     await loadAll();
   });
 
-  // --- publish to site ---
+  // --- manual rebuild ---
   $('publish-site')?.addEventListener('click', async () => {
     const btn = $<HTMLButtonElement>('publish-site');
-    const status = $('publish-status');
-    if (!btn || !supabase) return;
-
+    if (!btn) return;
     btn.disabled = true;
-    if (status) status.textContent = 'Triggering build…';
-
-    const { data: sess } = await supabase.auth.getSession();
-    const token = sess.session?.access_token;
-
-    try {
-      const res = await fetch(
-        `${import.meta.env.PUBLIC_SUPABASE_URL}/functions/v1/publish-site`,
-        { method: 'POST', headers: { Authorization: `Bearer ${token}` } },
-      );
-      const json = await res.json();
-      if (status) status.textContent = json.message || json.error || '';
-      if (!json.ok) toast(json.error ?? 'Publish failed.', 'error');
-      else {
-        toast(json.skipped ? 'Already building.' : 'Build triggered.');
-        setTimeout(() => void refreshPublishState(), 1500);
-      }
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Publish request failed.';
-      if (status) status.textContent = msg;
-      toast(msg, 'error');
-    } finally {
-      btn.disabled = false;
-    }
+    await triggerBuild(false);
+    btn.disabled = false;
   });
 
   void (async () => {

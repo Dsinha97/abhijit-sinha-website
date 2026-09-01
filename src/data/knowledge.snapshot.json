@@ -1,6 +1,6 @@
 {
   "_comment": "Last known-good Knowledge Corner content, committed so a Supabase outage degrades to stale content rather than to a green build that 404s every live article. Regenerate with `npm run sync:knowledge`. Never hand-edit.",
-  "generated_at": "2026-09-01T18:53:32.215Z",
+  "generated_at": "2026-09-01T19:16:30.550Z",
   "posts": [
     {
       "slug": "why-sips-work",
@@ -17,6 +17,13 @@
     }
   ],
   "videos": [
+    {
+      "id": 4,
+      "title": "Global Rate Expectations & India's Interest Rate Outlook for FY27",
+      "description": "Global Rate Expectations & India's Interest Rate Outlook for FY27. Vetri Subramaniam, MD & CEO, shares his perspective.",
+      "video_url": "https://youtu.be/Q4iLgl9D4l4?si=QYaNuRk9QaOlJxSb",
+      "sort_order": 0
+    },
     {
       "id": 3,
       "title": "D-Kode Monthly Market Outlook for August 2026 by Mr Nilesh Shah",
