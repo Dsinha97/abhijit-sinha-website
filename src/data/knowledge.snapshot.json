@@ -1,14 +1,14 @@
 {
   "_comment": "Last known-good Knowledge Corner content, committed so a Supabase outage degrades to stale content rather than to a green build that 404s every live article. Regenerate with `npm run sync:knowledge`. Never hand-edit.",
-  "generated_at": "2026-09-01T17:41:37.811Z",
+  "generated_at": "2026-09-01T18:53:32.215Z",
   "posts": [
     {
       "slug": "why-sips-work",
       "title": "Why SIPs Work",
       "excerpt": "A short look at rupee cost averaging and why consistency matters more than timing.",
-      "body_markdown": "## The core idea\n\nInvesting a fixed amount every month means you buy more units when prices are low and fewer when they are high.\n\n> Market timing is difficult even for professionals.\n\n<script>alert(1)</script>\n\nSee [AMFI](https://www.amfiindia.com) for scheme documents.",
+      "body_markdown": "## The core idea\n\nInvesting a fixed amount every month means you buy more units when prices are low and fewer when they are high. Over a long enough period this averages out your purchase cost without requiring you to predict anything.\n\n## Why timing is the hard part\n\nMarkets do not move in a straight line, and the best and worst days tend to cluster together. Missing a handful of strong days because you were waiting for a better entry point has historically cost more than simply staying invested.\n\n> Consistency is easier to sustain than accuracy.\n\n## What this does not do\n\nRupee cost averaging reduces the impact of volatility on your purchase price. It does not remove market risk, and it does not protect against a falling market. Fund selection, asset allocation and your own time horizon all still matter.\n\nScheme documents for every fund are published at [AMFI](https://www.amfiindia.com). Read them before investing.",
       "published_at": "2026-09-01T17:40:25.661568+00:00",
-      "updated_at": "2026-09-01T17:40:25.661568+00:00",
+      "updated_at": "2026-09-01T17:56:05.805884+00:00",
       "tags": [
         "SIP",
         "Basics"
@@ -18,11 +18,18 @@
   ],
   "videos": [
     {
-      "id": 1,
-      "title": "What is a Mutual Fund?",
-      "description": "A short primer on how pooled investing works.",
-      "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      "sort_order": 1
+      "id": 3,
+      "title": "D-Kode Monthly Market Outlook for August 2026 by Mr Nilesh Shah",
+      "description": "What could shape the Indian markets in August 2026?",
+      "video_url": "https://youtu.be/AlOhR318Vas?si=3C8hSfkbEL_iZqx5",
+      "sort_order": 0
+    },
+    {
+      "id": 2,
+      "title": "Market Insight Equity",
+      "description": "Know about the latest developments in the equity market, along with the fund positioning and strategy of UTI India Consumer Fund in Equity Market Insight - August 2026.",
+      "video_url": "https://youtu.be/01oSxE8tvIA?si=nGLSIRjOQR-3cZ5j",
+      "sort_order": 0
     }
   ],
   "links": [

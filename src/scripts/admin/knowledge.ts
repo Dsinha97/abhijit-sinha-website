@@ -435,6 +435,50 @@ async function loadAll(): Promise<void> {
   renderPostList();
   renderVideoList();
   renderLinkList();
+  void refreshPublishState();
+}
+
+/**
+ * Compares the newest content change against the last successful build.
+ *
+ * Saving in this panel writes to the database; it does not change the public
+ * site, which is static and only updates on a rebuild. That gap is easy to miss
+ * — edits appear to "work" and then nothing happens on the site — so the state
+ * is stated outright rather than left to a line of explanatory text.
+ */
+async function refreshPublishState(): Promise<void> {
+  if (!supabase) return;
+
+  const { data: deploy } = await supabase
+    .from('deploy_log')
+    .select('triggered_at')
+    .eq('ok', true)
+    .order('triggered_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const lastDeploy = deploy?.triggered_at ? new Date(deploy.triggered_at as string) : null;
+
+  const newest = [...posts, ...videos, ...links]
+    .map((r) => new Date((r as { updated_at?: string }).updated_at ?? 0).getTime())
+    .reduce((a, b) => Math.max(a, b), 0);
+
+  const pending = newest > 0 && (!lastDeploy || newest > lastDeploy.getTime());
+
+  const last = $('last-publish');
+  if (last) {
+    last.textContent = lastDeploy
+      ? `Last published to the site: ${relativeTime(lastDeploy.toISOString())}`
+      : 'This content has never been published to the site.';
+  }
+
+  const banner = $('publish-pending');
+  if (banner) {
+    banner.classList.toggle('hidden', !pending);
+    banner.textContent = pending
+      ? 'You have saved changes that are not on the public site yet. Press “Publish to site” to build them.'
+      : '';
+  }
 }
 
 // ------------------------------------------------------------------- wiring
@@ -534,7 +578,10 @@ document.addEventListener('admin:ready', () => {
       const json = await res.json();
       if (status) status.textContent = json.message || json.error || '';
       if (!json.ok) toast(json.error ?? 'Publish failed.', 'error');
-      else toast(json.skipped ? 'Already building.' : 'Build triggered.');
+      else {
+        toast(json.skipped ? 'Already building.' : 'Build triggered.');
+        setTimeout(() => void refreshPublishState(), 1500);
+      }
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Publish request failed.';
       if (status) status.textContent = msg;
@@ -546,14 +593,7 @@ document.addEventListener('admin:ready', () => {
 
   void (async () => {
     await loadAll();
-    const { data } = await supabase!
-      .from('deploy_log')
-      .select('triggered_at')
-      .order('triggered_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    const last = $('last-publish');
-    if (last) last.textContent = `Last published: ${relativeTime(data?.triggered_at as string)}`;
+    await refreshPublishState();
   })();
 
   refreshPreview();
