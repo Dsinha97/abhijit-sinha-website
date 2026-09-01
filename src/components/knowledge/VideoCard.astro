@@ -2,11 +2,15 @@
 // Click-to-load YouTube facade.
 //
 // Nothing here touches a Google domain until the visitor clicks: no iframe, no
-// hotlinked i.ytimg.com thumbnail, no preconnect. That is why the poster is a
-// CSS gradient rather than a real thumbnail — pulling the thumbnail would fire
-// the very third-party request this component exists to avoid, and would do it
-// on page load for every video at once.
+// hotlinked i.ytimg.com poster, no preconnect. The thumbnail is real, but it is
+// downloaded at build time by scripts/youtube-thumbnails.mjs and served from
+// this origin — hotlinking it would fire, on page load and for every video at
+// once, exactly the third-party request this component exists to avoid.
+//
+// The poster sits on top of the gradient rather than replacing it, so a video
+// with no available thumbnail falls back to the gradient with no broken image.
 import { youtubeId } from '../../lib/youtube';
+import { url } from '../../lib/url';
 
 interface Props {
   title: string;
@@ -21,21 +25,39 @@ const id = youtubeId(videoUrl);
 {
   id && (
     <article class="rounded-xl border border-slate-200 bg-white overflow-hidden flex flex-col">
-      <div class="relative aspect-video bg-slate-900" data-yt-slot>
+      <div
+        class="relative aspect-video bg-slate-900 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700"
+        data-yt-slot
+      >
+        {/* The poster is an inline background-image on the button, sitting over
+            the wrapper's gradient. They must be on separate elements: an inline
+            style beats a utility class, so putting both on the button would
+            replace the gradient outright and leave nothing to fall back to when
+            a poster is missing. The file is fetched at build time and served
+            from this origin - see scripts/youtube-thumbnails.mjs - so nothing
+            reaches Google before the visitor clicks. */}
         <button
           type="button"
           data-yt-id={id}
           data-track="video"
           data-track-label={title}
-          class="group absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white transition hover:from-slate-800 hover:to-slate-600 focus:outline-none focus-visible:ring-4 focus-visible:ring-accent/60"
+          style={`background-image:url('${url(`images/video-thumbs/${id}.jpg`)}')`}
+          class="group absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-3 bg-cover bg-center text-white focus:outline-none focus-visible:ring-4 focus-visible:ring-accent/60"
           aria-label={`Play video: ${title}`}
         >
-          <span class="flex h-14 w-14 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/30 backdrop-blur-sm transition group-hover:bg-white/25">
+          {/* Scrim: keeps the play control and caption legible over a bright
+              thumbnail, and lifts slightly on hover. */}
+          <span
+            class="absolute inset-0 bg-slate-950/45 transition-colors group-hover:bg-slate-950/30"
+            aria-hidden="true"
+          ></span>
+
+          <span class="relative flex h-14 w-14 items-center justify-center rounded-full bg-white/20 ring-1 ring-white/40 backdrop-blur-sm transition group-hover:bg-white/30 group-hover:scale-105">
             <svg viewBox="0 0 24 24" class="h-7 w-7 translate-x-[2px] fill-white" aria-hidden="true">
               <path d="M8 5v14l11-7z" />
             </svg>
           </span>
-          <span class="px-4 text-center text-xs font-medium text-slate-200">
+          <span class="relative px-4 text-center text-xs font-medium text-slate-100 drop-shadow">
             Click to play &middot; loads YouTube only on click
           </span>
         </button>

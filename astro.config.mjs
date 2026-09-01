@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
+import youtubeThumbnails from './scripts/youtube-thumbnails.mjs';
 
 // Deployed on Vercel (static output, no adapter) at the domain root, with
 // abhijitsinha.in registered and DNS-hosted at GoDaddy — see
@@ -18,5 +19,11 @@ export default defineConfig({
   // The admin panel must never be advertised in the sitemap. This matters the
   // moment the site becomes indexable at cutover, when robots.txt's blanket
   // Disallow is lifted.
-  integrations: [tailwind(), sitemap({ filter: (page) => !page.includes('/admin') })],
+  integrations: [
+    tailwind(),
+    sitemap({ filter: (page) => !page.includes('/admin') }),
+    // Downloads YouTube posters at build time so the browser never requests
+    // anything from Google before a visitor clicks play. Never fails the build.
+    youtubeThumbnails(),
+  ],
 });

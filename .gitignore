@@ -19,3 +19,6 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 .obsidian/
+
+# Downloaded at build time by scripts/youtube-thumbnails.mjs, not source.
+public/images/video-thumbs/
