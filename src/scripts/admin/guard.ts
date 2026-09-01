@@ -88,7 +88,17 @@ $('login-form')?.addEventListener('submit', async (event) => {
   });
 
   if (error) {
-    msg.textContent = error.message;
+    // Supabase returns "Signups not allowed for otp" when no auth.users row
+    // exists for this address. That is shouldCreateUser:false working as
+    // intended, but the raw wording sounds like a misconfiguration, so explain
+    // the actual cause: the account has to be created in the dashboard first.
+    // Being in admin_allowlist authorises an account; it does not create one.
+    const raw = error.message ?? '';
+    msg.textContent = /signups? not allowed/i.test(raw)
+      ? 'No sign-in account exists for this email yet. An administrator must create it in Supabase (Authentication → Users → Add user, with Auto Confirm enabled). Being on the admin allowlist alone is not enough.'
+      : /rate limit|too many/i.test(raw)
+        ? 'Too many sign-in emails requested. Wait a few minutes and try again.'
+        : raw;
     msg.className = 'mt-3 text-sm text-red-600';
     return;
   }

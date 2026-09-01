@@ -147,3 +147,29 @@ The Supabase linter reports two things after this work. Both are intentional; do
   `public.is_admin()` in its own body and raises `42501` otherwise, because `security definer`
   bypasses RLS and the guard therefore has to be explicit. A signed-in non-admin gets an error, not
   rows. This is the same accepted trade-off already documented for `is_admin()` itself.
+
+
+### Auth accounts must be created before anyone can sign in
+
+`admin_allowlist` is the **authorisation** layer, not the authentication one. An email being
+listed there grants access *once signed in*; it does not create a login. Sign-in also requires a
+row in `auth.users`, and the login form sets `shouldCreateUser: false`, so Supabase refuses to
+create one on demand and returns "Signups not allowed for otp".
+
+Keep `shouldCreateUser: false`. With it enabled, anyone could type any address into the public
+`/admin` form and have this project email them a sign-in link — an open email-spam relay and a
+source of junk `auth.users` rows. A non-allowlisted account would still see no data (RLS), but the
+abuse vector is real.
+
+**To add an admin, both steps are required:**
+
+1. Supabase → Authentication → Users → Add user → Create new user. Enter the email and tick
+   **Auto Confirm User**. The password the form demands is irrelevant — sign-in is magic-link only.
+2. Insert the same address into `public.admin_allowlist`.
+
+Doing only (1) gives an account that can sign in and see nothing. Doing only (2) gives the
+"Signups not allowed" error. The login form now explains that case rather than surfacing Supabase's
+raw wording.
+
+Note the free-tier default SMTP is rate-limited to a handful of emails per hour; repeated sign-in
+attempts will start failing with a rate-limit message, which the form also translates.
