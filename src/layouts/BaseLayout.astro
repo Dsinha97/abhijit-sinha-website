@@ -61,6 +61,13 @@ const { title, description, image, ogType, jsonLd } = Astro.props;
       import '../scripts/analytics';
     </script>
 
+    <!-- TEMPORARY: on-device layout probe, inert unless the URL carries
+         ?diag=1. Remove this and src/scripts/diag.ts once the mobile
+         horizontal-scroll report is resolved. -->
+    <script>
+      import '../scripts/diag';
+    </script>
+
     <script>
       // Shrinks the sticky header (regulatory strip + nav) once the page has
       // scrolled a little, via a `data-scrolled` attribute that the Tailwind
