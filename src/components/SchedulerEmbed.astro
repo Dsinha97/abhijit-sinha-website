@@ -23,11 +23,9 @@ const { provider, url: schedulerUrl } = scheduler;
     <div class="flex h-full min-h-[560px] flex-col justify-center gap-5 p-6 text-center sm:p-8">
       <div>
         <p class="text-xs font-semibold uppercase tracking-wide text-accent">Book a Time</p>
+        {/* No blurb here: duration, format and host are already stated in the
+            panel to the left of this column on /schedule. */}
         <h3 class="mt-1 text-lg font-bold text-slate-900">Pick a slot that works for you</h3>
-        <p class="mx-auto mt-3 max-w-md text-sm text-slate-600">
-          The calendar is provided by Calendly. Nothing is requested from Calendly until you
-          open it, so loading this page contacts no one but this website.
-        </p>
       </div>
 
       <div class="flex flex-col items-center gap-3">
