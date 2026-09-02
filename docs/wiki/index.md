@@ -5,6 +5,7 @@ Synthesized map of the design specs for abhijitsinha.in, an AMFI-registered Mutu
 ## Pages
 
 - [Design System](design-system.md) — colors, typography, layout rules, reusable UI modules
+- [Mobile Viewport Pitfalls](mobile-viewport-pitfalls.md) — why floating, clipping and sideways-scrolling elements break on real phones, and the rules that keep them fixed
 - [Regulatory Compliance](regulatory-compliance.md) — ARN/EUIN identifiers, statutory text, remuneration model, grievance ladder
 - [Site Architecture](site-architecture.md) — route map and shared page framework
 - [Page: Homepage](page-homepage.md)

@@ -42,13 +42,21 @@ const { headers, rows, caption } = Astro.props;
                 cell.map((link, j) => (
                   <>
                     {j > 0 && <span aria-hidden="true"> / </span>}
+                    {/* `relative` on the anchor is load-bearing, not
+                        decoration. The sr-only span inside is
+                        position:absolute, and with no positioned ancestor its
+                        containing block is the page - so it escapes this
+                        table's overflow-x-auto wrapper, lands out at the
+                        table's full width and gives the whole document a
+                        horizontal scrollbar on a phone. Positioning the anchor
+                        keeps it inside the scroll container. */}
                     <a
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
                       data-track="resource"
                       data-track-label={link.text}
-                      class="inline-flex min-h-[44px] items-center rounded text-accent underline underline-offset-2 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      class="relative inline-flex min-h-[44px] items-center rounded text-accent underline underline-offset-2 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                     >
                       {link.text}
                       <span class="sr-only">(opens in a new tab)</span>

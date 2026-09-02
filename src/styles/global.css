@@ -3,14 +3,6 @@
 @tailwind utilities;
 
 html {
-  /* Nothing on the page may scroll it sideways on a phone. `clip`, never
-     `hidden`: hidden turns the element into a scroll container, which
-     re-anchors position: sticky and would break the shrinking header in
-     BaseLayout.astro. clip suppresses the scroll without doing that. This is
-     containment, not a licence to ship overflowing elements - fix the element
-     too when one turns up (see the carousel arrows in
-     src/scripts/knowledge.ts). */
-  overflow-x: clip;
   scroll-behavior: smooth;
   /* Single source of truth for anchor-scroll offset (do not also add
      scroll-mt-* on individual sections — the two stack and overshoot).

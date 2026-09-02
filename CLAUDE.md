@@ -67,6 +67,13 @@ First-party and cookieless, ingested by the `track` edge function into `analytic
 
 Oxford Navy `#0F172A` primary, off-white surfaces, 8–12px rounded corners, no heavy shadows, 44×44px minimum touch targets. Full palette, typography, and layout rules: [docs/wiki/design-system.md](docs/wiki/design-system.md) — read it before styling anything rather than re-deriving the palette from component code.
 
+**Mobile layout rules that are not negotiable** — all four were learned from one horizontal-scroll bug that took five deploys and does not reproduce in desktop emulation. Read [docs/wiki/mobile-viewport-pitfalls.md](docs/wiki/mobile-viewport-pitfalls.md) before adding anything that floats, clips, or scrolls sideways.
+
+- **Float things with `left-0` + `w-screen`, never `right-*` or `inset-x-*`.** A fixed box resolves offsets against the window, and on a real phone the window measured 876px against a 411px layout viewport — `right-6` put the WhatsApp button at x=852 and gave every page 465px of sideways scroll.
+- **`overflow-x: clip` on the root does not clip fixed-position boxes.** It was tried and reverted; don't reach for it as a catch-all.
+- **An `sr-only` span inside an `overflow-x-auto` container needs `relative` on its parent.** `sr-only` is `position: absolute`, so with no positioned ancestor it escapes the scroll container and scrolls the document. The `relative` on the anchor in `DataTable.astro` is load-bearing.
+- **No horizontally scrolling carousels.** The Knowledge Corner previews are a plain grid with "View all" links to the listing pages; `Carousel.astro` was deleted, not shelved.
+
 ## Where content lives
 
 - [`docs/wiki/`](docs/wiki/) — **authoritative**, synthesized reference for every page's content, the design system, and compliance rules. Read this first when implementing or changing a page.
