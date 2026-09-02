@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ComplianceCallout from '../../components/ComplianceCallout.astro';
-import Carousel from '../../components/knowledge/Carousel.astro';
 import ReadingCard from '../../components/knowledge/ReadingCard.astro';
 import VideoCard from '../../components/knowledge/VideoCard.astro';
 import { getKnowledge, toReadingItems } from '../../lib/knowledge';
@@ -15,11 +14,16 @@ const reading = toReadingItems(content);
 const videos = content.videos;
 
 // The landing page previews each section; the listing pages hold everything.
-const PREVIEW = 6;
+// Three, because that is one full grid row at every breakpoint - a preview
+// that ends mid-row reads as a loading failure rather than a deliberate cut.
+const PREVIEW = 3;
 
-// One card per viewport tier. Kept in one constant because the carousel's
-// scroll step is derived from the rendered card width, so the two must agree.
-const CARD = 'shrink-0 w-[82%] sm:w-[46%] lg:w-[31.5%]';
+// A plain grid, deliberately not a horizontally scrolling carousel. The
+// carousel was the last remaining horizontally scrollable region on this page
+// and a phone reporting a layout viewport of 411 against a window of 876 kept
+// panning the whole document sideways; the "View all" links already lead to
+// the full listings, so the swipe was never the only way to reach anything.
+const GRID = 'grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3';
 ---
 
 <BaseLayout
@@ -66,9 +70,9 @@ const CARD = 'shrink-0 w-[82%] sm:w-[46%] lg:w-[31.5%]';
 
       {
         reading.length > 0 ? (
-          <Carousel id="reading-carousel" label="Articles and reading">
+          <ul class={GRID} aria-label="Articles and reading">
             {reading.slice(0, PREVIEW).map((item) => (
-              <li class={CARD}>
+              <li>
                 <ReadingCard
                   kind={item.kind}
                   id={item.id}
@@ -81,7 +85,7 @@ const CARD = 'shrink-0 w-[82%] sm:w-[46%] lg:w-[31.5%]';
                 />
               </li>
             ))}
-          </Carousel>
+          </ul>
         ) : (
           <p class="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
             Articles are being written and will appear here shortly. In the meantime, the{' '}
@@ -116,9 +120,9 @@ const CARD = 'shrink-0 w-[82%] sm:w-[46%] lg:w-[31.5%]';
 
       {
         videos.length > 0 ? (
-          <Carousel id="videos-carousel" label="Videos">
+          <ul class={GRID} aria-label="Videos">
             {videos.slice(0, PREVIEW).map((v) => (
-              <li class={CARD}>
+              <li>
                 <VideoCard
                   id={v.id}
                   title={v.title}
@@ -127,7 +131,7 @@ const CARD = 'shrink-0 w-[82%] sm:w-[46%] lg:w-[31.5%]';
                 />
               </li>
             ))}
-          </Carousel>
+          </ul>
         ) : (
           <p class="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
             No videos have been published yet.
