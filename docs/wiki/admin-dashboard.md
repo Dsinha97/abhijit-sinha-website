@@ -1,6 +1,6 @@
 # Admin Dashboard
 
-Authenticated dashboard at `/admin` where Abhijit reads incoming enquiries and edits the non-regulatory content of the site without touching git.
+Authenticated dashboard at `/admin` where Abhijit reads incoming requests and edits the non-regulatory content of the site without touching git.
 
 **Status:** Phases 0–4 are built and verified (2026-09-01). Phase 5 (committed content snapshot) is partly done — see the note at the end of this file.
 
@@ -82,7 +82,7 @@ on:
 
 - **Git-visible history.** Have the rebuild workflow commit the fetched content to `src/data/content.snapshot.json`. This restores Decap's one genuine advantage — a git diff per published change on a regulated site — and doubles as disaster recovery if the Supabase project is lost.
 - **Keep-alive.** Supabase pauses free projects after ~7 days of inactivity. Visitors degrade gracefully (the build falls back to `site.ts`) but **admin login breaks**. Add a scheduled GitHub Action that pings the project every few days.
-- **Lead retention.** Scheduled purge of enquiries older than 24 months, to match the commitment now published in the Privacy Policy. This is an obligation, not polish.
+- **Lead retention.** Scheduled purge of requests older than 24 months, to match the commitment now published in the Privacy Policy. This is an obligation, not polish.
 - Add Cloudflare Turnstile to `submit-lead` if spam appears.
 
 ---

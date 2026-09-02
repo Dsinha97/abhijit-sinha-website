@@ -11,7 +11,9 @@ Two-column:
 
 ## Scheduler tool decision
 
-The source specs mention a Cal.com / Calendly placeholder integration, but the tool is **not yet chosen** — it may end up being Cal.com, Calendly, or Google Calendar Appointment Schedules. The implementation should keep this swappable via one config field rather than hardcoding a vendor. Until an account exists, the right column ships as a styled placeholder using the direct-contact channels below.
+The scheduler is **Calendly** (`https://calendly.com/abhijitsinha-support/30min`), set through the single `scheduler` config field in `src/data/site.ts`; the component stays provider-agnostic so a later move to Cal.com or Google Calendar Appointment Schedules remains a one-line edit. With `provider: 'none'` the right column falls back to the styled placeholder using the direct-contact channels below.
+
+The embed is **click-to-load**: `SchedulerEmbed.astro` renders a facade and only creates the iframe once the visitor presses "Load booking calendar", so no request reaches Calendly on page view. That is the same treatment the Knowledge Corner gives YouTube, and it is what Privacy Policy §5.4 promises — do not add a preconnect, prefetch or provider script tag to the page.
 
 ## Alternative direct contact section
 

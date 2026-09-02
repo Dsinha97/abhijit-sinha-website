@@ -3,20 +3,68 @@
 // swapping between Cal.com, Calendly, or Google Calendar Appointment
 // Schedules later is a one-line edit to src/data/site.ts, never a template
 // change. See docs/wiki/page-schedule.md.
+//
+// The booking widget is click-to-load, the same treatment the Knowledge Corner
+// gives YouTube: no request reaches the scheduler until the visitor asks for
+// the calendar. That keeps a third-party embed off every /schedule page view,
+// which is what Privacy Policy 5.4 promises. Do not add a preconnect, a
+// prefetch or a provider script tag here - any of them would fire on load and
+// break that promise.
 import { scheduler, distributor } from '../data/site';
 
 const { provider, url: schedulerUrl } = scheduler;
 ---
 
 {provider !== 'none' && schedulerUrl ? (
-  <div class="rounded-xl border border-slate-200 overflow-hidden bg-white h-full min-h-[560px]">
-    <iframe
-      src={schedulerUrl}
-      title="Book a meeting with Abhijit Sinha"
-      class="w-full h-full min-h-[560px] border-0"
-      loading="lazy"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-    ></iframe>
+  <div
+    data-scheduler-slot
+    class="rounded-xl border border-slate-200 overflow-hidden bg-white h-full min-h-[560px]"
+  >
+    <div class="flex h-full min-h-[560px] flex-col justify-center gap-5 p-6 text-center sm:p-8">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-wide text-accent">Book a Time</p>
+        <h3 class="mt-1 text-lg font-bold text-slate-900">Pick a slot that works for you</h3>
+        <p class="mx-auto mt-3 max-w-md text-sm text-slate-600">
+          The calendar is provided by Calendly. Nothing is requested from Calendly until you
+          open it, so loading this page contacts no one but this website.
+        </p>
+      </div>
+
+      <div class="flex flex-col items-center gap-3">
+        <button
+          type="button"
+          data-scheduler-load
+          data-url={schedulerUrl}
+          data-track="cta"
+          data-track-label="Load booking calendar"
+          class="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-slate-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          Load booking calendar
+        </button>
+        <a
+          href={schedulerUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-track="cta"
+          data-track-label="Open booking calendar in new tab"
+          class="inline-flex min-h-[44px] items-center text-sm font-medium text-accent hover:underline"
+        >
+          Or open the calendar in a new tab
+          <span class="sr-only">(opens in a new tab)</span>
+        </a>
+      </div>
+
+      <p class="text-xs text-slate-500">
+        Prefer to talk first? Email{' '}
+        <a href={`mailto:${distributor.email}`} class="text-accent underline underline-offset-2">
+          {distributor.email}
+        </a>{' '}
+        or call{' '}
+        <a href={distributor.phoneHref} class="text-accent underline underline-offset-2">
+          {distributor.phone}
+        </a>.
+      </p>
+    </div>
   </div>
 ) : (
   <div class="rounded-xl border border-slate-200 bg-surface p-6 sm:p-8 h-full flex flex-col justify-center gap-5">
@@ -40,3 +88,33 @@ const { provider, url: schedulerUrl } = scheduler;
     </div>
   </div>
 )}
+
+<script>
+  // Swap the facade for the real embed, and only then. Delegated for the same
+  // reason as the video facade: one listener, no per-render wiring.
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const btn = target.closest('[data-scheduler-load]');
+    if (!(btn instanceof HTMLElement)) return;
+
+    const src = btn.getAttribute('data-url');
+    const slot = btn.closest('[data-scheduler-slot]');
+    if (!src || !slot) return;
+
+    const iframe = document.createElement('iframe');
+    iframe.src = src;
+    iframe.title = 'Book a meeting with Abhijit Sinha';
+    iframe.className = 'w-full h-full min-h-[560px] border-0';
+    iframe.loading = 'lazy';
+    // allow-popups-to-escape-sandbox matters: Calendly's confirmation step
+    // opens out of the frame, and without it that window inherits the sandbox
+    // and dies.
+    iframe.setAttribute(
+      'sandbox',
+      'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox',
+    );
+
+    slot.replaceChildren(iframe);
+  });
+</script>

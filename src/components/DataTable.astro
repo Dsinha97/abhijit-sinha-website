@@ -1,7 +1,19 @@
 ---
+/**
+ * Statutory and reference tables.
+ *
+ * A cell is either plain text or a list of outbound links. The link form is an
+ * array of objects rather than a raw HTML string on purpose: this same
+ * component renders the commission schedule on /disclosures and is earmarked
+ * for Supabase-sourced content, so no caller can ever inject markup through it.
+ */
+
+export type CellLink = { text: string; href: string };
+export type Cell = string | CellLink[];
+
 interface Props {
   headers: string[];
-  rows: string[][];
+  rows: Cell[][];
   caption?: string;
 }
 const { headers, rows, caption } = Astro.props;
@@ -23,7 +35,28 @@ const { headers, rows, caption } = Astro.props;
       {rows.map((row, i) => (
         <tr class:list={[i % 2 === 1 ? 'bg-slate-50/50' : '']}>
           {row.map((cell) => (
-            <td class="px-4 py-3 text-slate-600 align-top">{cell}</td>
+            <td class="px-4 py-3 text-slate-600 align-top">
+              {typeof cell === 'string' ? (
+                cell
+              ) : (
+                cell.map((link, j) => (
+                  <>
+                    {j > 0 && <span aria-hidden="true"> / </span>}
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-track="resource"
+                      data-track-label={link.text}
+                      class="inline-flex min-h-[44px] items-center rounded text-accent underline underline-offset-2 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                    >
+                      {link.text}
+                      <span class="sr-only">(opens in a new tab)</span>
+                    </a>
+                  </>
+                ))
+              )}
+            </td>
           ))}
         </tr>
       ))}

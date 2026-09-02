@@ -67,15 +67,19 @@ export const redressalLinks = [
 // src/components/SchedulerEmbed.astro and docs/wiki/page-schedule.md.
 export type SchedulerProvider = 'cal' | 'calendly' | 'google' | 'none';
 export const scheduler: { provider: SchedulerProvider; url: string } = {
-  provider: 'none',
-  url: '',
+  provider: 'calendly',
+  url: 'https://calendly.com/abhijitsinha-support/30min',
 };
+
+/** Structurally identical to DataTable's CellLink, so these rows drop straight
+ *  into a table cell without the data layer importing from a component. */
+export type PortalLink = { text: string; href: string };
 
 export type RtaPortalRow = {
   provider: string;
   coveredAmcs: string;
-  portalLabel: string;
-  portalUrl: string;
+  /** One or more destinations - the depository row legitimately has two. */
+  portals: PortalLink[];
   services: string;
 };
 
@@ -83,29 +87,28 @@ export const rtaPortals: RtaPortalRow[] = [
   {
     provider: 'CAMS (Computer Age Management Services)',
     coveredAmcs: 'HDFC, ICICI Prudential, SBI, Aditya Birla Sun Life, Kotak, DSP, and others',
-    portalLabel: 'mycams.camsonline.com',
-    portalUrl: 'https://mycams.camsonline.com',
+    portals: [{ text: 'mycams.camsonline.com', href: 'https://mycams.camsonline.com' }],
     services: 'Instant CAS, Nominee Update, Bank Change, SIP Pause',
   },
   {
     provider: 'KFintech (KFin Technologies)',
     coveredAmcs: 'Axis, Nippon India, UTI, Mirae Asset, Bandhan, Invesco, and others',
-    portalLabel: 'mfs.kfintech.com/investor',
-    portalUrl: 'https://mfs.kfintech.com/investor',
+    portals: [{ text: 'mfs.kfintech.com/investor', href: 'https://mfs.kfintech.com/investor' }],
     services: 'e-CAS Download, Capital Gains Statement, Folio Consolidation',
   },
   {
     provider: 'MF Central (Unified Platform)',
     coveredAmcs: 'All AMCs combined (Joint initiative of CAMS & KFintech)',
-    portalLabel: 'mfcentral.com',
-    portalUrl: 'https://mfcentral.com',
+    portals: [{ text: 'mfcentral.com', href: 'https://mfcentral.com' }],
     services: 'Unified portfolio view, non-commercial service requests',
   },
   {
     provider: 'DigiLocker / Depository CAS',
     coveredAmcs: 'NSDL / CDSL Consolidated Statement Portals',
-    portalLabel: 'nsdl.co.in / cdslindia.com',
-    portalUrl: 'https://nsdl.co.in',
+    portals: [
+      { text: 'nsdl.co.in', href: 'https://nsdl.co.in' },
+      { text: 'cdslindia.com', href: 'https://www.cdslindia.com' },
+    ],
     services: 'Demat and Mutual Fund combined statement',
   },
 ];

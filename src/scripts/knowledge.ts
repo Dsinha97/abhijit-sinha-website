@@ -32,8 +32,13 @@ function syncArrows(track: HTMLElement): void {
   const maxScroll = track.scrollWidth - track.clientWidth;
   const overflows = maxScroll > padLeft + 2;
 
+  // Only the responsive class is toggled - `hidden` stays on the button for
+  // good. Removing it would drop the arrow back to a button's default
+  // inline-block below the sm breakpoint, where `sm:flex` does not apply: the
+  // arrows are translated half their width past the track edge, so on a phone
+  // they poked out beyond the viewport and gave the whole page a horizontal
+  // scrollbar. `hidden sm:flex` is the pairing used elsewhere (Header.astro).
   for (const btn of [prev, next]) {
-    btn.classList.toggle('hidden', !overflows);
     btn.classList.toggle('sm:flex', overflows);
   }
   prev.disabled = track.scrollLeft <= padLeft + 2;
@@ -141,7 +146,13 @@ function initClamps(): void {
     const overflows = text.scrollHeight > text.clientHeight + 1;
     if (!overflows) continue;
 
+    // The display utility is added here rather than baked into the markup.
+    // Tailwind's preflight hides [hidden] with a rule of the same specificity
+    // as a utility class, and utilities ship later in the stylesheet - so a
+    // button carrying both `hidden` and `inline-flex` is never actually
+    // hidden, and this measurement would decide nothing.
     toggle.hidden = false;
+    toggle.classList.add('inline-flex', 'items-center');
     wrap.dataset.clampReady = 'true';
     toggle.addEventListener('click', () => {
       const expanded = toggle.getAttribute('aria-expanded') === 'true';

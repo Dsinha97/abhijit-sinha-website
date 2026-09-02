@@ -3,7 +3,11 @@
  * Three-line description with a "Show more" toggle.
  *
  * The button is rendered hidden and only revealed by script once the text is
- * measured as actually overflowing. Deciding from character count instead would
+ * measured as actually overflowing. It deliberately carries no display utility
+ * here: Tailwind's preflight `[hidden]` rule and a `inline-flex` utility have
+ * the same specificity, and the utility wins, so the button would be visible on
+ * every card. src/scripts/knowledge.ts adds the display class when it reveals
+ * the button. Deciding from character count instead would
  * be wrong at any width other than the one it was tuned for — the same string
  * wraps to two lines on desktop and five on a phone.
  *
@@ -30,7 +34,7 @@ const { text, id, class: className = '' } = Astro.props;
     aria-controls={id}
     aria-expanded="false"
     hidden
-    class="mt-1 inline-flex min-h-[44px] items-center text-sm font-medium text-accent hover:underline"
+    class="mt-1 min-h-[44px] text-sm font-medium text-accent hover:underline"
   >
     Show more
   </button>

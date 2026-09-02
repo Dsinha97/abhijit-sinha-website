@@ -1,5 +1,5 @@
 /**
- * Enquiry inbox.
+ * Request inbox: homepage inquiries and investor service requests.
  *
  * Every field rendered here originated in a public form with no authentication,
  * so all of it is attacker-controlled. It is built with createElement and
@@ -36,14 +36,40 @@ const STATUS_CLASS: Record<string, string> = {
   closed: 'bg-slate-100 text-slate-600 border-slate-200',
 };
 
+type Kind = 'inquiry' | 'service';
+
+const KIND_LABEL: Record<Kind, string> = {
+  inquiry: 'Inquiry',
+  service: 'Service request',
+};
+
 let leads: Lead[] = [];
 let filter: 'all' | 'new' | 'contacted' | 'closed' = 'all';
+let kind: 'all' | Kind = 'all';
 let expanded: number | null = null;
 
 const supabase = getSupabase();
 
+/**
+ * Which form a submission came from.
+ *
+ * source_page is the primary key to this, but it is stored exactly as the
+ * browser saw it - live rows carry a trailing slash - so it is normalised
+ * before matching rather than compared literally. form_name is the fallback
+ * for any row predating source_page.
+ */
+function kindOf(lead: Lead): Kind {
+  const path = (lead.source_page ?? '').replace(/\/+$/, '').toLowerCase();
+  if (path.endsWith('/investor-services')) return 'service';
+  if (path) return 'inquiry';
+  return /service/i.test(lead.form_name) ? 'service' : 'inquiry';
+}
+
 function visible(): Lead[] {
-  return filter === 'all' ? leads : leads.filter((l) => l.status === filter);
+  return leads.filter(
+    (l) =>
+      (filter === 'all' || l.status === filter) && (kind === 'all' || kindOf(l) === kind),
+  );
 }
 
 function field(label: string, value: string | null | undefined): HTMLElement | null {
@@ -64,7 +90,7 @@ function detailPanel(lead: Lead): HTMLElement {
     el(
       'a',
       {
-        href: `mailto:${lead.email}?subject=${encodeURIComponent(`Re: your enquiry (${lead.form_name})`)}`,
+        href: `mailto:${lead.email}?subject=${encodeURIComponent(`Re: your request (${lead.form_name})`)}`,
         class:
           'inline-flex min-h-[44px] items-center rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50',
       },
@@ -100,7 +126,7 @@ function detailPanel(lead: Lead): HTMLElement {
     class:
       'mt-1 w-full rounded-lg border border-slate-300 p-2.5 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30',
     rows: '3',
-    placeholder: 'Internal notes — not visible to the enquirer.',
+    placeholder: 'Internal notes — not visible to the sender.',
   }) as HTMLTextAreaElement;
   notes.value = lead.admin_notes ?? '';
 
@@ -130,6 +156,7 @@ function detailPanel(lead: Lead): HTMLElement {
     field('Investment goal', lead.investment_goal),
     field('Mode', lead.mode),
     field('Service category', lead.service_category),
+    field('Type', KIND_LABEL[kindOf(lead)]),
     field('Submitted from', lead.source_page),
     field('Form', lead.form_name),
     field('Received', fmtDateTime(lead.created_at)),
@@ -237,6 +264,15 @@ function row(lead: Lead): HTMLElement {
   return card;
 }
 
+function paintTab(btn: HTMLButtonElement, on: boolean): void {
+  btn.className = `min-h-[44px] rounded-lg border px-3 text-sm font-medium transition ${
+    on
+      ? 'border-slate-900 bg-slate-900 text-white'
+      : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+  }`;
+  btn.setAttribute('aria-pressed', String(on));
+}
+
 function render(): void {
   const list = $('leads-list');
   const empty = $('leads-empty');
@@ -249,12 +285,10 @@ function render(): void {
   empty.classList.toggle('hidden', rows.length > 0);
 
   for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-filter]')) {
-    const on = btn.dataset.filter === filter;
-    btn.className = `min-h-[44px] rounded-lg border px-3 text-sm font-medium transition ${
-      on
-        ? 'border-slate-900 bg-slate-900 text-white'
-        : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
-    }`;
+    paintTab(btn, btn.dataset.filter === filter);
+  }
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-kind]')) {
+    paintTab(btn, btn.dataset.kind === kind);
   }
 }
 
@@ -282,10 +316,19 @@ document.addEventListener('admin:ready', () => {
     });
   }
 
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-kind]')) {
+    btn.addEventListener('click', () => {
+      kind = (btn.dataset.kind ?? 'all') as typeof kind;
+      expanded = null;
+      render();
+    });
+  }
+
   $('export-csv')?.addEventListener('click', () => {
     const rows = visible().map((l) => [
       l.id,
       l.created_at,
+      KIND_LABEL[kindOf(l)],
       l.form_name,
       l.name,
       l.email,
@@ -299,9 +342,9 @@ document.addEventListener('admin:ready', () => {
       l.source_page ?? '',
     ]);
     downloadCsv(
-      `enquiries-${new Date().toISOString().slice(0, 10)}.csv`,
+      `requests-${new Date().toISOString().slice(0, 10)}.csv`,
       [
-        'ID', 'Received', 'Form', 'Name', 'Email', 'Mobile', 'Investment goal',
+        'ID', 'Received', 'Type', 'Form', 'Name', 'Email', 'Mobile', 'Investment goal',
         'Mode', 'Service category', 'Message', 'Status', 'Notes', 'Source page',
       ],
       rows,

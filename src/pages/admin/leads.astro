@@ -1,18 +1,31 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 
+// Two independent axes. Kind splits by which form the submission came from
+// (see kindOf in src/scripts/admin/leads.ts); status is the follow-up state.
+const kinds = [
+  { key: 'all', label: 'All' },
+  { key: 'inquiry', label: 'Inquiries' },
+  { key: 'service', label: 'Service Requests' },
+];
 const filters = ['all', 'new', 'contacted', 'closed'];
 ---
 
-<AdminLayout title="Enquiries" active="leads">
+<AdminLayout title="Requests" active="leads">
   <div class="flex flex-wrap items-center gap-2">
     {
+      kinds.map((k) => (
+        <button type="button" data-kind={k.key} class="min-h-[44px] rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700">
+          {k.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="mt-3 flex flex-wrap items-center gap-2">
+    {
       filters.map((f) => (
-        <button
-          type="button"
-          data-filter={f}
-          class="min-h-[44px] rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700"
-        >
+        <button type="button" data-filter={f} class="min-h-[44px] rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700">
           {f}
         </button>
       ))
@@ -28,7 +41,7 @@ const filters = ['all', 'new', 'contacted', 'closed'];
   </div>
 
   <ul id="leads-list" class="mt-4 space-y-2"></ul>
-  <p id="leads-empty" class="hidden mt-4 text-sm text-slate-500">No enquiries match this filter.</p>
+  <p id="leads-empty" class="hidden mt-4 text-sm text-slate-500">No requests match this filter.</p>
 </AdminLayout>
 
 <script>
