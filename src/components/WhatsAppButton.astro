@@ -16,7 +16,15 @@ const encodedMessage = encodeURIComponent(defaultMessage);
 const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 ---
 
-<aside class="fixed bottom-6 right-6 z-50">
+<!-- Anchored with left-0 + w-screen (100vw), never `right-6`. A fixed box's
+     containing block is the window, and on a phone the window can be wider
+     than the layout viewport - one real device reported innerWidth 876 against
+     a clientWidth of 411 - so `right-6` parked this button at x=852 on a 411px
+     page and gave every page 465px of sideways scroll. 100vw follows the
+     layout viewport on the same device, so the button stays on screen. The
+     wrapper spans the viewport and only the button itself takes pointer
+     events, so the strip does not swallow taps across the bottom of the page. -->
+<aside class="pointer-events-none fixed bottom-6 left-0 z-50 flex w-screen justify-end pr-6">
   <a
     href={whatsappUrl}
     data-track="whatsapp"
@@ -24,7 +32,7 @@ const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
     target="_blank"
     rel="noopener noreferrer"
     aria-label="Chat directly with Abhijit Sinha on WhatsApp (opens in a new tab)"
-    class="group flex items-center bg-[#25D366] hover:bg-[#20bd5a] text-white p-3.5 rounded-full shadow-lg transition-all duration-200 ease-in-out hover:scale-105 focus:outline-none focus-visible:ring-4 focus-visible:ring-green-400 focus-visible:ring-offset-2"
+    class="group pointer-events-auto flex items-center bg-[#25D366] hover:bg-[#20bd5a] text-white p-3.5 rounded-full shadow-lg transition-all duration-200 ease-in-out hover:scale-105 focus:outline-none focus-visible:ring-4 focus-visible:ring-green-400 focus-visible:ring-offset-2"
   >
     <svg class="w-6 h-6 fill-current flex-shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path
