@@ -211,12 +211,38 @@ Then, in a browser:
 - **Supabase → Auth → URL Configuration** must be updated by hand: Site URL to
   `https://abhijitsinha.in`, and `https://abhijitsinha.in/admin` added to the Redirect URLs
   allowlist. Nothing in the repo controls this, and the failure mode is silent — the magic link
-  arrives and simply does not sign you in. **Both set 2026-09-03**, not yet exercised by an actual
-  sign-in; a real magic-link login is the only way to confirm it, since a wrong allowlist entry
-  produces no error anywhere. The edge functions need **no** change; `track`, `publish-site` and
-  `submit-lead` already allowlist both hostnames in source.
+  arrives and simply does not sign you in. **Set and confirmed by a real sign-in 2026-09-03** — the
+  admin pages work on the custom domain. The edge functions needed **no** change; `track`,
+  `publish-site` and `submit-lead` already allowlist both hostnames in source, which is why the
+  forms worked the moment DNS landed.
 - **Google Search Console**: register `https://abhijitsinha.in` and submit the sitemap. Nothing was ever indexed under the vercel.app hostname, so there is no migration or duplicate-content cleanup — that was the point of the `Disallow`.
+  **Submitted 2026-09-03; still reports "Couldn't fetch".** Do not treat that as a fault on its own.
+  `https://abhijitsinha.in/sitemap-index.xml` was checked with a Googlebot user-agent and returns
+  **200 `application/xml` with no redirect**, and `robots.txt` both allows it and advertises the
+  same URL — so there is nothing on the site to fix. "Couldn't fetch" is Search Console's state
+  *before a successful crawl has been recorded*, and Google may also still hold the pre-cutover
+  parking IP from the old records' 1-hour TTL. Resubmitting does not speed it up. If it persists
+  beyond ~24h, suspect the **property**, not the sitemap: a URL-prefix property must be
+  `https://abhijitsinha.in` exactly (`http://`, or the `www` form, is a separate property, and a
+  sitemap submitted under a mismatched one fails). A DNS-verified Domain property avoids the
+  distinction entirely and is the better fit here, since the GoDaddy zone is already under control.
 - **Resend** becomes viable for lead notification email. It needs `abhijitsinha.in` verified, which the parked domain could not do, and requires its own DKIM/SPF TXT records at GoDaddy. See [data-model](data-model.md).
+
+### What is still open (as of 2026-09-03)
+
+The cutover itself is **finished and verified**: DNS, TLS, all routes, canonicals, sitemap, the
+`/admin` exclusions, the vercel.app redirect, admin sign-in on the custom domain, and both contact
+forms end to end. Nothing below blocks the site; these are the loose ends.
+
+| Item | State | Notes |
+|---|---|---|
+| Search Console sitemap | **Waiting** | "Couldn't fetch" — expected pre-first-crawl. Re-check on or after **2026-09-04**; if unchanged, check the property type, not the sitemap (see above). |
+| WhatsApp link preview | **Unverified** | Paste `https://abhijitsinha.in` into a chat. Exercises `og:url` and the OG image together — neither is provable by `curl`, since the failure is a preview that renders blank or stale. |
+| `VERCEL_DEPLOY_HOOK_URL` | **Unverified** | Admin sign-in working does not prove *publishing* works. Press Publish in `/admin`; a **503 with an explanatory message** means the Supabase secret was never created. See [admin-dashboard](admin-dashboard.md). |
+| Resend for lead email | **Optional** | Now unblocked — `abhijitsinha.in` can finally be domain-verified, which the parked domain could not do. Needs DKIM/SPF TXT records at GoDaddy. Web3Forms keeps working until then; this is an improvement, not a repair. See [data-model](data-model.md). |
+| `commissionPeriod` | **Expires** | `site.ts` carries `1 August 2026 to 30 September 2026`. It is a dated statutory claim on `/disclosures` and goes stale on its own — it needs refreshing from the AMC rate cards when the period ends, independent of anything to do with the domain. |
+
+The last row is the only one with a hard deadline, and it is the one nothing will remind you about.
 
 ### Rollback
 
