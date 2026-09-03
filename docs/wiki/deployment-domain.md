@@ -241,6 +241,8 @@ forms end to end. Nothing below blocks the site; these are the loose ends.
 | `VERCEL_DEPLOY_HOOK_URL` | **Unverified** | Admin sign-in working does not prove *publishing* works. Press Publish in `/admin`; a **503 with an explanatory message** means the Supabase secret was never created. See [admin-dashboard](admin-dashboard.md). |
 | Resend for lead email | **Optional** | Now unblocked — `abhijitsinha.in` can finally be domain-verified, which the parked domain could not do. Needs DKIM/SPF TXT records at GoDaddy. Web3Forms keeps working until then; this is an improvement, not a repair. See [data-model](data-model.md). |
 | `commissionPeriod` | **Expires** | `site.ts` carries `1 August 2026 to 30 September 2026`. It is a dated statutory claim on `/disclosures` and goes stale on its own — it needs refreshing from the AMC rate cards when the period ends, independent of anything to do with the domain. |
+| Missing AMC rate cards | **Waiting** | Empanelled with 14 AMCs, 6 rate cards on file. `/disclosures` states the gap openly, so this is not a defect — but each card that arrives means re-deriving `commissionSchedule` and flipping `rateCardOnFile` in `site.ts`. Outstanding: Aditya Birla Sun Life, Edelweiss, HDFC, ITI, Kotak Mahindra, Motilal Oswal, SBI, UTI. See [regulatory-compliance](regulatory-compliance.md#commission-disclosure-provenance). |
+| quant rate card | **Lapsed** | The quant card on file is dated **1–31 August 2026** and has expired, while `/disclosures` publishes a period ending 30 September. Its figures are still in the table (highest slab, so the range encloses them); replace the card with one covering the published period. |
 
 The last row is the only one with a hard deadline, and it is the one nothing will remind you about.
 

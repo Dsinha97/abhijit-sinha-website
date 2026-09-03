@@ -32,6 +32,38 @@ These three patterns recur across pages (see [site-architecture](site-architectu
 - **Compliance & Disclosure Callouts** — highlighted boxes with a subtle slate/blue border, separating regulatory notices from body copy. See [regulatory-compliance](regulatory-compliance.md).
 - **Structured Data Tables** — responsive, striped tables for commission structures, grievance contacts, fund category breakdowns.
 
+## AMC logo tiles
+
+The empanelled-AMC wall on [disclosures](page-disclosures.md) is fourteen third-party logos in one
+grid, and third-party marks are the hardest thing on this site to make look deliberate. Three rules
+carry it, all of them learned by getting it wrong first:
+
+- **A fixed white tile per mark, `object-contain`, alt text = the AMC's name.** Every one of these
+  logos is dark artwork drawn for a light background, so the tile is not decoration — it is the only
+  thing that keeps them legible and stops fourteen different canvas colours from showing through.
+  The wall was in the navy footer until 2026-09-03, where the tile was doing even more work.
+- **Trim each PNG to the mark's own bounds before committing it.** The ICICI source arrived as a
+  180×180 canvas that was only 41% logo, so it rendered at half the visual size of its neighbours no
+  matter what the CSS said — whitespace inside the file beats any rule outside it. Sources also
+  arrive wildly oversized (the Edelweiss SVG rasterised to 11134px wide); cap at 480px.
+- **Balance area, not height.** The eye compares how much ink a mark occupies. With aspect ratios
+  from 2.0:1 to 5.9:1, a single `max-h` makes the wide marks enormous, so each entry in `site.ts`
+  carries its own `maxH` — roughly `max-h-12` at 2:1 down to `max-h-9` past 4:1 — chosen to land
+  every mark near 4700px². Re-measure when a logo is replaced.
+
+  **The `max-w-[min(100%,9rem)]` cap on the image is load-bearing.** Those `maxH` values were tuned
+  against the footer's fixed 144px-wide tile, where marks past ~4:1 hit the *width* limit before the
+  height limit. The grid's tiles are wider than that at desktop, so without the cap those marks stop
+  being width-limited and measure ~6500px² against ~4700px² for the compact ones. The cap makes
+  every breakpoint behave like the tile the numbers were picked for.
+
+`AmcPartner.logo` is nullable and falls back to a plain wordmark tile. Nothing uses it today, but it
+is the graceful degradation for an AMC whose mark is missing or unusable, and it is how Aditya Birla
+Sun Life rendered for the few hours before a usable logo was supplied.
+
+A **grid, never a horizontal strip** — see [mobile-viewport-pitfalls](mobile-viewport-pitfalls.md);
+nothing on this site scrolls sideways.
+
 ## Global framework (every page)
 
 1. **Sticky regulatory top banner** — topmost bar, above main nav. See [regulatory-compliance](regulatory-compliance.md).

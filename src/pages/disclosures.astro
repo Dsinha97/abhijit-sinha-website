@@ -3,7 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import DataTable from '../components/DataTable.astro';
 import SectionCard from '../components/SectionCard.astro';
 import ComplianceCallout from '../components/ComplianceCallout.astro';
-import { distributor, commissionSchedule, commissionPeriod, empanelledAmcs } from '../data/site';
+import { distributor, commissionSchedule, commissionPeriod, empanelledAmcs, rateCardAmcs } from '../data/site';
+import { url } from '../lib/url';
 
 const tableRows = commissionSchedule.map((r) => [r.assetClass, r.subCategories, r.year1, r.year2Plus]);
 
@@ -47,14 +48,20 @@ const conductGrid = [
   <section class="bg-surface border-y border-slate-200 py-14 sm:py-20">
     <div class="mx-auto max-w-6xl px-4 sm:px-6">
       <h2 class="text-2xl font-bold text-slate-900 mb-2">Annual Trail Commission Schedule</h2>
-      <p class="text-sm text-slate-500 mb-6">
+      <p class="text-sm text-slate-500 mb-2">
         Ranges below are the lowest and highest base trail commission payable across every scheme in the
-        published rate cards of the empanelled AMCs ({empanelledAmcs.map((amc) => amc.name).join(', ')}) for the period {commissionPeriod}.
+        published rate cards held on file, for the period {commissionPeriod}. Those cards are the ones
+        issued by {rateCardAmcs.map((amc) => amc.name).join(', ')}.
+      </p>
+      <p class="text-sm text-slate-500 mb-6">
+        Rate cards for the remaining empanelled Asset Management Companies have not yet been received.
+        Their schemes are <strong>not</strong> reflected in the ranges below, and this schedule will be
+        updated as each card is received.
       </p>
       <DataTable
         headers={['Asset Class / Classification', 'Sub-Categories Included', 'Trail Commission (Years 1–3)', 'Trail Commission (Year 4 Onwards)']}
         rows={tableRows}
-        caption="Annual trail commission schedule by asset class, across empanelled AMCs"
+        caption="Annual trail commission schedule by asset class, across the AMCs whose current rate cards are on file"
       />
       <div class="text-xs text-slate-500 mt-4 space-y-2 max-w-4xl">
         <p>
@@ -74,6 +81,55 @@ const conductGrid = [
         </p>
       </div>
     </div>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-4 sm:px-6 py-14 sm:py-20">
+    <h2 class="text-2xl font-bold text-slate-900 mb-2">Empanelled Asset Management Companies</h2>
+    <p class="text-sm text-slate-500 mb-6 max-w-3xl">
+      {distributor.name} is empanelled as a distributor with the {empanelledAmcs.length} Asset Management
+      Companies below under {distributor.arn}.
+    </p>
+
+    {/* A fixed white tile per mark, with object-contain and a per-logo max
+        height, is what makes aspect ratios from 2:1 to 5.9:1 read as one band
+        without distorting any of them — see the note above `empanelledAmcs` in
+        site.ts.
+
+        The 9rem (144px) width cap is load-bearing, not decoration. Every `maxH`
+        was picked against a tile whose usable width was 144px, where marks past
+        ~4:1 hit the width limit before the height limit. This grid's tiles are
+        wider than that at desktop, so without the cap those marks stop being
+        width-limited and blow out to ~6500px² against ~4700px² for the compact
+        ones — measurably lopsided, since the eye compares area. Capping the
+        width makes every breakpoint behave like the tile the values were tuned
+        for.
+
+        A grid, never a horizontal strip: nothing on this site scrolls sideways
+        (docs/wiki/mobile-viewport-pitfalls.md). */}
+    <ul class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      {empanelledAmcs.map((amc) => (
+        <li class="flex h-20 items-center justify-center rounded-lg border border-slate-200 bg-white p-2">
+          {amc.logo ? (
+            <img
+              src={url(amc.logo)}
+              alt={amc.name}
+              width="160"
+              height="80"
+              loading="lazy"
+              decoding="async"
+              class:list={['w-auto max-w-[min(100%,9rem)] object-contain', amc.maxH]}
+            />
+          ) : (
+            <span class="text-center text-sm font-semibold leading-tight text-primary">{amc.name}</span>
+          )}
+        </li>
+      ))}
+    </ul>
+
+    <p class="mt-4 text-xs text-slate-500 max-w-3xl">
+      Empanelment is a distribution arrangement and does not constitute a recommendation of any scheme or
+      Asset Management Company. All logos and trademarks are the property of their respective owners.
+    </p>
   </section>
 
   <section class="mx-auto max-w-6xl px-4 sm:px-6 py-14 sm:py-20">

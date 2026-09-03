@@ -31,7 +31,7 @@ Recurring compliance statement: all transactions are executed in **Regular Plans
 - 100% trail-only — no upfront commissions, advisory fees, or platform charges to the investor.
 - Commission is disclosed under SEBI circular `SEBI/IMD/CIR No. 4/168230/09` and the AMFI Code of Conduct.
 - Exact commission is verifiable by the investor via their Consolidated Account Statement (CAS) from NSDL/CDSL or CAMS/KFintech.
-- Indicative trail commission ranges are placeholders (e.g. Equity `[0.50%–1.25%]`) pending AMC empanelment agreements — do not present these as final.
+- ~~Indicative trail commission ranges are placeholders (e.g. Equity `[0.50%–1.25%]`) pending AMC empanelment agreements — do not present these as final.~~ **Superseded 2026-09-01, noted here 2026-09-03:** the ranges are real, derived from rate cards on file. See "Commission disclosure provenance" below.
 
 ## AMFI Code of Conduct pillars (three-column grid on /disclosures)
 
@@ -78,10 +78,28 @@ statement on the page and in Terms §5.
 ## Commission disclosure provenance (updated 2026-09-01)
 
 The trail-commission table on `/disclosures` is no longer placeholder data. It is derived from the
-Aug–Sep 2026 brokerage rate cards of the four empanelled AMCs (Nippon India, ICICI Prudential, DSP,
-WhiteOak Capital) held in `Important Docs/Commission Structure/`, which are **never committed**.
+brokerage rate cards held in `Important Docs/Commission Structure/`, which are **never committed**.
 Figures are base trail per annum excluding GST, taken as the min/max across every scheme row, with
 minimums rounded down and maximums rounded up so the published range always encloses actual rates.
+
+**Coverage is a subset of empanelment, and the page says so.** As of 2026-09-03 the ARN is
+empanelled with **fourteen** AMCs but only **six** rate cards are on file — Axis, DSP, ICICI
+Prudential, Nippon India, quant, WhiteOak Capital. `site.ts` tracks this with `rateCardOnFile` per
+AMC and derives `rateCardAmcs` from it; only that list may be named beside the commission table, and
+the page states outright that the remaining AMCs' schemes are not reflected in the ranges. Naming
+all fourteen would assert a derivation from documents that do not exist. See
+[page-disclosures](page-disclosures.md#two-amc-lists-deliberately); the rule is also in root
+`CLAUDE.md`.
+
+Two judgement calls baked into the current figures, both worth knowing before re-deriving:
+
+- **quant publishes three AUM slabs** (BASE Plus > ₹2 cr, BASE ₹50 L–2 cr, OPEN < ₹50 L). The
+  highest slab is used, so the published range encloses whichever one applies as AUM moves — that is
+  the same "always encloses actual rates" rule applied to a tiered card. quant's trail is perpetual,
+  so its rates land in both year columns. This is what moved the Hybrid ceiling to 1.16%.
+- **quant SIF long-short products are excluded.** A Specialized Investment Fund is a separate SEBI
+  product category, not a mutual fund scheme, and this table's asset classes are mutual fund
+  categories. Folding SIF rates in would misstate both.
 
 `/disclosures` also now discloses the SEBI B-30 / women-investor incentive (1% of the first
 investment, capped at ₹2,000, payable after one year), which is a real payment received in
