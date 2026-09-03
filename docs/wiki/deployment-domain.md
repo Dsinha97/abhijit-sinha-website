@@ -2,17 +2,60 @@
 
 The site is a static Astro build (no SSR adapter) deployed on **Vercel**, which builds and deploys from `main` on every push. GitHub Pages was the original target and is fully retired: `.github/workflows/deploy.yml` is deleted and the repo's Pages source is set to **None**.
 
-## Current state (verified live)
+## Current state (verified live 2026-09-03)
 
 | | |
 |---|---|
-| Live URL | `https://abhijit-sinha-website.vercel.app` |
-| Custom domain | `abhijitsinha.in` — registered at **GoDaddy**, still parked, **not** pointed here |
-| Cutover | Deferred until the site's content is finished |
-| Indexing | **Disabled** — `public/robots.txt` carries `Disallow: /` |
+| Live URL | `https://abhijitsinha.in` |
+| Custom domain | **Cut over.** DNS hosted at GoDaddy (`ns31`/`ns32.domaincontrol.com`), apex `A → 216.198.79.1`, `www` CNAME → per-account Vercel host, 308 to apex. Both certificates issued. |
+| Cutover | **Done** — see [what actually happened](#what-actually-happened-at-cutover-2026-09-03) |
+| Indexing | **Enabled** — `public/robots.txt` is `Allow: /` with `Disallow: /admin` retained |
 | Contact forms | Working end to end (Supabase `submit-lead` → `leads` → Web3Forms email) |
 
-The `.vercel.app` hostname is temporary but fully functional. Everything in the [cutover runbook](#cutover-runbook) below is the plan for later, not the state today.
+The [cutover runbook](#cutover-runbook) below has been **executed**, not superseded — it is kept as
+written because it is the recovery procedure if DNS ever has to be rebuilt, and because its
+reasoning is still the reasoning. Where reality diverged from it, the runbook step carries an
+inline correction and the divergences are collected in the section directly below.
+
+**Historical note:** the site served from `https://abhijit-sinha-website.vercel.app` with
+`Disallow: /` from launch until 2026-09-03. Nothing was ever indexed under that hostname, which
+was the entire point of the block — so the cutover needed no duplicate-content cleanup.
+
+## What actually happened at cutover (2026-09-03)
+
+Five things the runbook did not predict. All five are now folded into the steps below, but they are
+worth reading as a set, because four of them present as *the same symptom*: correct-looking records
+that do nothing.
+
+1. **Vercel now issues `216.198.79.1` for the apex, not `76.76.21.21`.** Vercel's own panel says the
+   legacy IP "will continue to work", so this is not urgent for anyone already pointed at it — but
+   the dashboard is authoritative and new setups should use what it shows.
+
+2. **The `www` CNAME target is per-account and unguessable.** Ours is
+   `50fdc8d963fd4e2e.vercel-dns-017.com`. The runbook already warned about this; it was right to.
+   GoDaddy adds its own trailing dot, so enter the value without one.
+
+3. **Do not use Vercel's "Vercel DNS" tab.** The Domains panel offers a nameserver switch to
+   `ns1`/`ns2.vercel-dns.com` as an alternative to the A record. Taking it moves the *entire* zone to
+   Vercel — including the **MX records routing `support@abhijitsinha.in`**, which would stop
+   delivering until recreated by hand. The A-record route leaves mail untouched. Use the **DNS
+   Records** tab.
+
+4. **GoDaddy domain forwarding is what locks the parking A records.** The apex had *three* A records
+   — `15.197.225.128` and `3.33.251.168` (GoDaddy's forwarding endpoints) alongside the one we
+   added. The two forwarding rows had their delete and edit controls **greyed out**, because the
+   forwarding feature owns them. They cannot be removed from the DNS page at all; deleting the
+   forwarding entry under **Domain Settings → Forwarding** removes both rows automatically. Until
+   then DNS round-robins across all three, so roughly two visitors in three land on the parking page
+   — an intermittent failure that looks like slow propagation.
+
+5. **The forwarding pointed the wrong way.** GoDaddy was set to forward apex → `http://www` (301),
+   while Vercel is configured `www` → apex (308). Left in place these two fight each other into a
+   redirect loop *after* DNS is otherwise perfect. Deleting the forwarding was required for
+   correctness, not just tidiness.
+
+Once forwarding was deleted, propagation took under a minute, and the post-push Vercel build was
+live in ~30 seconds.
 
 ### Why `base` must stay at the domain root
 
@@ -20,7 +63,11 @@ The `.vercel.app` hostname is temporary but fully functional. Everything in the 
 
 `base` is `''` on every host and must never go back to a sub-path. Vercel serves `dist/` at the root, so a non-empty `base` produces a site whose **pages load but whose CSS, images, and every link 404** — pages are emitted at the root regardless of `base`, so the deploy looks healthy while being completely broken. This is exactly how the first Vercel deploy failed, and it fails silently: no build error, no 500, just an unstyled page.
 
-`SITE_URL` is currently **overridden in Vercel** to the vercel.app hostname so canonical tags, `og:url`, and the sitemap agree with the host actually serving them. Without it they would advertise `abhijitsinha.in`, which does not resolve — link previews in WhatsApp and LinkedIn resolve against `og:url`, so this is not merely cosmetic.
+`SITE_URL` was **overridden in Vercel** to the vercel.app hostname for the whole pre-cutover
+period, so canonical tags, `og:url`, and the sitemap agreed with the host actually serving them —
+link previews in WhatsApp and LinkedIn resolve against `og:url`, so this was never merely cosmetic.
+Since 2026-09-03 the override is `https://abhijitsinha.in`, which now matches the config default;
+it is kept set rather than deleted so the value is visible in the dashboard alongside the others.
 
 ## Vercel project settings
 
@@ -33,7 +80,7 @@ Environment variables, scoped to Production + Preview + Development:
 | `PUBLIC_FORM_ENDPOINT` | the `submit-lead` edge function URL |
 | `PUBLIC_SUPABASE_URL` | the Supabase project URL |
 | `PUBLIC_SUPABASE_ANON_KEY` | the publishable key (public by design) |
-| `SITE_URL` | `https://abhijit-sinha-website.vercel.app` → becomes `https://abhijitsinha.in` at cutover |
+| `SITE_URL` | `https://abhijitsinha.in` (set at cutover, 2026-09-03) |
 
 `BASE_PATH` is deliberately **not** set — root is already the default. The Supabase `service_role` key must never be added here; it stays a Supabase edge-function secret (see [data-model](data-model.md)).
 
@@ -61,11 +108,26 @@ Vercel will show both as unverified and display the exact DNS values it wants. *
 
 In GoDaddy → Domain → DNS Management:
 
-1. **Delete the parking records first.** A parked domain ships with an `A @ →` GoDaddy parking IP and a `CNAME www → @`. Both must go, or the apex keeps resolving to the parked page no matter what else you add.
-2. **Check Domain Settings → Forwarding and remove any domain or subdomain forwarding.** GoDaddy forwarding silently overrides DNS. This is the most common reason a correct A record appears to do nothing, and it will cost you an hour if you skip it.
-3. Add `A` record — host `@`, value `76.76.21.21` (Vercel's apex anycast IP). An A record is required because GoDaddy cannot CNAME an apex; that is the only cost of choosing apex-canonical over www-canonical.
-4. Add `CNAME` record — host `www`, value = whatever Vercel showed in step 1.
-5. **Leave MX and TXT records alone.** `support@abhijitsinha.in` mail routing must not be disturbed by a hosting change.
+Use the **DNS Records** tab, **not the Vercel DNS tab** — the nameserver switch it offers would
+move the MX records for `support@abhijitsinha.in` to Vercel and break mail. See
+[divergence 3](#what-actually-happened-at-cutover-2026-09-03).
+
+1. **Delete the forwarding first, before touching any record.** Domain Settings → **Forwarding**,
+   remove both the domain and any subdomain entry. Corrected 2026-09-03: this was step 2 and is now
+   step 1, because the parking A records **cannot be deleted while forwarding exists** — GoDaddy
+   greys out their delete and edit controls. Deleting the forwarding removes them for you. Doing it
+   in the old order leaves you fighting a control that will never work.
+2. **Confirm the parking records are gone.** A parked domain ships with GoDaddy forwarding IPs on
+   `A @` (ours were `15.197.225.128` and `3.33.251.168`) and a `CNAME www → @`. If any survive, the
+   apex round-robins between Vercel and the parking page.
+3. Add `A` record — host `@`, value **`216.198.79.1`**. Corrected 2026-09-03: the runbook previously
+   said `76.76.21.21`, which Vercel confirms still works but no longer issues. Take whatever the
+   dashboard shows. An A record is required because GoDaddy cannot CNAME an apex; that is the only
+   cost of choosing apex-canonical over www-canonical.
+4. Add `CNAME` record — host `www`, value = whatever Vercel showed in step 1 (ours:
+   `50fdc8d963fd4e2e.vercel-dns-017.com`, entered **without** a trailing dot — GoDaddy appends one).
+5. **Leave MX, TXT and the `NS`/`SOA` rows alone.** `support@abhijitsinha.in` mail routing must not
+   be disturbed by a hosting change.
 
 Then wait for both hostnames to read **Valid** in Vercel's Domains panel. TLS certificates issue automatically once they do. GoDaddy TTLs are often an hour, so this is not instant.
 
@@ -75,7 +137,11 @@ Check propagation without waiting on a browser cache:
 nslookup abhijitsinha.in
 ```
 
-The apex should answer `76.76.21.21`.
+The apex should answer a single address — `216.198.79.1`. *More than one answer means a parking
+record survived*; go back and clear the forwarding. Query a public resolver (`nslookup
+abhijitsinha.in 8.8.8.8`) rather than trusting a browser or the Vercel badge, and check `www`
+resolves through the vercel-dns host too. The real proof that certificates issued is that
+`https://` responds at all on both names, not the panel turning green.
 
 ### 3. Point `SITE_URL` at the domain
 
@@ -123,6 +189,12 @@ curl -s -o /dev/null -w "www -> %{http_code} %{redirect_url}\n" https://www.abhi
 
 Expect canonical and `og:url` on `https://abhijitsinha.in`, and `www` returning 308 to the apex.
 
+All of the above passed on 2026-09-03: eight 200s and one 404 (the runbook's original loop omitted
+`/knowledge-corner`), canonical and `og:url` both on the apex, `www` 308, sitemap index resolving,
+and **zero `/admin` URLs** in `sitemap-0.xml`. The Knowledge Corner article was checked in
+view-source rather than by status code alone — a 200 proves the route exists, not that the
+build-time Supabase fetch returned anything.
+
 Then, in a browser:
 
 - Submit **both** contact forms (homepage and `/investor-services`) from the real domain. Confirm a row in `leads` **and** the Web3Forms email. The email leg is the only part of the stack that fails silently.
@@ -131,12 +203,21 @@ Then, in a browser:
 ### 7. Post-cutover
 
 - **Check whether `abhijit-sinha-website.vercel.app` still serves.** Vercel keeps project aliases reachable, and now that indexing is enabled it would be an indexable duplicate of a regulated-content site. If it still answers, set it to redirect to the apex in the Domains panel.
+  **Confirmed outstanding as of 2026-09-03:** it returns **200** and serves the full site. This is
+  the one item of the cutover left open, and it is a compliance exposure rather than a cosmetic
+  one — the whole reason for the pre-cutover `Disallow` was to keep a second copy of regulated
+  content out of the index, and this reintroduces exactly that. Resolve it in the Domains panel.
+- **Supabase → Auth → URL Configuration** must be updated by hand: Site URL to
+  `https://abhijitsinha.in`, and `https://abhijitsinha.in/admin` added to the Redirect URLs
+  allowlist. Nothing in the repo controls this, and the failure mode is silent — the magic link
+  arrives and simply does not sign you in. The edge functions need **no** change; `track`,
+  `publish-site` and `submit-lead` already allowlist both hostnames in source.
 - **Google Search Console**: register `https://abhijitsinha.in` and submit the sitemap. Nothing was ever indexed under the vercel.app hostname, so there is no migration or duplicate-content cleanup — that was the point of the `Disallow`.
 - **Resend** becomes viable for lead notification email. It needs `abhijitsinha.in` verified, which the parked domain could not do, and requires its own DKIM/SPF TXT records at GoDaddy. See [data-model](data-model.md).
 
 ### Rollback
 
-Nothing in steps 1–4 affects the live site — the vercel.app host serves throughout, so an abandoned cutover leaves no damage; just delete the domains in Vercel.
+*(Executed 2026-09-03; retained as the recovery procedure.)* Nothing in steps 1–4 affects the live site — the vercel.app host serves throughout, so an abandoned cutover leaves no damage; just delete the domains in Vercel.
 
 After step 5, rolling back means reverting the robots.txt commit and setting `SITE_URL` back. If DNS is the problem, the fastest recovery is to keep sharing the vercel.app URL while you fix the records, since it keeps working independently of the domain.
 

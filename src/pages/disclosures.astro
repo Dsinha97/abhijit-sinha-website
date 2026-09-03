@@ -49,7 +49,7 @@ const conductGrid = [
       <h2 class="text-2xl font-bold text-slate-900 mb-2">Annual Trail Commission Schedule</h2>
       <p class="text-sm text-slate-500 mb-6">
         Ranges below are the lowest and highest base trail commission payable across every scheme in the
-        published rate cards of the empanelled AMCs ({empanelledAmcs.join(', ')}) for the period {commissionPeriod}.
+        published rate cards of the empanelled AMCs ({empanelledAmcs.map((amc) => amc.name).join(', ')}) for the period {commissionPeriod}.
       </p>
       <DataTable
         headers={['Asset Class / Classification', 'Sub-Categories Included', 'Trail Commission (Years 1–3)', 'Trail Commission (Year 4 Onwards)']}

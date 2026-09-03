@@ -17,7 +17,7 @@ Synthesized map of the design specs for abhijitsinha.in, an AMFI-registered Mutu
 - [SEO & Metadata](seo-and-metadata.md) — sitemap, OG tags, JSON-LD schema
 - [Contact Channels](contact-channels.md) — WhatsApp, email, phone, forms, scheduler
 - [Legal Copy](legal-copy.md) — Privacy Policy & Terms of Use content
-- [Deployment & Domain](deployment-domain.md) — current GitHub Pages sub-path deployment and the deferred custom-domain cutover plan
+- [Deployment & Domain](deployment-domain.md) — Vercel deployment, the executed `abhijitsinha.in` cutover, and the GoDaddy DNS traps it surfaced
 - [Admin Dashboard](admin-dashboard.md) — the `/admin` lead inbox and content editor: approach rationale, access control, and the Phase 2–5 roadmap
 - [Data Model](data-model.md) — Supabase schema, RLS policies, and the `submit-lead` edge function
 

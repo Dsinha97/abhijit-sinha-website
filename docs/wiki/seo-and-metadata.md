@@ -4,7 +4,7 @@ Source: [seo-tools.md](../sources/seo-tools.md).
 
 ## Sitemap & robots
 
-`@astrojs/sitemap` integration. `site` is `https://abhijitsinha.in` and `base` is the domain root, matching the source spec — the site is served from the root on Vercel, so sitemap and canonical URLs need no sub-path allowance. Both values are env-overridable; see [deployment-domain](deployment-domain.md). `public/robots.txt` allows all crawlers and points to `/sitemap-index.xml`; its `Sitemap:` line is the one hardcoded absolute URL in the repo and must be edited by hand if the domain ever changes.
+`@astrojs/sitemap` integration. `site` is `https://abhijitsinha.in` and `base` is the domain root, matching the source spec — the site is served from the root on Vercel, so sitemap and canonical URLs need no sub-path allowance. Both values are env-overridable; see [deployment-domain](deployment-domain.md). `public/robots.txt` allows all crawlers **except on `/admin`**, and points to `/sitemap-index.xml`; its `Sitemap:` line is the one hardcoded absolute URL in the repo and must be edited by hand if the domain ever changes. Indexing was blocked outright (`Disallow: /`) until the 2026-09-03 cutover — see [deployment-domain](deployment-domain.md). The `Disallow: /admin` line was added ahead of that date specifically so lifting the blanket block could not accidentally expose the admin panel, and the sitemap integration filters `/admin` independently in `astro.config.mjs`; **both belts are deliberate, keep both.**
 
 ## Social preview
 
