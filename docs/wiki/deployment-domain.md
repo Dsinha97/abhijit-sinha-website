@@ -203,15 +203,18 @@ Then, in a browser:
 ### 7. Post-cutover
 
 - **Check whether `abhijit-sinha-website.vercel.app` still serves.** Vercel keeps project aliases reachable, and now that indexing is enabled it would be an indexable duplicate of a regulated-content site. If it still answers, set it to redirect to the apex in the Domains panel.
-  **Confirmed outstanding as of 2026-09-03:** it returns **200** and serves the full site. This is
-  the one item of the cutover left open, and it is a compliance exposure rather than a cosmetic
-  one — the whole reason for the pre-cutover `Disallow` was to keep a second copy of regulated
-  content out of the index, and this reintroduces exactly that. Resolve it in the Domains panel.
+  **Done 2026-09-03.** It was serving the full site on 200 for roughly an hour after cutover — a
+  crawlable second copy of regulated content, which is exactly what the pre-cutover `Disallow` had
+  existed to prevent. Now **308s to the apex and preserves the path** (`/disclosures` →
+  `https://abhijitsinha.in/disclosures`), so no page on that host is independently indexable.
+  Verify with a deep path, not just `/`: a root-only redirect would leave every inner page exposed.
 - **Supabase → Auth → URL Configuration** must be updated by hand: Site URL to
   `https://abhijitsinha.in`, and `https://abhijitsinha.in/admin` added to the Redirect URLs
   allowlist. Nothing in the repo controls this, and the failure mode is silent — the magic link
-  arrives and simply does not sign you in. The edge functions need **no** change; `track`,
-  `publish-site` and `submit-lead` already allowlist both hostnames in source.
+  arrives and simply does not sign you in. **Both set 2026-09-03**, not yet exercised by an actual
+  sign-in; a real magic-link login is the only way to confirm it, since a wrong allowlist entry
+  produces no error anywhere. The edge functions need **no** change; `track`, `publish-site` and
+  `submit-lead` already allowlist both hostnames in source.
 - **Google Search Console**: register `https://abhijitsinha.in` and submit the sitemap. Nothing was ever indexed under the vercel.app hostname, so there is no migration or duplicate-content cleanup — that was the point of the `Disallow`.
 - **Resend** becomes viable for lead notification email. It needs `abhijitsinha.in` verified, which the parked domain could not do, and requires its own DKIM/SPF TXT records at GoDaddy. See [data-model](data-model.md).
 
