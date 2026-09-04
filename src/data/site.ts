@@ -48,18 +48,41 @@ export const nav: NavItem[] = [
 
 export const primaryCta: NavItem = { label: 'Schedule a Meeting', href: '/schedule' };
 
-export const footerQuickLinks: NavItem[] = [
-  ...nav,
-  primaryCta,
-  { label: 'Privacy Policy', href: '/privacy-policy' },
-  { label: 'Terms of Use', href: '/terms' },
-];
-
 export const redressalLinks = [
   { label: 'CAMS Online', href: 'https://mycams.camsonline.com' },
   { label: 'KFintech', href: 'https://mfs.kfintech.com/investor' },
   { label: 'SEBI SCORES 2.0', href: 'https://scores.sebi.gov.in/' },
 ] as const;
+
+// The footer used to spread the entire header nav plus every redressal link
+// plus Privacy Choices into one full-size row — thirteen items, and it read as
+// clutter. This is a deliberately short selection rendered inline under the
+// copyright line, not a second navigation: the header already carries the nav,
+// and the pages themselves carry the deep links.
+//
+// Two omissions are on purpose. `About` and `Schedule a Meeting` are dropped
+// because the header shows both on every page. The CAMS and KFintech portals
+// are dropped because they are self-service RTA logins that belong on
+// /investor-services, where they are explained — but SEBI SCORES stays, since
+// the grievance channel is a statutory footer expectation
+// (docs/wiki/design-system.md, global framework item 4).
+//
+// `kind` drives which element Footer.astro renders: an external anchor, the
+// privacy-notice reopen button, or a plain internal link.
+export type FooterLink = NavItem & { kind?: 'external' | 'privacy-choices' };
+
+export const footerLinks: FooterLink[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Solutions', href: '/solutions' },
+  { label: 'Knowledge Corner', href: '/knowledge-corner' },
+  { label: 'Investor Services', href: '/investor-services' },
+  { label: 'Disclosures', href: '/disclosures' },
+  { label: 'SEBI SCORES 2.0', href: 'https://scores.sebi.gov.in/', kind: 'external' },
+  { label: 'Privacy Policy', href: '/privacy-policy' },
+  { label: 'Terms of Use', href: '/terms' },
+  // Not a navigation target — reopens the privacy notice in place.
+  { label: 'Privacy Choices', href: '#privacy-choices', kind: 'privacy-choices' },
+];
 
 // Scheduler is deliberately provider-agnostic: the specs mention Cal.com /
 // Calendly, but Abhijit may end up on Google Calendar Appointment Schedules
@@ -272,7 +295,7 @@ export const site = {
   statutory,
   nav,
   primaryCta,
-  footerQuickLinks,
+  footerLinks,
   redressalLinks,
   scheduler,
   rtaPortals,
@@ -280,10 +303,21 @@ export const site = {
   commissionPeriod,
   empanelledAmcs,
   rateCardAmcs,
-  // POST endpoint for the contact forms — the Supabase `submit-lead` edge
-  // function. Set PUBLIC_FORM_ENDPOINT in .env (see .env.example). When empty,
-  // ContactForm.astro renders in a disabled/informational state.
+  // POST endpoint for the contact forms — the Supabase `verify-lead` edge
+  // function, which checks the Turnstile token and then forwards to the
+  // untouched `submit-lead`. Set PUBLIC_FORM_ENDPOINT in .env (see
+  // .env.example). When empty, ContactForm.astro renders in a
+  // disabled/informational state. Pointing this back at `submit-lead` is the
+  // one-line rollback if the gate ever misbehaves.
   formEndpoint: import.meta.env.PUBLIC_FORM_ENDPOINT ?? '',
+
+  // Cloudflare Turnstile site key for the contact forms. Public by design —
+  // it identifies the widget, not the account; the secret half never leaves
+  // the Supabase edge-function secrets. When empty no widget renders and no
+  // request reaches Cloudflare at all, which is what keeps local dev (and a
+  // misconfigured key) working: `verify-lead` fails open only when its secret
+  // is unset. See docs/wiki/security-hardening.md.
+  turnstileSiteKey: import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '',
 
   // POST endpoint for the first-party analytics beacon — the Supabase `track`
   // edge function. When empty, src/scripts/analytics.ts no-ops entirely and

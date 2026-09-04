@@ -3,10 +3,15 @@
  * Bottom privacy notice.
  *
  * Deliberately NOT a "we use cookies" banner, because this site sets no
- * cookies. Analytics here are cookieless and store no IP address, user-agent or
- * location, and nothing is written to browser storage on any public page. A
- * banner claiming otherwise would be a false disclosure — on a regulated
- * financial site that is worse than having no banner at all.
+ * tracking cookies. Analytics here are cookieless and store no IP address,
+ * user-agent or location, and nothing is written to browser storage on any
+ * public page. A banner claiming otherwise would be a false disclosure — on a
+ * regulated financial site that is worse than having no banner at all.
+ *
+ * That precision cuts both ways: the Turnstile check on the enquiry forms may
+ * set a short-lived cookie of its own, so the copy below names that exception
+ * rather than claiming a blanket zero. Keep it in step with Privacy Policy
+ * §5.6 if either changes.
  *
  * So this states what is actually true and offers a genuine choice: an opt-out
  * that really does stop measurement, rather than an "Accept" button that does
@@ -30,10 +35,11 @@ import { url } from '../lib/url';
     <div class="min-w-0 flex-1 text-sm text-slate-700">
       <p class="font-semibold text-slate-900">Your privacy on this site</p>
       <p class="mt-1">
-        This website uses <strong>no cookies</strong> and does not track you across other sites. To
-        see which pages are useful we count visits in a way that stores no IP address, no browser
-        fingerprint and no personal data, using an identifier that changes daily and cannot be
-        traced back to you. Read the{' '}
+        This website sets <strong>no tracking cookies</strong> and does not track you across other
+        sites. To see which pages are useful we count visits in a way that stores no IP address, no
+        browser fingerprint and no personal data, using an identifier that changes daily and cannot
+        be traced back to you. The one exception is the anti-spam check on our enquiry forms, which
+        may set a short-lived cookie of its own to record that the check was passed. Read the{' '}
         <a
           href={url('privacy-policy')}
           class="text-accent underline underline-offset-2 hover:no-underline"

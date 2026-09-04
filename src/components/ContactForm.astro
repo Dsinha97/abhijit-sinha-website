@@ -1,9 +1,15 @@
 ---
 // Generic POST-endpoint form component.
 // Configure src/data/site.ts `formEndpoint` (via PUBLIC_FORM_ENDPOINT) to go live;
-// it points at the Supabase `submit-lead` edge function, which validates the
-// submission, stores it in the `leads` table, and emails a copy.
+// it points at the Supabase `verify-lead` edge function, which checks the
+// Cloudflare Turnstile token and then forwards to `submit-lead`, which
+// validates the submission, stores it in the `leads` table, and emails a copy.
 // Two callers: the homepage inquiry form and the Investor Services request form.
+//
+// Anti-abuse here is deliberately layered and cheap: a honeypot, a dwell-time
+// check, field length caps, and the Turnstile widget. None of it is
+// authoritative — every one of those is re-checked in verify-lead, because a
+// bot can POST straight at the endpoint and never run this script.
 //
 // NOTE: there is deliberately no folio-number field. Folio numbers are financial
 // identifiers; they are collected over WhatsApp/phone once contact is
@@ -28,6 +34,12 @@ const {
 const formId = `contact-form-${formName.toLowerCase().replace(/\s+/g, '-')}`;
 const hasEndpoint = Boolean(site.formEndpoint);
 const sourcePage = Astro.url.pathname;
+
+// No site key -> no widget and no request to Cloudflare at all, which is what
+// keeps local dev clean. verify-lead fails open only while its secret is
+// unset, so the two states line up. Only one of these forms is ever rendered
+// per page, so loading the Turnstile API script here cannot duplicate.
+const turnstileSiteKey = site.turnstileSiteKey;
 ---
 
 <form
@@ -41,22 +53,25 @@ const sourcePage = Astro.url.pathname;
   <input type="hidden" name="source_page" value={sourcePage} />
   {/* Honeypot field — hidden from real users, bots tend to fill every field */}
   <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+  {/* Milliseconds between the form's script running and the submit. Filled in
+      below; verify-lead drops anything under its own threshold. */}
+  <input type="hidden" name="form_dwell_ms" value="0" />
 
   <div class="sm:col-span-1">
     <label for={`${formId}-name`} class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-    <input id={`${formId}-name`} name="name" type="text" required
+    <input id={`${formId}-name`} name="name" type="text" required maxlength="120"
       class="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" />
   </div>
 
   <div class="sm:col-span-1">
     <label for={`${formId}-email`} class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-    <input id={`${formId}-email`} name="email" type="email" required
+    <input id={`${formId}-email`} name="email" type="email" required maxlength="200"
       class="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" />
   </div>
 
   <div class="sm:col-span-1">
     <label for={`${formId}-mobile`} class="block text-sm font-medium text-slate-700 mb-1">Mobile Number</label>
-    <input id={`${formId}-mobile`} name="mobile" type="tel" required
+    <input id={`${formId}-mobile`} name="mobile" type="tel" required maxlength="20"
       class="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" />
   </div>
 
@@ -64,7 +79,7 @@ const sourcePage = Astro.url.pathname;
     <>
       <div class="sm:col-span-1">
         <label for={`${formId}-goal`} class="block text-sm font-medium text-slate-700 mb-1">Investment Goal</label>
-        <input id={`${formId}-goal`} name="investment_goal" type="text" placeholder="e.g. Retirement, Child's Education"
+        <input id={`${formId}-goal`} name="investment_goal" type="text" maxlength="120" placeholder="e.g. Retirement, Child's Education"
           class="w-full min-h-[44px] rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent" />
       </div>
       <div class="sm:col-span-1">
@@ -94,9 +109,18 @@ const sourcePage = Astro.url.pathname;
 
   <div class="sm:col-span-2">
     <label for={`${formId}-message`} class="block text-sm font-medium text-slate-700 mb-1">Message / Request Details</label>
-    <textarea id={`${formId}-message`} name="message" rows="4"
+    <textarea id={`${formId}-message`} name="message" rows="4" maxlength="2000"
       class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"></textarea>
   </div>
+
+  {turnstileSiteKey && (
+    <div class="sm:col-span-2">
+      {/* Turnstile injects the `cf-turnstile-response` token as a hidden input
+          inside this form. `flexible` sizing keeps it inside the 375px
+          layout viewport rather than forcing sideways scroll. */}
+      <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="light" data-size="flexible"></div>
+    </div>
+  )}
 
   {!hasEndpoint && (
     <p class="sm:col-span-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
@@ -118,7 +142,15 @@ const sourcePage = Astro.url.pathname;
   </div>
 </form>
 
+{turnstileSiteKey && (
+  <script is:inline async defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+)}
+
 <script>
+  // Captured when the bundled module runs, i.e. at page load. The gap between
+  // this and the submit is what verify-lead's dwell check reads.
+  const formsReadyAt = Date.now();
+
   document.querySelectorAll('form[data-endpoint]').forEach((form) => {
     const endpoint = form.getAttribute('data-endpoint');
     if (!endpoint) return;
@@ -127,6 +159,8 @@ const sourcePage = Astro.url.pathname;
       e.preventDefault();
       const statusEl = form.querySelector('[data-form-status]');
       const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+      const dwellEl = form.querySelector('input[name="form_dwell_ms"]') as HTMLInputElement | null;
+      if (dwellEl) dwellEl.value = String(Date.now() - formsReadyAt);
       if (submitBtn) submitBtn.disabled = true;
 
       try {
@@ -154,16 +188,32 @@ const sourcePage = Astro.url.pathname;
           statusEl.classList.toggle('text-green-700', succeeded);
           statusEl.classList.toggle('text-red-700', !succeeded);
         }
-        if (succeeded) (form as HTMLFormElement).reset();
+        if (succeeded) {
+          (form as HTMLFormElement).reset();
+          // Stays disabled on success: the lead is in, and a second click
+          // would only create a duplicate row for Abhijit to reconcile.
+          return;
+        }
+        resetForRetry(form, submitBtn);
       } catch {
         if (statusEl) {
           statusEl.textContent = 'Something went wrong. Please try again or reach out via WhatsApp/phone.';
           statusEl.classList.remove('hidden');
           statusEl.classList.add('text-red-700');
         }
-      } finally {
-        if (submitBtn) submitBtn.disabled = false;
+        resetForRetry(form, submitBtn);
       }
     });
   });
+
+  // A Turnstile token is single-use. Without this reset the widget keeps
+  // handing back the spent token and every retry after a failure is rejected
+  // by verify-lead — which looks exactly like a broken form.
+  function resetForRetry(form: Element, submitBtn: HTMLButtonElement | null) {
+    if (submitBtn) submitBtn.disabled = false;
+    const widget = form.querySelector('.cf-turnstile');
+    const turnstile = (window as unknown as { turnstile?: { reset: (el?: Element) => void } })
+      .turnstile;
+    if (widget && turnstile) turnstile.reset(widget);
+  }
 </script>

@@ -71,6 +71,19 @@ nothing on this site scrolls sideways.
 3. **Floating quick-contact** — WhatsApp trigger, bottom-right. See [contact-channels](contact-channels.md).
 4. **Statutory footer** — risk warning, disclaimer, grievance links, registration metadata. See [regulatory-compliance](regulatory-compliance.md).
 
+### Footer link row (revised 2026-09-03)
+
+Order inside the footer is: statutory callout → distributor disclaimer → empanelment pointer → divider → copyright + contact → **link row last**. The links sit *below* the copyright line by design.
+
+That row used to be `[...nav, primaryCta, Privacy Policy, Terms of Use]` plus all three redressal links plus Privacy Choices — thirteen full-size items, and it read as clutter. It is now a **short inline row**: nine `text-xs` items separated by middots, driven by `footerLinks` in `src/data/site.ts`. It is not a second navigation; the header carries the nav and the pages carry the deep links. `About` and `Schedule a Meeting` are omitted because the header shows both everywhere; CAMS and KFintech are omitted because they are explained on `/investor-services`; **SEBI SCORES stays**, because the grievance channel is a statutory footer expectation (item 4 above).
+
+Two mechanics to preserve:
+
+- Each item keeps `min-h-[44px] inline-flex items-center`. The row is visually dense but the tap target is still full height.
+- The separators are **real `<span aria-hidden="true">·</span>` elements, not `after:content-['·']`**. Tailwind's scanner generated no rule at all for the escaped-character arbitrary value, so the separators silently vanished. Don't "simplify" them back into pseudo-content without checking the compiled CSS.
+
+The row wraps (`flex flex-wrap`) and never scrolls sideways — see [mobile-viewport-pitfalls](mobile-viewport-pitfalls.md).
+
 ## Active nav state
 
 The current page's nav link gets a persistent visual indicator, distinct from hover: a 2px accent underline on desktop, a 4px accent left-border + tinted background on mobile. Styling lives entirely in `aria-[current=page]:` Tailwind variants in `Header.astro`, so anything that sets `aria-current="page"` on a nav link — the server-rendered `isActiveNavItem()` for real routes, or the homepage's `#about` scroll-spy script in `BaseLayout.astro` for the one hash-based nav item — gets the correct look for free. `isActiveNavItem()` deliberately excludes hash-only entries (`/#about`) on its own pass, since a same-page anchor isn't a separate route and matching it by pathname would light up two nav items at once on first paint; see [site-architecture](site-architecture.md#nav-active-state-scroll-spy) for how About's highlight is actually driven.

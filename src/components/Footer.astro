@@ -1,8 +1,13 @@
 ---
 import { url } from '../lib/url';
-import { distributor, statutory, redressalLinks, footerQuickLinks, empanelledAmcs } from '../data/site';
+import { distributor, statutory, footerLinks, empanelledAmcs } from '../data/site';
 
 const year = new Date().getFullYear();
+
+// Shared by every entry so the 44px tap target survives whichever element the
+// entry renders as — an inline row is visually dense, but the touch target
+// stays full height (docs/wiki/design-system.md).
+const itemClass = 'hover:text-white transition-colors min-h-[44px] inline-flex items-center';
 ---
 
 <footer class="bg-slate-900 text-slate-300 mt-16">
@@ -19,28 +24,6 @@ const year = new Date().getFullYear();
     <p class="text-sm text-slate-400 max-w-3xl">
       {statutory.distributorDisclaimer}
     </p>
-
-    <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-      {redressalLinks.map((link) => (
-        <a href={link.href} target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors min-h-[44px] inline-flex items-center">
-          {link.label}
-        </a>
-      ))}
-      {footerQuickLinks.map((item) => (
-        <a href={url(item.href.replace(/^\//, ''))} class="hover:text-white transition-colors min-h-[44px] inline-flex items-center">
-          {item.label}
-        </a>
-      ))}
-      {/* Reopens the privacy notice so a choice can be changed at any time.
-          An opt-out a visitor cannot revisit is not much of a choice. */}
-      <button
-        id="privacy-reopen"
-        type="button"
-        class="hover:text-white transition-colors min-h-[44px] inline-flex items-center"
-      >
-        Privacy Choices
-      </button>
-    </div>
 
     {/* The logo wall itself lives on /disclosures, directly under the
         commission table it qualifies — fourteen tiles is a page section, not a
@@ -65,6 +48,39 @@ const year = new Date().getFullYear();
         <a href={distributor.phoneHref} class="hover:text-white">{distributor.phone}</a>
       </p>
     </div>
+
+    {/* A short inline row under the copyright line, not a second navigation —
+        see the note on footerLinks in src/data/site.ts. Wraps rather than
+        scrolls: nothing in this site may scroll sideways
+        (docs/wiki/mobile-viewport-pitfalls.md). The middot separators are
+        real elements marked aria-hidden rather than `after:content-['·']`
+        arbitrary values: Tailwind's scanner produced no rule at all for the
+        escaped-character form, so the separators silently vanished. */}
+    <nav aria-label="Footer">
+      <ul class="flex flex-wrap items-center gap-x-3 text-xs text-slate-400">
+        {footerLinks.map((item, i) => (
+          <li class="flex items-center gap-x-3">
+            {item.kind === 'external' ? (
+              <a href={item.href} target="_blank" rel="noopener noreferrer" class={itemClass}>
+                {item.label}
+              </a>
+            ) : item.kind === 'privacy-choices' ? (
+              /* Reopens the privacy notice so a choice can be changed at any
+                 time. An opt-out a visitor cannot revisit is not much of a
+                 choice. */
+              <button id="privacy-reopen" type="button" class={itemClass}>
+                {item.label}
+              </button>
+            ) : (
+              <a href={url(item.href.replace(/^\//, ''))} class={itemClass}>
+                {item.label}
+              </a>
+            )}
+            {i < footerLinks.length - 1 && <span aria-hidden="true" class="text-slate-600">&middot;</span>}
+          </li>
+        ))}
+      </ul>
+    </nav>
   </div>
 </footer>
 

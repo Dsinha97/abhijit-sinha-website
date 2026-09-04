@@ -83,7 +83,7 @@ on:
 - **Git-visible history.** Have the rebuild workflow commit the fetched content to `src/data/content.snapshot.json`. This restores Decap's one genuine advantage — a git diff per published change on a regulated site — and doubles as disaster recovery if the Supabase project is lost.
 - **Keep-alive.** Supabase pauses free projects after ~7 days of inactivity. Visitors degrade gracefully (the build falls back to `site.ts`) but **admin login breaks**. Add a scheduled GitHub Action that pings the project every few days.
 - **Lead retention.** Scheduled purge of requests older than 24 months, to match the commitment now published in the Privacy Policy. This is an obligation, not polish.
-- Add Cloudflare Turnstile to `submit-lead` if spam appears.
+- ~~Add Cloudflare Turnstile to `submit-lead` if spam appears.~~ **Done 2026-09-03, but not by touching `submit-lead`** — a new `verify-lead` function sits in front of it and forwards. See [contact-channels.md](contact-channels.md) and [data-model.md](data-model.md).
 
 ---
 

@@ -26,4 +26,21 @@ export default defineConfig({
     // anything from Google before a visitor clicks play. Never fails the build.
     youtubeThumbnails(),
   ],
+  vite: {
+    build: {
+      // Astro inlines bundled `<script>` blocks under ~4KB straight into the
+      // HTML, and four of ours qualified. That is fine on its own, but it
+      // makes the Content-Security-Policy in vercel.json unshippable: every
+      // inlined block is an inline-script violation, and the only ways to
+      // allow them are 'unsafe-inline' (which throws away the CSP's main
+      // reason for existing) or per-script sha256 hashes (which go stale
+      // silently the next time anyone edits a script). Emitting every script
+      // as a real file instead keeps `script-src 'self'` strict and
+      // maintenance-free, at the cost of a few small extra requests over
+      // HTTP/2. Verified against the report-only walk-through: with this at 0,
+      // the only remaining inline <script> is the JSON-LD block in SEO.astro,
+      // which browsers do not treat as executable script.
+      assetsInlineLimit: 0,
+    },
+  },
 });

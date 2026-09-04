@@ -19,7 +19,8 @@ Synthesized map of the design specs for abhijitsinha.in, an AMFI-registered Mutu
 - [Legal Copy](legal-copy.md) — Privacy Policy & Terms of Use content
 - [Deployment & Domain](deployment-domain.md) — Vercel deployment, the executed `abhijitsinha.in` cutover, and the GoDaddy DNS traps it surfaced
 - [Admin Dashboard](admin-dashboard.md) — the `/admin` lead inbox and content editor: approach rationale, access control, and the Phase 2–5 roadmap
-- [Data Model](data-model.md) — Supabase schema, RLS policies, and the `submit-lead` edge function
+- [Data Model](data-model.md) — Supabase schema, RLS policies, and the `verify-lead` → `submit-lead` edge functions
+- [Security Hardening](security-hardening.md) — the public-repo audit, the `vercel.json` security headers, and the per-host CSP rationale
 
 ## Not covered here
 

@@ -37,7 +37,7 @@ Source: [disclosures.md](../sources/disclosures.md). Title: "Regulatory Disclosu
 
 5. **AMFI Code of Conduct grid** — Suitability-First, Conflict-of-Interest Mitigation, Transparent Documentation.
 6. **Registration & statutory identifiers card** — Distributor Name, ARN, EUIN, ARN validity (confirmed), NISM certification, principal place of business. See [regulatory-compliance](regulatory-compliance.md) for the exact values — this page states them as text, with no PDF download link (the source certificates in `Important Docs/` are excluded from the public site).
-7. **Statutory footer** — shared, plus regulatory/redressal links (CAMS, KFintech, SEBI SCORES 2.0, Investor Services, Schedule Meeting).
+7. **Statutory footer** — shared. Since 2026-09-03 the footer link row is a short inline selection (see [design-system](design-system.md)); of the redressal links only SEBI SCORES 2.0 remains there, and the CAMS/KFintech portals live on [/investor-services](page-investor-services.md), where they are explained.
 
 ## Two AMC lists, deliberately
 

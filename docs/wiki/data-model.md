@@ -27,7 +27,7 @@ The table has **no INSERT policy at all**. Writes arrive only through the `submi
 
 Retention: enquiries not leading to an ongoing engagement are deleted within 24 months, per the commitment published in `privacy-policy.astro` §5.1. The purge job itself is Phase 5.
 
-**Outstanding:** row id 5 is a Phase 1 end-to-end test record containing a real email and mobile. Retained on purpose as sample data for building the Phase 2 inbox; delete it when Phase 2 is verified. See [admin-dashboard.md](admin-dashboard.md).
+**Resolved 2026-09-03:** row id 5 (the Phase-1 end-to-end test record holding a real email and mobile) is gone — verified `count(*) filter (where id = 5) = 0`, table holds 4 rows, all genuine sign-off submissions. The remaining ids are non-contiguous (5 and 8 deleted), which is expected of a sequence.
 
 ### `site_content`
 
@@ -47,9 +47,23 @@ Current keys: `commission_schedule`, `rta_portals`, `scheduler`.
 
 Both trigger functions have EXECUTE revoked from `public`, `anon`, and `authenticated`; triggers still fire, since the trigger mechanism does not check the caller's EXECUTE grant.
 
+## Edge function: `verify-lead` (the form's actual endpoint since 2026-09-03)
+
+`POST https://cebfypcoyqiegwuahmun.supabase.co/functions/v1/verify-lead`
+
+Source: `supabase/functions/verify-lead/index.ts` — the bot gate. `PUBLIC_FORM_ENDPOINT` points here; this function forwards to `submit-lead` server-to-server, so `submit-lead` remains the only writer to `leads` and the only sender of the notification email, and remains **unredeployed**.
+
+`verify_jwt` **off** (deploy with `--no-verify-jwt`). Checks in order: origin allowlist → 16KB cap → honeypot → dwell time (2500ms) → field caps → per-IP rate limit (5/15 min, SHA-256 of the first `x-forwarded-for` hop, in-memory, never stored) → Turnstile `siteverify`. Honeypot and dwell failures return a **normal success payload** and forward nothing. `submit-lead`'s status and JSON body are relayed verbatim, so its own validation wording and its 3/hour per-email limit still reach the visitor.
+
+Turnstile is **fail-open while `TURNSTILE_SECRET_KEY` is unset** and fail-closed once it is set. That asymmetry is the design: a never-configured or mis-set secret must not take the only lead channel offline, but a live Turnstile rejects a missing or bad token. The field caps mirror `maxlength` in `ContactForm.astro`; change both together. Full rationale in [contact-channels.md](contact-channels.md).
+
+Secrets: `TURNSTILE_SECRET_KEY`, and optionally `SUBMIT_LEAD_URL` (defaults to `${SUPABASE_URL}/functions/v1/submit-lead`) and `ALLOWED_ORIGINS`.
+
 ## Edge function: `submit-lead`
 
 `POST https://cebfypcoyqiegwuahmun.supabase.co/functions/v1/submit-lead`
+
+No longer called directly by the browser — `verify-lead` forwards to it, passing the visitor's `Origin` through so the allowlist below still applies. Pointing `PUBLIC_FORM_ENDPOINT` back here is the one-line rollback.
 
 `verify_jwt` is **off** — site visitors are anonymous, so authorisation is not the control here. Protections are the honeypot, field validation, and a per-email rate limit (3/hour).
 
@@ -124,6 +138,10 @@ Admin SELECT only, no INSERT policy.
   (60/10 min per session) → normalise → insert. Every rejection returns 204, not an error. Must
   parse `req.text()`, not `req.json()`: the client sends a `text/plain` Blob so `sendBeacon` produces
   a CORS-simple request, and beacons cannot preflight.
+- **`verify-lead`** (`verify_jwt` off) — origin allowlist → size cap → honeypot → dwell check →
+  field caps → per-IP rate limit (5/15 min) → Turnstile `siteverify` → forward to `submit-lead`.
+  Honeypot and dwell rejections return a normal success payload. Fail-open only while
+  `TURNSTILE_SECRET_KEY` is unset. See the section above.
 - **`publish-site`** (`verify_jwt` off, token verified in-body so errors are readable JSON) —
   verifies the caller's JWT, **re-checks `admin_allowlist` server-side**, debounces to one build per
   60s, POSTs `VERCEL_DEPLOY_HOOK_URL`, logs to `deploy_log`.
