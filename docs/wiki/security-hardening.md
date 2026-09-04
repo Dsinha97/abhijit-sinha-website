@@ -2,6 +2,8 @@
 
 What was audited on 2026-09-03, what shipped, and the rules that keep it true.
 Companion pages: [admin-dashboard.md](admin-dashboard.md) (auth and RLS),
+[legal-copy.md](legal-copy.md) (what the Privacy Policy actually discloses),
+[contact-channels.md](contact-channels.md) (the lead-form bot gate),
 [data-model.md](data-model.md) (tables, retention, edge functions),
 [deployment-domain.md](deployment-domain.md) (DNS, Vercel env vars).
 
@@ -148,3 +150,21 @@ rather than alerting after it is already public and needs rotating.
 Nothing from this pass. The `leads` row id 5 test record flagged in
 [data-model.md](data-model.md) has also since been deleted (verified
 2026-09-03: the table holds four rows, all genuine sign-off submissions).
+
+## Vercel env var types
+
+`PUBLIC_*` variables must be created as **Config**, not **Secret**. Astro inlines
+every `PUBLIC_`-prefixed value into the client bundle, so marking one Secret
+hides nothing from a visitor — it only makes the value write-only in the Vercel
+dashboard, so it can never be read back or diffed. Vercel flags this itself
+("Remove the public framework prefix to keep this value private").
+
+The trap: a variable already saved as Secret **cannot be converted** to Config.
+It has to be deleted and re-created. `PUBLIC_FORM_ENDPOINT`,
+`PUBLIC_TURNSTILE_SITE_KEY`, `PUBLIC_SUPABASE_URL` and
+`PUBLIC_SUPABASE_ANON_KEY` are all Config by design.
+
+Preview deployments get a fresh `*.vercel.app` hostname per deploy, which is not
+in the Turnstile widget's hostname list — so the widget errors there, no token
+is issued, and `verify-lead` rejects the submit. **Test forms on production**,
+or add the specific preview hostname in Cloudflare.

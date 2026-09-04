@@ -9,9 +9,9 @@ How a visitor reaches Abhijit across the site. Sources: [whatsapp-contact.md](..
 | Floating WhatsApp button | `wa.me/918976539234`, prefilled message "Hello Abhijit, I would like to know more about mutual fund investments and SIPs." | Every page, bottom-right, fixed position |
 | Direct email | `support@abhijitsinha.in` | Footer, `/schedule`, `/disclosures` |
 | Direct phone | `+91-8976539234` (Mon–Fri 10am–6pm IST) | Footer, `/schedule` |
-| Homepage inquiry form | Name, Email, Mobile, Investment Goal, Mode (SIP/Lump Sum) | `/` `#contact` |
-| Investor Services request form | Name, Email, Mobile, Folio (optional), Service Category dropdown, Message | `/investor-services` |
-| Scheduler | Booking UI, tool TBD (Cal.com / Calendly / Google Calendar) | `/schedule` — see [page-schedule](page-schedule.md) |
+| Homepage inquiry form | Name, Email, Mobile, Investment Goal, Mode (SIP/Lump Sum), Message | `/` `#contact` |
+| Investor Services request form | Name, Email, Mobile, Service Category dropdown, Message. **No folio field** — the source spec listed one and it was deliberately removed (see below) | `/investor-services` |
+| Scheduler | Booking UI — `scheduler.provider` in `site.ts` is set to **Calendly**; the component stays provider-agnostic so the spec-era "TBD (Cal.com / Calendly / Google)" is still a one-line swap | `/schedule` — see [page-schedule](page-schedule.md) |
 | LinkedIn | `distributor.linkedin` in `site.ts`, opens in a new tab | `/` `#about`, under the profile credentials card |
 
 ## WhatsApp button component
@@ -50,7 +50,7 @@ Why a gate was needed at all: the only pre-existing defence was a honeypot plus 
 
 Client-side (`ContactForm.astro`) adds the widget, the dwell timestamp, and the `maxlength` caps. None of it is authoritative; a bot can POST straight at the endpoint and never run the script, which is why every check is repeated server-side. Two details worth keeping: on **success** the submit button stays disabled (a second click would only duplicate the lead), and on **failure** the button is re-enabled *and* `turnstile.reset()` is called — a Turnstile token is single-use, so without the reset every retry after a failure is rejected and the form looks broken.
 
-Turnstile is disclosed in **Privacy Policy §5.6**, and the privacy notice's cookie wording names the exception. Cloudflare receives the visitor's IP; the form contents never leave for Cloudflare. See [security-hardening.md](security-hardening.md) for the CSP entries the widget requires.
+Turnstile is disclosed in **Privacy Policy §5.6** (see [legal-copy.md](legal-copy.md) for the full shipped section list), and the privacy notice's cookie wording names the exception. Cloudflare receives the visitor's IP; the form contents never leave for Cloudflare. See [security-hardening.md](security-hardening.md) for the CSP entries the widget requires.
 
 **The folio-number field was removed** from the Investor Services form. Folio numbers are financial identifiers, and collecting them through a web form means storing sensitive account data at rest for no operational gain; they are collected over WhatsApp or phone once contact is established. The form copy now says so explicitly, and Privacy Policy §5.1 asks visitors not to enter account identifiers. Do not reintroduce the field without a retention policy and a matching disclosure.
 
