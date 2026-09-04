@@ -2,7 +2,9 @@
 
 Authenticated dashboard at `/admin` where Abhijit reads incoming requests and edits the non-regulatory content of the site without touching git.
 
-**Status:** Phases 0–4 are built and verified (2026-09-01). Phase 5 (committed content snapshot) is partly done — see the note at the end of this file.
+**Status:** Phases 0–4 are built and verified (2026-09-01); Phase 5 is resolved (2026-09-03) — three of its four items shipped and the fourth was judged unnecessary.
+
+**How to read the phase sections below.** They are the **original build plan**, kept as written because the reasoning in them is still the reasoning behind the code. They are not a to-do list any more: each heading carries what actually happened, and where the plan turned out to be wrong the correction is in [Status update — 2026-09-01](#status-update--2026-09-01) rather than edited into the plan text. If a phase section and the status update disagree, the status update wins — and the shipped code wins over both.
 
 Backing infrastructure: Supabase project `cebfypcoyqiegwuahmun` (`https://cebfypcoyqiegwuahmun.supabase.co`), region India. Schema reference: [data-model.md](data-model.md).
 
@@ -37,7 +39,7 @@ Every admin-only RLS policy gates on `public.is_admin()`, which matches the emai
 
 ---
 
-## Phase 2 — Admin shell, auth, and lead inbox *(not built)*
+## Phase 2 — Admin shell, auth, and lead inbox *(built 2026-09-01)*
 
 The deliverable that answers "view requests like form details."
 
@@ -52,9 +54,9 @@ Only new dependency: `@supabase/supabase-js`.
 
 **Verify:** log in as an allowlisted user and see leads; log out and confirm the page shows only a login card with no lead data in the network tab; `grep -r "service_role" dist/` returns nothing.
 
-> **Cleanup owed (carried from Phase 1):** `leads` row **id 5** is a live end-to-end test record from 2026-08-28, holding a real email address and mobile number. It was deliberately kept so the inbox UI could be built and styled against a real row rather than a fixture. **Delete it as the final step of Phase 2**, once the inbox is verified: `delete from public.leads where id = 5;`  Leaving it in place past Phase 2 means shipping a dashboard whose first visible enquiry is fake, and holding personal data with no business reason to retain it.
+> **Cleanup owed (carried from Phase 1) — DONE.** `leads` row **id 5** was a live end-to-end test record from 2026-08-28 holding a real email address and mobile number, deliberately kept so the inbox UI could be built against a real row rather than a fixture. It has been deleted (verified 2026-09-03: the table holds four rows, all genuine submissions, and `id = 5` returns nothing). The reason it mattered is worth keeping: leaving it would have meant a dashboard whose first visible enquiry is fake, and holding personal data with no business reason to retain it.
 
-## Phase 3 — Editable content, rendered at build time *(not built)*
+## Phase 3 — Editable content, rendered at build time *(built 2026-09-01, except `site_content` editing; publish mechanism replaced — see the status update)*
 
 `src/lib/content.ts` fetches `site_content` at build time and **falls back to the committed values in `src/data/site.ts`** when Supabase is unreachable or paused. That fallback is the whole point: a build must never ship an empty statutory table. The `CommissionRow`, `RtaPortalRow`, and `SchedulerProvider` types stay in `site.ts` and are reused unchanged.
 
@@ -72,17 +74,17 @@ on:
 
 **Verify:** edit a rate, publish, then confirm the new value appears in **view-source** on `/disclosures`, not just the rendered DOM. Then break the Supabase URL locally and confirm `npm run build` still succeeds on the fallback.
 
-## Phase 4 — Videos and notes *(not built)*
+## Phase 4 — Videos and notes *(built 2026-09-01, as the Knowledge Corner rather than `/notes`)*
 
 - **Videos:** admin CRUD over the `videos` table. A `VideoGrid.astro` renders `youtube-nocookie.com` embeds, lazy-loaded behind a poster image so no third-party request fires until the visitor clicks. URLs only — no file uploads.
 - **Notes/blog:** `src/pages/notes/index.astro` and `notes/[slug].astro` via `getStaticPaths()` over published `posts`. Render markdown at build time (`marked`), never client-side. Add "Notes" to `nav`.
 - **Compliance gate:** free-text posts are the highest-risk surface on this site — they drift into what reads as personalised investment advice, which is prohibited. Every post page must render `ComplianceCallout.astro`, and the editor should show that requirement before publishing.
 
-## Phase 5 — Audit trail and hardening *(not built)*
+## Phase 5 — Audit trail and hardening *(resolved 2026-09-03)*
 
-- **Git-visible history.** Have the rebuild workflow commit the fetched content to `src/data/content.snapshot.json`. This restores Decap's one genuine advantage — a git diff per published change on a regulated site — and doubles as disaster recovery if the Supabase project is lost.
-- **Keep-alive.** Supabase pauses free projects after ~7 days of inactivity. Visitors degrade gracefully (the build falls back to `site.ts`) but **admin login breaks**. Add a scheduled GitHub Action that pings the project every few days.
-- **Lead retention.** Scheduled purge of requests older than 24 months, to match the commitment now published in the Privacy Policy. This is an obligation, not polish.
+- **Git-visible history.** *Shipped, under a different filename.* Have the rebuild workflow commit the fetched content to `src/data/content.snapshot.json`. This restores Decap's one genuine advantage — a git diff per published change on a regulated site — and doubles as disaster recovery if the Supabase project is lost. → Implemented as `src/data/knowledge.snapshot.json`, refreshed by `npm run sync:knowledge` and committed, deliberately outside `npm run build`.
+- **Keep-alive.** *Judged unnecessary.* Supabase pauses free projects after ~7 days of inactivity. Visitors degrade gracefully (the build falls back to `site.ts`) but **admin login breaks**. Add a scheduled GitHub Action that pings the project every few days. → Continuous analytics ingest keeps the project awake once there is real traffic; a cron job for it would be solving a problem the site's own use already solves.
+- **Lead retention.** *Shipped.* Scheduled purge of requests older than 24 months, to match the commitment now published in the Privacy Policy. This is an obligation, not polish. → `purge_old_leads()` (24 months, closed only) and `purge_analytics()` (13 months) run daily at 03:00 UTC via the `retention-purges` pg_cron job. See [data-model.md](data-model.md).
 - ~~Add Cloudflare Turnstile to `submit-lead` if spam appears.~~ **Done 2026-09-03, but not by touching `submit-lead`** — a new `verify-lead` function sits in front of it and forwards. See [contact-channels.md](contact-channels.md) and [data-model.md](data-model.md).
 
 ---
