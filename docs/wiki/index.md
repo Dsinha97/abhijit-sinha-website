@@ -21,10 +21,11 @@ Synthesized map of the design specs for abhijitsinha.in, an AMFI-registered Mutu
 - [Admin Dashboard](admin-dashboard.md) — the `/admin` lead inbox and content editor: approach rationale, access control, and the Phase 2–5 roadmap
 - [Data Model](data-model.md) — Supabase schema, RLS policies, and the `verify-lead` → `submit-lead` edge functions
 - [Security Hardening](security-hardening.md) — the public-repo audit, the `vercel.json` security headers, and the per-host CSP rationale
+- [Improvement Backlog](improvement-backlog.md) — what competitive benchmarking is worth acting on, what is already shipped, and which of its recommendations must be rejected on compliance grounds
 
 ## Not covered here
 
-`Images/` (site assets) and `Important Docs/` (ARN registration & NISM certificate PDFs — sensitive, excluded) are outside this wiki's scope by design. See [Regulatory Compliance](regulatory-compliance.md#sensitive-source-documents--handling-rule).
+`Images/` (site assets) and `Important Docs/` (ARN registration & NISM certificate PDFs — sensitive, excluded) are outside this wiki's scope by design. So is the competitive-benchmarking source document, which names real competing firms alongside criticism of their regulatory disclosures and is `.gitignore`d for that reason — its usable half is distilled, competitors unnamed, in [Improvement Backlog](improvement-backlog.md). See [Regulatory Compliance](regulatory-compliance.md#sensitive-source-documents--handling-rule).
 
 See [log.md](log.md) for the change history.
 
