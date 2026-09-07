@@ -95,12 +95,18 @@ function classify(el: HTMLAnchorElement | HTMLButtonElement): { kind: string; hr
 
   if (href.startsWith('tel:')) return { kind: 'tel', href };
   if (href.startsWith('mailto:')) return { kind: 'mailto', href };
-  if (href.includes('wa.me') || href.includes('api.whatsapp.com')) {
-    return { kind: 'whatsapp', href };
-  }
   if (/^https?:\/\//i.test(href)) {
     try {
-      if (new URL(href).host !== location.host) return { kind: 'outbound', href };
+      const host = new URL(href).host;
+      // Match on the host, not on a substring of the whole URL. The old form
+      // was `href.includes('wa.me')`, which also counted an ordinary outbound
+      // link like https://example.com/?ref=wa.me as a WhatsApp click. Nothing
+      // security-sensitive rides on this — classify() only picks an analytics
+      // label — but it is the difference between a correct number and a
+      // plausible one, and it is what CodeQL flags as incomplete URL
+      // substring sanitization.
+      if (host === 'wa.me' || host === 'api.whatsapp.com') return { kind: 'whatsapp', href };
+      if (host !== location.host) return { kind: 'outbound', href };
     } catch {
       /* ignore unparseable href */
     }
