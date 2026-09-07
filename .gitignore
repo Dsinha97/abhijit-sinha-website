@@ -1,6 +1,13 @@
 # Sensitive source documents — never commit (see CLAUDE.md)
 Important Docs/
 
+# Competitive benchmarking source. Names real competing firms alongside
+# criticism of their regulatory disclosures — publishing that from a competing
+# distributor's public repo is disparagement under this ARN's own name, and a
+# public git history cannot be taken back. The usable half is distilled, with
+# competitors unnamed, in docs/wiki/improvement-backlog.md.
+docs/sources/Competitive Analysis and Improvement Suggestions.md
+
 # Build output
 dist/
 .astro/
