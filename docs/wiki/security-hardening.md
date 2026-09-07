@@ -373,19 +373,48 @@ not open source; the statutory disclosures in this repo are specific to this ARN
 and must not be reused by another distributor). No `CODEOWNERS` — pointless with
 one maintainer.
 
+## Closed 2026-09-07
+
+- **The GitHub Pages site is deleted.** `GET /repos/.../pages` now returns 404,
+  which is the success condition — it means no Pages site exists, so there is
+  no longer a configured second publishing target for a regulated-content site.
+  `https://dsinha97.github.io/abhijit-sinha-website/` 404s and
+  `https://abhijitsinha.in` is unaffected (200).
+
+  Two notes for anyone repeating this. The API `DELETE` is the quick route
+  (`gh api -X DELETE repos/<owner>/<repo>/pages`, needs only the `repo` scope,
+  succeeds silently with 204). In the UI it is less obvious than it sounds:
+  because the source was **GitHub Actions**, the Branch dropdown offers no
+  "None" option, and with `status: null` there was never an "Unpublish site"
+  button either — you have to switch Source to "Deploy from a branch" first,
+  and only then can you set Branch to None.
+
+- **Vercel Deployment Protection is on.** Vercel Authentication → Require Log
+  In → **Standard Protection**, which covers every deployment except
+  production: preview URLs need a Vercel login, `abhijitsinha.in` stays public.
+  Password Protection and Trusted Sources are deliberately left off — the
+  first is a $150/month Pro add-on that adds nothing over authentication for a
+  single maintainer, and the second is OIDC for service-to-service calls into
+  protected deployments, which nothing here does.
+
+  The practical consequence: a form submitted from a PR preview will not reach
+  `verify-lead` unless you are signed in to Vercel. That is the intended trade,
+  and it stacks with the tightened origin regex rather than conflicting with
+  it. It also compounds an existing constraint — Turnstile issues no token on
+  a fresh preview hostname anyway, so **forms are still tested on production**,
+  as recorded above.
+
 ## Still open from this pass
 
-- **Delete the GitHub Pages site** in Settings → Pages (see above). This is the
-  only finding here with a real compliance edge.
-- **Turn on Vercel Deployment Protection for the Preview environment.**
-  Requiring PRs means every PR now builds a public preview of a
-  regulated-content site. Vercel adds `X-Robots-Tag: noindex` to previews
-  automatically, but authentication on previews is the durable answer, and it is
-  a dashboard setting.
 - **Secret scanning validity checks and non-provider patterns** would not enable
   via the API — the `PATCH` returns 200 and the values stay `disabled`, which
   usually means the feature is not offered on this repo's plan. Worth a look in
   Settings → Code security.
+- **Nine Dependabot alerts remain open** (eight Astro, one esbuild), all of them
+  assessed unreachable above. They are deliberately not dismissed: accepting a
+  risk is the owner's call, not an agent's. The justification for dismissing
+  them as "vulnerable code is not actually used" is the reachability table
+  above, if that is ever wanted.
 
 ## What CodeQL found on its first run
 
