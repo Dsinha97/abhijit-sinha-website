@@ -14,11 +14,11 @@ Source: [homepage.md](../sources/homepage.md). Shares the framework in [site-arc
 
    This section is also what the homepage's nav scroll-spy watches — see [site-architecture](site-architecture.md#nav-active-state-scroll-spy).
 4. **Distribution solutions summary** — four product cards: Equity / Hybrid / Debt / Liquid & Overnight Schemes, plus the Regular Plan mandatory note (see [regulatory-compliance](regulatory-compliance.md)).
-5. **Direct written inquiry** (`id="contact"`) — dual action: (A) banner linking to `/schedule`, (B) inline form (Name, Email, Mobile, Investment Goal, Mode: SIP/Lump Sum, Submit). See [contact-channels](contact-channels.md) for the form-handling approach.
+5. **Direct written inquiry** (`id="contact"`) — dual action: (A) banner linking to `/schedule`, (B) inline form (Name, Email, Mobile, Investment Goal, Mode: SIP/Lump Sum, Submit). See [contact-channels](contact-channels.md) for the form-handling approach. Since 2026-09-06 the left card also carries an **Our Office** block below the "Schedule a Meeting" button: address, hours, and two outbound buttons — "Get Directions" and "Review us on Google". They reuse the LinkedIn button treatment from the `#about` credentials card (44px tap target, inline SVG, "opens in a new tab" `aria-label`), and they are plain anchors, never a map embed — see [contact-channels](contact-channels.md).
 6. **Statutory footer** — shared, see [regulatory-compliance](regulatory-compliance.md).
 
 ## Note on source duplication
 
 The homepage source file also contains a full `/schedule` blueprint appended at the end (sections numbered "3." and beyond) — that content has been treated as the authoritative source for [page-schedule](page-schedule.md) instead, since a dedicated `schedule.md` source also exists and the two are consistent.
 
-Related: [site-architecture](site-architecture.md) · [page-solutions](page-solutions.md) · [page-schedule](page-schedule.md)
+Related: [site-architecture](site-architecture.md) · [page-solutions](page-solutions.md) · [page-schedule](page-schedule.md) · [contact-channels](contact-channels.md)

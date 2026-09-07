@@ -53,6 +53,6 @@ See [contact-channels](contact-channels.md) for the Turnstile mechanics and
 - **Accuracy/availability:** content provided "as is", no uptime guarantee.
 - **Limitation of liability:** no liability for decisions made without a formal suitability assessment, for downtime, or for third-party links (CAMS/KFintech/SEBI SCORES).
 - **Governing law:** laws of India, exclusive jurisdiction of competent Indian courts.
-- **Contact:** `support@abhijitsinha.in`, Navi Mumbai.
+- **Contact:** `support@abhijitsinha.in`, and the full official address — Sector 35E, Kharghar, Navi Mumbai, Panvel, Maharashtra 410210 (was the bare city until 2026-09-06). The ARN in this list was hardcoded in `terms.astro` and now reads from `site.ts` like every other identifier.
 
 Related: [regulatory-compliance](regulatory-compliance.md) · [contact-channels](contact-channels.md) · [security-hardening](security-hardening.md) · [data-model](data-model.md)

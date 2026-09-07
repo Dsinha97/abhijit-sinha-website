@@ -124,6 +124,24 @@ fetch target requires a matching CSP edit in `vercel.json`.** Under an enforcing
 CSP the failure mode is silent — the resource simply never loads — so this is
 not something to discover in production.
 
+### The corollary: a link is not a subresource
+
+The Google Business Profile work of 2026-09-06 added Google links to the footer,
+the homepage and `/schedule` and required **no CSP change at all**, which is
+worth recording so the absence does not read as an oversight. The directions,
+profile and write-review URLs are ordinary top-level navigations; CSP governs
+subresources and form targets, and `form-action` applies to forms rather than
+links, so nothing in the policy touches them.
+
+That stops being true the moment anyone embeds a map. A Google Maps iframe needs
+`frame-src https://www.google.com`; a static map image or Street View thumbnail
+needs an `img-src` host (the policy allows no remote image host whatsoever); and
+the Maps JS API needs `script-src https://maps.googleapis.com`, which the plain
+`/maps/embed` iframe avoids. `Permissions-Policy: geolocation=()` would also
+block a "find my location" control, though not a static embed. The site links
+out instead — see [contact-channels](contact-channels.md) for why that also
+keeps the Privacy Policy §5.4 promise intact.
+
 ## Standing rules
 
 - `.env.example` is a template. Every value in it is a placeholder, including

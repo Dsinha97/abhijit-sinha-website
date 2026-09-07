@@ -8,7 +8,7 @@ How a visitor reaches Abhijit across the site. Sources: [whatsapp-contact.md](..
 |---|---|---|
 | Floating WhatsApp button | `wa.me/918976539234`, prefilled message "Hello Abhijit, I would like to know more about mutual fund investments and SIPs." | Every page, bottom-right, fixed position |
 | Direct email | `support@abhijitsinha.in` | Footer, `/schedule`, `/disclosures` |
-| Direct phone | `+91-8976539234` (Mon–Sat 10am–7pm IST) | Footer, `/schedule` |
+| Direct phone | `+91-8976539234`. Reachable during the office hours below (Mon–Sat 10am–7pm IST) — **note these are the Google Business Profile's opening hours, not a separately confirmed phone window.** This row read "Mon–Fri 10am–6pm" from the source spec until 2026-09-06; no phone-specific hours are rendered anywhere on the site, so the listing was taken as the authoritative public commitment | Footer, `/schedule` |
 | Homepage inquiry form | Name, Email, Mobile, Investment Goal, Mode (SIP/Lump Sum), Message | `/` `#contact` |
 | Investor Services request form | Name, Email, Mobile, Service Category dropdown, Message. **No folio field** — the source spec listed one and it was deliberately removed (see below) | `/investor-services` |
 | Scheduler | Booking UI — `scheduler.provider` in `site.ts` is set to **Calendly**; the component stays provider-agnostic so the spec-era "TBD (Cal.com / Calendly / Google)" is still a one-line swap | `/schedule` — see [page-schedule](page-schedule.md) |

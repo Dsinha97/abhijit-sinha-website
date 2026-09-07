@@ -7,7 +7,7 @@ Abhijit Sinha operates as an AMFI-registered Mutual Fund Distributor, not an inv
 - **AMFI Registration Number (ARN):** ARN-367596
 - **EUIN:** E703717
 - **Certification:** NISM Series V-A (Mutual Fund Distributors Certification)
-- **Principal place of business:** Navi Mumbai
+- **Principal place of business:** Sector 35E, Kharghar, Navi Mumbai, Panvel, Maharashtra 410210 — widened from the bare city "Navi Mumbai" on 2026-09-06 when the Google Business Profile was adopted as the official address. It is now a NAP pair with that listing and must not diverge from it; see [contact-channels](contact-channels.md).
 - **Direct email:** `support@abhijitsinha.in`
 - **Direct phone:** `+91-8976539234`
 - **ARN validity window:** `11/08/2026 to 01/07/2029` — confirmed against `Important Docs/ARN Registration.pdf`

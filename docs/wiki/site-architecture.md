@@ -22,7 +22,7 @@ Route map, navigation, and the shared framework every page mounts. Sources: [des
 
 Both the strip and header live inside one wrapper (`#site-header` in `BaseLayout.astro`) that shrinks — smaller nav height, smaller logo, tighter strip padding/type — once the page scrolls past ~32px, via a `data-scrolled` attribute toggled from a plain scroll listener. The regulatory strip is never hidden while scrolled, only shrunk, to keep the AMFI/ARN proof visible per the design system's proof-first rule.
 3. **`<slot/>`** — page content.
-4. **Footer** — statutory risk warning box, distributor disclaimer, CAMS/KFintech/SEBI SCORES 2.0 links, office/registration metadata, copyright. Full text in [regulatory-compliance](regulatory-compliance.md).
+4. **Footer** — statutory risk warning box, distributor disclaimer, CAMS/KFintech/SEBI SCORES 2.0 links, office/registration metadata, copyright. Since 2026-09-06 the identity block carries the **full office address** rather than the bare city, and the contact line beside it is a wrapping flex row of email · phone · "View on Google" — see [contact-channels](contact-channels.md). Full text in [regulatory-compliance](regulatory-compliance.md).
 5. **Floating WhatsApp button** — bottom-right, all viewports, collapsed to just the icon and expanding to show the label on hover/focus. See [contact-channels](contact-channels.md).
 
 This maps directly to an Astro `BaseLayout.astro` wrapping `RegulatoryStrip` + `Header` + page slot + `Footer` + `WhatsAppButton`, with `SEO.astro` in the `<head>` — see [seo-and-metadata](seo-and-metadata.md).

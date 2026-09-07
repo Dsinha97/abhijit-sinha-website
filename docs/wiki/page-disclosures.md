@@ -36,7 +36,7 @@ Source: [disclosures.md](../sources/disclosures.md). Title: "Regulatory Disclosu
    of any scheme or AMC — travels with the wall wherever it goes, and is repeated in the footer.
 
 5. **AMFI Code of Conduct grid** — Suitability-First, Conflict-of-Interest Mitigation, Transparent Documentation.
-6. **Registration & statutory identifiers card** — Distributor Name, ARN, EUIN, ARN validity (confirmed), NISM certification, principal place of business. See [regulatory-compliance](regulatory-compliance.md) for the exact values — this page states them as text, with no PDF download link (the source certificates in `Important Docs/` are excluded from the public site).
+6. **Registration & statutory identifiers card** — Distributor Name, ARN, EUIN, ARN validity (confirmed), NISM certification, principal place of business (the **full postal address** since 2026-09-06, not the bare city it carried until then — see [contact-channels](contact-channels.md)). See [regulatory-compliance](regulatory-compliance.md) for the exact values — this page states them as text, with no PDF download link (the source certificates in `Important Docs/` are excluded from the public site).
 7. **Statutory footer** — shared. Since 2026-09-03 the footer link row is a short inline selection (see [design-system](design-system.md)); of the redressal links only SEBI SCORES 2.0 remains there, and the CAMS/KFintech portals live on [/investor-services](page-investor-services.md), where they are explained.
 
 ## Two AMC lists, deliberately
@@ -57,4 +57,4 @@ exist. Splitting the two was the fix; **only `rateCardAmcs` may be named beside 
 table**, and the flag flips only after the figures are re-derived. This is now a rule in the root
 `CLAUDE.md`. Provenance and method: [regulatory-compliance](regulatory-compliance.md#commission-disclosure-provenance).
 
-Related: [regulatory-compliance](regulatory-compliance.md) · [design-system](design-system.md) · [page-investor-services](page-investor-services.md)
+Related: [regulatory-compliance](regulatory-compliance.md) · [design-system](design-system.md) · [page-investor-services](page-investor-services.md) · [contact-channels](contact-channels.md)
