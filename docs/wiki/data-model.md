@@ -174,3 +174,49 @@ try/catch, since `localStorage` throws outright in some privacy modes.
 A **Privacy Choices** button in the footer re-dispatches `privacy:reopen` so the
 choice can be changed later; an opt-out a visitor cannot revisit is not a choice.
 The notice is mounted from `BaseLayout`, so it never appears on `/admin`.
+
+## The schema is in version control (2026-09-06)
+
+`supabase/migrations/` was empty, so everything on this page described a
+boundary that existed only in the Supabase dashboard — no diff, no review
+trail, and no way to notice a policy being dropped or widened. Since RLS *is*
+the admin panel's protection rather than one layer of it (the site is static
+and has no server to enforce anything), that was the single largest gap in the
+data layer.
+
+**`supabase/schema.sql`** is now a committed snapshot of the public schema: ten
+tables with their CHECK constraints, fourteen functions, eleven triggers, every
+RLS policy, and the `retention-purges` cron job. It contains **no data** — no
+leads, no analytics rows, and none of the addresses in `admin_allowlist`.
+
+Two points about how to use it:
+
+- **It is not a migration and must never be executed.** It deliberately lives
+  outside `supabase/migrations/`, because a file there is something
+  `supabase db push` will try to run against the live database. The live
+  database remains the source of truth; the file follows it.
+- **Refresh it when the schema changes**, and diff it when you suspect drift.
+  A difference is either a dashboard change nobody recorded, or something that
+  should not have changed at all.
+
+The two absences this page already calls out — `leads` and `analytics_events`
+having **no INSERT policy**, and `analytics_salt` having **zero policies** — are
+the things most likely to be "fixed" by someone who does not know they are
+deliberate, so the snapshot annotates both in place.
+
+Related: [security-hardening](security-hardening.md).
+
+## Click classification is host-based (2026-09-06)
+
+`link_kind` for an anchor without an explicit `data-track` attribute is decided
+by `classify()` in `src/scripts/analytics.ts`. It used to test
+`href.includes('wa.me')`, which also counted an ordinary outbound link such as
+`https://example.com/?ref=wa.me` as a WhatsApp click. It now parses the href and
+compares the **host**.
+
+Nothing security-sensitive rode on it — the function only picks an analytics
+label — but it is the difference between a correct number and a plausible one,
+and it is what CodeQL flagged as incomplete URL substring sanitization on its
+first run. Real WhatsApp clicks were never affected either way: the floating
+button carries `data-track="whatsapp"` and is matched by the explicit branch
+before this one is reached.

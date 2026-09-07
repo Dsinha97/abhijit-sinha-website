@@ -386,3 +386,30 @@ one maintainer.
   via the API — the `PATCH` returns 200 and the values stay `disabled`, which
   usually means the feature is not offered on this repo's plan. Worth a look in
   Settings → Code security.
+
+## What CodeQL found on its first run
+
+One alert, rated high: `js/incomplete-url-substring-sanitization` at
+`src/scripts/analytics.ts:98` — `href.includes('wa.me')`.
+
+It is worth recording both halves of the verdict, because they point in
+opposite directions and both are true.
+
+**It was not a vulnerability here.** `classify()` picks an analytics label; it
+does not authorise, navigate, or sanitise. CodeQL rates the pattern high
+because it is dangerous *when used as a security check*, which is not what this
+is. Taking the severity at face value would have been wrong.
+
+**It was still a real bug.** `href.includes('wa.me')` matches
+`https://example.com/?ref=wa.me`, so an ordinary outbound link could be counted
+as a WhatsApp click. Parsing the URL and comparing the host fixes the alert and
+the miscount together, and real WhatsApp clicks were never affected either way
+(the floating button carries `data-track="whatsapp"` and is matched by the
+explicit branch first).
+
+The general lesson for future alerts on this repo: **read the finding, not the
+severity.** A static analyser cannot know that a function is a labeller rather
+than a gate — but it was right that the line was wrong, and the fix was three
+lines. Verified: zero open code-scanning alerts on `main` afterwards.
+
+See [data-model](data-model.md) for what this changes about `link_kind`.
