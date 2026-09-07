@@ -8,11 +8,12 @@ How a visitor reaches Abhijit across the site. Sources: [whatsapp-contact.md](..
 |---|---|---|
 | Floating WhatsApp button | `wa.me/918976539234`, prefilled message "Hello Abhijit, I would like to know more about mutual fund investments and SIPs." | Every page, bottom-right, fixed position |
 | Direct email | `support@abhijitsinha.in` | Footer, `/schedule`, `/disclosures` |
-| Direct phone | `+91-8976539234` (Mon–Fri 10am–6pm IST) | Footer, `/schedule` |
+| Direct phone | `+91-8976539234` (Mon–Sat 10am–7pm IST) | Footer, `/schedule` |
 | Homepage inquiry form | Name, Email, Mobile, Investment Goal, Mode (SIP/Lump Sum), Message | `/` `#contact` |
 | Investor Services request form | Name, Email, Mobile, Service Category dropdown, Message. **No folio field** — the source spec listed one and it was deliberately removed (see below) | `/investor-services` |
 | Scheduler | Booking UI — `scheduler.provider` in `site.ts` is set to **Calendly**; the component stays provider-agnostic so the spec-era "TBD (Cal.com / Calendly / Google)" is still a one-line swap | `/schedule` — see [page-schedule](page-schedule.md) |
 | LinkedIn | `distributor.linkedin` in `site.ts`, opens in a new tab | `/` `#about`, under the profile credentials card |
+| Office / Google Business Profile | `distributor.address.full` + `distributor.officeHours.display`; "View on Google", "Get Directions" and "Review us on Google" links from `googleBusiness` in `site.ts` | Address: footer (every page), `/schedule` logistics card, `/` `#contact`, `/disclosures`, `/terms`. Links: footer, `/schedule`, `/` `#contact` |
 
 ## WhatsApp button component
 
@@ -59,3 +60,21 @@ Turnstile is disclosed in **Privacy Policy §5.6** (see [legal-copy.md](legal-co
 `support@abhijitsinha.in` is live and is the distributor's primary address (`distributor.email` in `src/data/site.ts`). `contact@abhijitsinha.in` and `compliance@abhijitsinha.in` are referenced in the disclosures/investor-services specs but are not yet provisioned — until they are, all mail routes to `support@abhijitsinha.in`.
 
 Related: [regulatory-compliance](regulatory-compliance.md) · [page-schedule](page-schedule.md) · [page-investor-services](page-investor-services.md)
+
+## Office address & the Google Business Profile
+
+Added 2026-09-06. The site previously published only a bare city (`officeCity: 'Navi Mumbai'`); the declared address is now the full postal address taken from the Google Business Profile:
+
+**Sector 35E, Kharghar, Navi Mumbai, Panvel, Maharashtra 410210** · Mon–Sat 10:00–19:00 IST, Sunday closed.
+
+`distributor.address` in `site.ts` holds it in structured form (street / locality / region / postalCode / countryCode) plus a `full` string for display; `distributor.officeHours` holds both a human `display` string and the schema.org `Mo-Sa 10:00-19:00` form that `SEO.astro` emits. `officeCity` is retained but is no longer rendered anywhere.
+
+**This is a NAP pair.** Name, address and phone are the fields local search reconciles the site and the listing on, so the address in `site.ts` and the address on the listing must be edited together or the two stop matching. The `full` string is deliberately byte-identical to Google's own rendering, **Panvel included** — Panvel is the municipal jurisdiction and Google places it between the locality and the state. The structured fields are split on the same comma order so that `${street}, ${locality}, ${region} ${postalCode}` rebuilds `full` exactly: `addressLocality` is therefore **Panvel**, with Kharghar and Navi Mumbai as address lines inside `streetAddress`. schema.org has no taluka field, so do not "correct" the locality to Navi Mumbai — that silently drops Panvel from the structured data while the listing still carries it.
+
+One divergence remains: the listing carries **no phone number** while the site publishes `+91-8976539234`. Adding it on Google's side is the largest outstanding local-SEO gap and needs no code change.
+
+The listing has **zero reviews**, which is why the "Review us on Google" CTA exists on `/` and `/schedule`, and why `SEO.astro` deliberately emits no `aggregateRating` or `review` — rating markup with nothing behind it is both a structured-data penalty and, on a regulated-content site, a misrepresentation.
+
+**Link-out only, no map embed.** All three Google URLs are ordinary top-level navigations, so nothing reaches Google until a visitor clicks — the same contract `SchedulerEmbed.astro` and `VideoCard.astro` keep, and the reason `vercel.json` needs no Google host and the Privacy Policy §5.4 third-party-embed promise is untouched. Adding a map iframe later would break all three of those at once and would require `frame-src https://www.google.com` in the CSP — see [security-hardening](security-hardening.md).
+
+Identifiers live in `googleBusiness` in `site.ts`: place ID `ChIJ9zAUWBnB5zsRUORqF5Cp7OA` (CID `16207515595332838480`), with prebuilt profile, directions and write-review URLs. Related: [seo-and-metadata](seo-and-metadata.md).

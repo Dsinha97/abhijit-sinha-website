@@ -1,6 +1,6 @@
 ---
 import { url } from '../lib/url';
-import { distributor, statutory, footerLinks, empanelledAmcs } from '../data/site';
+import { distributor, statutory, footerLinks, empanelledAmcs, googleBusiness } from '../data/site';
 
 const year = new Date().getFullYear();
 
@@ -40,12 +40,27 @@ const itemClass = 'hover:text-white transition-colors min-h-[44px] inline-flex i
 
     <div class="border-t border-slate-700 pt-6 text-xs text-slate-500 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
       <p>
-        &copy; {year} {distributor.name}. All rights reserved. AMFI Registration Number: {distributor.arn}. Registered Office: {distributor.officeCity}.
+        &copy; {year} {distributor.name}. All rights reserved. AMFI Registration Number: {distributor.arn}. Registered Office: {distributor.address.full}.
       </p>
-      <p>
+      {/* Wraps rather than scrolls — this row is on every page, and a
+          non-wrapping addition here is exactly how the mobile
+          horizontal-scroll bug got in (docs/wiki/mobile-viewport-pitfalls.md). */}
+      <p class="flex flex-wrap items-center gap-x-2">
         <a href={`mailto:${distributor.email}`} class="hover:text-white">{distributor.email}</a>
-        {' | '}
+        <span aria-hidden="true" class="text-slate-600">|</span>
         <a href={distributor.phoneHref} class="hover:text-white">{distributor.phone}</a>
+        <span aria-hidden="true" class="text-slate-600">|</span>
+        <a
+          href={googleBusiness.profileUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="View the Google Business Profile (opens in a new tab)"
+          data-track="resource"
+          data-track-label="Google Business Profile — footer"
+          class="hover:text-white"
+        >
+          View on Google
+        </a>
       </p>
     </div>
 

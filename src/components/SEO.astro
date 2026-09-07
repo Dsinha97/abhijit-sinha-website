@@ -1,7 +1,7 @@
 ---
 // src/components/SEO.astro
 import { url } from '../lib/url';
-import { distributor } from '../data/site';
+import { distributor, googleBusiness } from '../data/site';
 
 interface Props {
   title: string;
@@ -60,6 +60,28 @@ const socialImageURL = new URL(url(image), Astro.site);
   image: new URL(url('images/banner.png'), Astro.site).toString(),
   description: 'Goal-based mutual fund distribution and disciplined portfolio allocation.',
   identifier: distributor.arn,
+  telephone: distributor.phone,
+  email: distributor.email,
+  // FinancialService is a LocalBusiness subtype, so the address, hours and
+  // sameAs fields below are all valid on this node — no second script tag.
+  // sameAs is what ties this site to the Google Business Profile and the
+  // LinkedIn page as one entity; keep the listing's address byte-identical
+  // to distributor.address or the two stop reconciling.
+  // Deliberately no aggregateRating/review: the listing has no reviews, and
+  // rating markup without reviews behind it is both a structured-data
+  // penalty and a misrepresentation on a regulated-content site.
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: distributor.address.street,
+    addressLocality: distributor.address.locality,
+    addressRegion: distributor.address.region,
+    postalCode: distributor.address.postalCode,
+    addressCountry: distributor.address.countryCode,
+  },
+  openingHours: distributor.officeHours.schema,
+  areaServed: { '@type': 'Country', name: 'India' },
+  hasMap: googleBusiness.profileUrl,
+  sameAs: [googleBusiness.profileUrl, distributor.linkedin],
   founder: {
     '@type': 'Person',
     name: distributor.name,

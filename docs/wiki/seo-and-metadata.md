@@ -21,9 +21,12 @@ Reusable head component taking `title`, `description`, `image` (default `/og-ima
 
 Mounted inside `BaseLayout.astro`'s `<head>`. See [site-architecture](site-architecture.md).
 
-## External profile
+## External profiles
 
-LinkedIn: `https://www.linkedin.com/in/abhijit-sinha-243b7243/` — noted in the source for potential `sameAs` schema linkage or footer link, not yet placed in any page spec.
+Both are now linked from the JSON-LD `sameAs` array (see Additions 2026-09-06), which closes the open item this section used to record:
+
+- Google Business Profile: place ID `ChIJ9zAUWBnB5zsRUORqF5Cp7OA` — `googleBusiness` in `site.ts`
+- LinkedIn: `https://www.linkedin.com/in/abhijit-sinha-243b7243/` — `distributor.linkedin`
 
 Related: [site-architecture](site-architecture.md) · [regulatory-compliance](regulatory-compliance.md)
 
@@ -39,3 +42,19 @@ Related: [site-architecture](site-architecture.md) · [regulatory-compliance](re
   at cutover.
 - `public/robots.txt` carries `Disallow: /admin` above the blanket `Disallow: /`, so the cutover
   edit cannot accidentally expose it.
+
+## Additions 2026-09-06 — local business fields
+
+The default `FinancialService` node gained the fields that make it usable as a local-business entity. `FinancialService` is a `LocalBusiness` subtype, so all of them are valid on the existing node — **no second script tag and no new schema type**:
+
+- `telephone`, `email`
+- `address` — a `PostalAddress` built from `distributor.address`
+- `openingHours` — `distributor.officeHours.schema`, currently `["Mo-Sa 10:00-19:00"]`
+- `areaServed` — `{ '@type': 'Country', name: 'India' }`
+- `hasMap` and `sameAs` — the Google Business Profile URL, with LinkedIn alongside it in `sameAs`
+
+`sameAs` is the field that actually ties site ↔ listing ↔ LinkedIn together as one entity; the address inside it must stay byte-identical to the listing's, so treat `site.ts` and the Google Business Profile as a single edit. See [contact-channels](contact-channels.md) for the full NAP note.
+
+**No `aggregateRating` and no `review`, deliberately.** The listing has no reviews. Rating markup with nothing behind it is a Google structured-data penalty, and on a regulated-content site it is a misrepresentation. Add these only if real review data is ever fetched — which would need the Places API, a server, a key, and a `connect-src` widening in `vercel.json`.
+
+The `ld+json` block remains the one inline `<script>` tolerated in `dist/` under the enforcing CSP, because browsers do not execute it — see [security-hardening](security-hardening.md). Extending it raises no CSP question; embedding a Google map would (`frame-src https://www.google.com`), which is why the site links out to Google instead.

@@ -9,6 +9,31 @@ export const distributor = {
   euin: 'E703717',
   certification: 'NISM Series V-A Certified',
   officeCity: 'Navi Mumbai',
+  // Postal address exactly as published on the Google Business Profile
+  // (googleBusiness below). NAP — name, address, phone — consistency is what
+  // local search matches the site and the listing on, so any edit here must
+  // be mirrored on the listing, and vice versa. Changing it is a change to
+  // the declared principal place of business: see CLAUDE.md.
+  // The field split follows Google's own comma order so that
+  // `${street}, ${locality}, ${region} ${postalCode}` reconstructs `full`
+  // exactly: Panvel is the municipal jurisdiction and therefore the
+  // addressLocality, while Kharghar / Navi Mumbai are address lines above it.
+  // schema.org has no taluka field, so do not "correct" this to
+  // locality: 'Navi Mumbai' — that drops Panvel from the structured data
+  // while the listing still carries it.
+  address: {
+    street: 'Sector 35E, Kharghar, Navi Mumbai',
+    locality: 'Panvel',
+    region: 'Maharashtra',
+    postalCode: '410210',
+    countryCode: 'IN',
+    full: 'Sector 35E, Kharghar, Navi Mumbai, Panvel, Maharashtra 410210',
+  },
+  officeHours: {
+    display: 'Monday – Saturday, 10:00 AM – 7:00 PM IST (Sunday closed)',
+    // schema.org openingHours form, consumed by SEO.astro.
+    schema: ['Mo-Sa 10:00-19:00'],
+  },
   email: 'support@abhijitsinha.in',
   phone: '+91-8976539234',
   phoneHref: 'tel:+918976539234',
@@ -16,6 +41,23 @@ export const distributor = {
   // Confirmed against Important Docs/ARN Registration.pdf ("ARN Validity 11-AUG-2026 to 01-JUL-2029").
   arnValidity: '11/08/2026 to 01/07/2029',
   linkedin: 'https://www.linkedin.com/in/abhijit-sinha-243b7243/',
+} as const;
+
+// The Google Business Profile for the practice. Every URL here is a plain
+// top-level navigation, never an embed: no iframe, no script, no image host,
+// so nothing reaches Google until a visitor clicks — the same contract
+// SchedulerEmbed.astro and VideoCard.astro keep, and the reason vercel.json's
+// CSP needs no Google entry. Adding a map embed later would change that and
+// would require `frame-src https://www.google.com`.
+// placeId is the stable identifier; the CID form of the same place is
+// 16207515595332838480.
+export const googleBusiness = {
+  name: 'Abhijit Sinha Mutual Fund Distributor',
+  placeId: 'ChIJ9zAUWBnB5zsRUORqF5Cp7OA',
+  profileUrl: 'https://www.google.com/maps/place/?q=place_id:ChIJ9zAUWBnB5zsRUORqF5Cp7OA',
+  directionsUrl:
+    'https://www.google.com/maps/dir/?api=1&destination=Sector+35E%2C+Kharghar%2C+Navi+Mumbai%2C+Maharashtra+410210&destination_place_id=ChIJ9zAUWBnB5zsRUORqF5Cp7OA',
+  reviewUrl: 'https://search.google.com/local/writereview?placeid=ChIJ9zAUWBnB5zsRUORqF5Cp7OA',
 } as const;
 
 // Further mailboxes referenced in the original specs but not yet provisioned
@@ -291,6 +333,7 @@ export const rateCardAmcs = empanelledAmcs.filter((amc) => amc.rateCardOnFile);
 
 export const site = {
   distributor,
+  googleBusiness,
   plannedMailboxes,
   statutory,
   nav,

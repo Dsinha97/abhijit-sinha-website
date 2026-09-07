@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionCard from '../components/SectionCard.astro';
 import ContactForm from '../components/ContactForm.astro';
 import { url } from '../lib/url';
-import { distributor } from '../data/site';
+import { distributor, googleBusiness } from '../data/site';
 
 const schemeCards = [
   { title: 'Equity Schemes', desc: 'Long-term capital growth across large, mid, and small-cap opportunities.' },
@@ -139,6 +139,46 @@ const schemeCards = [
           <a href={url('schedule')} class="min-h-[44px] inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 transition w-fit">
             Schedule a Meeting
           </a>
+
+          {/* Office details link out to the Google Business Profile rather
+              than embedding a map: no request reaches Google until a visitor
+              clicks, which is the same promise SchedulerEmbed and VideoCard
+              keep, and the reason vercel.json's CSP needs no Google entry. */}
+          <div class="border-t border-slate-200 pt-4">
+            <p class="text-sm font-semibold text-accent uppercase tracking-wide">Our Office</p>
+            <address class="not-italic mt-2 text-sm text-slate-700">{distributor.address.full}</address>
+            <p class="mt-1 text-sm text-slate-600">{distributor.officeHours.display}</p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <a
+                href={googleBusiness.directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Get directions to the office on Google Maps (opens in a new tab)"
+                data-track="resource"
+                data-track-label="Google directions — homepage"
+                class="inline-flex min-h-[44px] items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-100 transition"
+              >
+                <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"></path>
+                </svg>
+                Get Directions
+              </a>
+              <a
+                href={googleBusiness.reviewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Write a review on the Google Business Profile (opens in a new tab)"
+                data-track="resource"
+                data-track-label="Google review — homepage"
+                class="inline-flex min-h-[44px] items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 text-sm font-semibold hover:bg-slate-100 transition"
+              >
+                <svg class="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+                </svg>
+                Review us on Google
+              </a>
+            </div>
+          </div>
         </div>
         <div class="rounded-xl border border-slate-200 bg-white p-6 sm:p-8">
           <ContactForm formName="Homepage Inquiry" submitLabel="Submit Inquiry" showGoalFields />

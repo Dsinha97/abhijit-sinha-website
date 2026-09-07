@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SchedulerEmbed from '../components/SchedulerEmbed.astro';
-import { distributor } from '../data/site';
+import { distributor, googleBusiness } from '../data/site';
 
 const agendaPoints = [
   { title: 'Goal Mapping', desc: "Defining timelines and cash flow requirements for milestones like retirement, children's education, or wealth creation." },
@@ -40,6 +40,21 @@ const agendaPoints = [
         <p><strong class="text-slate-900">Format:</strong> Google Meet Video Call or Direct Phone Call</p>
         <p><strong class="text-slate-900">Host:</strong> {distributor.name} ({distributor.arn} | 35 Years Industry Experience)</p>
         <p><strong class="text-slate-900">Preparation:</strong> None mandatory. Keep current investment summaries or SIP details handy if you wish to review existing holdings.</p>
+        <p><strong class="text-slate-900">Office:</strong> {distributor.address.full}</p>
+        <p><strong class="text-slate-900">Office Hours:</strong> {distributor.officeHours.display}</p>
+        <p>
+          <a
+            href={googleBusiness.directionsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Get directions to the office on Google Maps (opens in a new tab)"
+            data-track="resource"
+            data-track-label="Google directions — schedule"
+            class="text-accent font-medium underline underline-offset-2"
+          >
+            Get directions
+          </a>
+        </p>
       </div>
     </div>
 
@@ -52,9 +67,25 @@ const agendaPoints = [
 
   <section class="bg-surface border-t border-slate-200 py-10">
     <div class="mx-auto max-w-3xl px-4 sm:px-6 text-center text-sm text-slate-600">
-      Need immediate assistance or have a quick query? Email
-      <a href={`mailto:${distributor.email}`} class="text-accent font-medium">{distributor.email}</a>
-      or call <a href={distributor.phoneHref} class="text-accent font-medium">{distributor.phone}</a>.
+      <p>
+        Need immediate assistance or have a quick query? Email
+        <a href={`mailto:${distributor.email}`} class="text-accent font-medium">{distributor.email}</a>
+        or call <a href={distributor.phoneHref} class="text-accent font-medium">{distributor.phone}</a>.
+      </p>
+      <p class="mt-3">
+        Already worked with us?
+        <a
+          href={googleBusiness.reviewUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Write a review on the Google Business Profile (opens in a new tab)"
+          data-track="resource"
+          data-track-label="Google review — schedule"
+          class="text-accent font-medium"
+        >
+          Leave a review on Google</a
+        >.
+      </p>
     </div>
   </section>
 </BaseLayout>

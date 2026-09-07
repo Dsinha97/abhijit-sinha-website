@@ -47,9 +47,9 @@ import { distributor } from '../data/site';
     <h2>8. Contact Information</h2>
     <ul>
       <li><strong>Entity:</strong> Abhijit Sinha (AMFI Registered Mutual Fund Distributor)</li>
-      <li><strong>ARN:</strong> ARN-367596</li>
+      <li><strong>ARN:</strong> {distributor.arn}</li>
       <li><strong>Email:</strong> <a href={`mailto:${distributor.email}`}>{distributor.email}</a></li>
-      <li><strong>Official Address:</strong> Navi Mumbai</li>
+      <li><strong>Official Address:</strong> {distributor.address.full}</li>
     </ul>
   </article>
 </BaseLayout>
