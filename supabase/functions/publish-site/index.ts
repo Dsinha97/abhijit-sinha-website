@@ -18,7 +18,15 @@ const DEFAULT_ORIGINS = [
   'http://localhost:4321',
   'http://localhost:3000',
 ];
-const VERCEL_PREVIEW = /^https:\/\/[a-z0-9-]+\.vercel\.app$/;
+// Preview deployments of THIS project only. The previous form was
+// /^https:\/\/[a-z0-9-]+\.vercel\.app$/, which matched every vercel.app
+// subdomain on earth — anyone could deploy a page at evil-thing.vercel.app and
+// pass this origin check. Anchoring on the project name keeps real previews
+// working (both the `-<hash>-<scope>` and `-git-<branch>-<scope>` forms) and
+// shuts out everyone else's. It matters most on verify-lead, which forwards
+// unverified when TURNSTILE_SECRET_KEY is unset: in that state this regex is
+// the only barrier left.
+const VERCEL_PREVIEW = /^https:\/\/abhijit-sinha-website-[a-z0-9-]+\.vercel\.app$/;
 
 // One build per minute. Saving several items in a row should not queue several
 // builds; the last one would win anyway.
@@ -30,6 +38,14 @@ function allowedOrigins(): string[] {
   return raw.split(',').map((s) => s.trim()).filter(Boolean);
 }
 
+// Deliberately shaped differently from track/verify-lead, which return null and
+// 403 on a disallowed origin. Here the handler needs a headers object on every
+// path (including its own error responses), so a bad origin gets the literal
+// string 'null' — which matches no real browser origin and is therefore refused
+// by the browser just the same. CORS is not the authorisation boundary in this
+// function anyway: below, a valid JWT is re-checked against admin_allowlist
+// server-side before anything is published. Don't "fix" this to match the other
+// two without restructuring the handler.
 function corsFor(origin: string | null): Record<string, string> {
   const ok = origin && (allowedOrigins().includes(origin) || VERCEL_PREVIEW.test(origin));
   return {

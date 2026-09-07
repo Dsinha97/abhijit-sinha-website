@@ -38,9 +38,17 @@ const itemClass = 'hover:text-white transition-colors min-h-[44px] inline-flex i
       respective owners.
     </p>
 
-    <div class="border-t border-slate-700 pt-6 text-xs text-slate-500 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    {/* Stacked at every breakpoint, never side by side. The identity line
+        carries the full postal address, which is long enough that a
+        `sm:flex-row` split leaves it wrapping onto two lines and crowding the
+        contact links beside it. */}
+    <div class="border-t border-slate-700 pt-6 text-xs text-slate-500 flex flex-col gap-2">
       <p>
-        &copy; {year} {distributor.name}. All rights reserved. AMFI Registration Number: {distributor.arn}. Registered Office: {distributor.address.full}.
+        &copy; {year} {distributor.name}. All rights reserved.
+        <span aria-hidden="true" class="text-slate-600">|</span>
+        AMFI Registration Number: {distributor.arn}
+        <span aria-hidden="true" class="text-slate-600">|</span>
+        Registered Office: {distributor.address.full}
       </p>
       {/* Wraps rather than scrolls — this row is on every page, and a
           non-wrapping addition here is exactly how the mobile

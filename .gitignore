@@ -8,17 +8,42 @@ dist/
 # Dependencies
 node_modules/
 
-# Environment
-.env
-.env.local
-.env.*.local
+# Environment. Deny-all then re-allow the template, rather than listing the
+# variants: the old `.env` / `.env.local` / `.env.*.local` trio let a
+# `.env.production` or `.env.backup` through, and on a public repo the pattern
+# has to fail safe rather than depend on someone naming the file predictably.
+.env*
+!.env.example
+
+# Keys and certificates — nothing of the sort belongs in this repo, so this is
+# a backstop against `git add -A` picking one up, not a description of what
+# lives here.
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+
+# Vercel CLI link state. `vercel link` or `vercel dev` writes
+# .vercel/project.json (org + project IDs); it is machine-local, not source.
+.vercel
+
+# Supabase CLI scratch state — written by `supabase functions deploy` and
+# friends. Machine-local, and linked-project.json names the project ref.
+supabase/.temp/
 
 # Editor/OS
 .DS_Store
 Thumbs.db
 .vscode/*
 !.vscode/extensions.json
+.idea/
 .obsidian/
+*.log
+npm-debug.log*
+
+# Machine-local Claude Code settings; the shared config is .claude/settings.json.
+.claude/settings.local.json
 
 # Downloaded at build time by scripts/youtube-thumbnails.mjs, not source.
 public/images/video-thumbs/
