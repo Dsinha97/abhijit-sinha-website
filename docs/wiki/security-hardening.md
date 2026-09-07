@@ -165,9 +165,12 @@ rather than alerting after it is already public and needs rotating.
 
 ## Still open
 
-Nothing from this pass. The `leads` row id 5 test record flagged in
+Nothing from the 2026-09-03 pass. The `leads` row id 5 test record flagged in
 [data-model.md](data-model.md) has also since been deleted (verified
 2026-09-03: the table holds four rows, all genuine sign-off submissions).
+
+For what the 2026-09-06 supply-chain and governance pass left open, see the end
+of that section below.
 
 ## Vercel env var types
 
@@ -186,3 +189,200 @@ Preview deployments get a fresh `*.vercel.app` hostname per deploy, which is not
 in the Turnstile widget's hostname list — so the widget errors there, no token
 is issued, and `verify-lead` rejects the submit. **Test forms on production**,
 or add the specific preview hostname in Cloudflare.
+
+---
+
+# Supply chain and repo governance (2026-09-06)
+
+The 2026-09-03 pass above was about **secrets and headers**, and it closed those
+out. It never looked at the supply chain, at who can change `main`, or at the
+origin allowlist on the edge functions. This section covers that second pass.
+
+The credential position still holds, re-verified independently: no credential is
+committed and none ever was, on any ref. `Important Docs/` and `.env` are
+correctly ignored and were never tracked. Every credential in the tree is a
+`Deno.env.get()` or `import.meta.env` read.
+
+## `.gitignore` now fails safe
+
+The environment rule was `.env`, `.env.local`, `.env.*.local` — a list of
+variants, which meant `.env.production` or `.env.backup` would have been
+committed without complaint. It is now `.env*` with `!.env.example`: deny
+everything, re-allow the one file that is meant to be tracked. On a public repo
+the pattern has to fail safe rather than depend on someone naming a file
+predictably.
+
+Also added: `.vercel` (the CLI writes org and project IDs into
+`.vercel/project.json` on the first `vercel link`), a `*.pem` / `*.key` /
+`*.p12` / `*.pfx` / `id_rsa*` backstop, `.idea/`, `*.log`, and
+`.claude/settings.local.json`.
+
+## GitHub settings
+
+| Setting | Before | After |
+| --- | --- | --- |
+| Branch protection on `main` | none at all | PR required, 0 approvals, force-push and deletion blocked |
+| Dependabot alerts | disabled | enabled |
+| Dependabot security updates | disabled | enabled (security fixes only — no `dependabot.yml`, so no routine version-bump PRs) |
+| Code scanning | none | CodeQL **default setup** |
+| Actions | any action from anywhere | GitHub-owned actions only |
+| GitHub Wiki | enabled, unused | disabled |
+| `delete_branch_on_merge` | false | true |
+
+**Why 0 required approvals.** A solo maintainer cannot approve their own pull
+request, so any non-zero count would deadlock the repo permanently. Zero still
+buys the thing that matters: every change gets a PR, a diff, a preview
+deployment and a record. Admin bypass is left **on** deliberately — a statutory
+correction on a regulated site should never be blocked behind process.
+
+**Why CodeQL default setup and not a workflow file.** `CLAUDE.md` says not to
+reintroduce a GitHub Actions workflow, for a good reason (a workflow that
+publishes creates a second live copy of a regulated-content site). Default setup
+runs scanning from repo settings with no workflow file committed, so the rule
+stands as written and the scanning still happens. Actions is restricted to
+GitHub-owned actions rather than disabled, because default setup needs to run
+`github/codeql-action`.
+
+**GitHub Pages was still enabled.** The Pages *workflow file* was deleted long
+ago, but the Pages **site** was never removed — `build_type: workflow`, source
+`main` `/`. It serves 404 today only because nothing publishes to it. That is
+config, not safety: any future Pages upload would stand up a second indexable
+copy of the site at `dsinha97.github.io/abhijit-sinha-website/`, which is
+precisely what `CLAUDE.md` forbids. **Delete the Pages site in repo Settings →
+Pages.** Deleting it via the API was blocked as a destructive action.
+
+## Dependencies: assessed, not blindly upgraded
+
+`npm audit` wants `astro@7.3.1` — a **two-major** jump from 5.18.2 — to clear
+eight Astro advisories plus one in `esbuild`. Every one was checked against what
+this site actually does, and **none are reachable**:
+
+| Advisory | Why it cannot fire here |
+| --- | --- |
+| XSS via `define:vars` | No `define:vars` anywhere in `src/` |
+| Server island encrypted-parameter replay | No `server:defer`; there are no server islands |
+| XSS via unescaped attribute names in spread props (×2) | **No spread props at all** in any template |
+| XSS via `transition:*` on hydrated islands | No `transition:*`, no `<ClientRouter>` / `<ViewTransitions>` |
+| Reflected XSS via View Transition animation props | Same — View Transitions are not used |
+| Reflected XSS via unescaped slot name | No dynamic `slot={…}` |
+| Host-header SSRF in prerendered error page | Static output, no adapter — there is no server to send a Host header to |
+| `esbuild` arbitrary file read on Windows | Dev server only; needs an attacker able to reach `localhost:4321` |
+
+So the major upgrade would buy **zero** reduction in visitor-facing risk, at
+real regression cost on a live regulated site. It is deliberately not being
+done.
+
+**These are the conditions that would change that answer.** Adding any one of
+them makes an accepted risk live, and the upgrade becomes required:
+
+- adding `<ClientRouter />` / View Transitions
+- using a dynamic `slot={…}` name
+- using spread props (`{...attrs}`) on an element
+- adding `define:vars` to a `<script>` or `<style>`
+- adding an SSR adapter, or any `server:defer` island
+
+`sharp` was a different case and **was** fixed. Its four libvips CVEs were the
+only HIGH findings, and although they are equally unreachable — the site uses no
+`astro:assets`, `<Image>`, `<Picture>`, `getImage` or `image()`, so libvips
+never parses anything during a build — an `overrides` entry pinning
+`sharp@^0.35.4` clears them outright. Worth doing precisely because it is
+risk-free here: it keeps `npm audit` quiet so a genuine future alert stands out
+instead of arriving into a list that is already red. Verified by a clean
+`astro check` and `npm run build`.
+
+One side effect: `sharp@0.35.4` declares `node >=22.19.0`, so `npm install`
+prints an `EBADENGINE` warning on Node 22.14. It is a warning, not an error —
+there is no `.npmrc` and so no `engine-strict` — and sharp is never loaded
+anyway.
+
+Separately, `package.json` had **no `devDependencies` block at all**: 430 prod
+dependencies, 0 dev, with the typechecker and the CSS toolchain shipping as
+production deps. `@astrojs/check`, `typescript`, `tailwindcss` and
+`@tailwindcss/typography` moved to `devDependencies`, which is what they are.
+
+## The edge-function origin allowlist was open to anyone
+
+All three in-repo functions shared this:
+
+```
+const VERCEL_PREVIEW = /^https:\/\/[a-z0-9-]+\.vercel\.app$/;
+```
+
+That matches **every `vercel.app` subdomain in existence**, not just this
+project's. Anyone could deploy a page at `evil-thing.vercel.app` and pass the
+origin check on `track` and `verify-lead`. On `publish-site` the server-side
+`admin_allowlist` re-check still stopped them, so the real exposure was the
+analytics and lead endpoints.
+
+It mattered more than it looks, because `verify-lead` **forwards unverified when
+`TURNSTILE_SECRET_KEY` is unset**. That fail-open is deliberate and stays — an
+unconfigured secret must never take the site's only lead channel offline — but
+in that state this regex was the only barrier left standing.
+
+Now anchored to the project:
+
+```
+const VERCEL_PREVIEW = /^https:\/\/abhijit-sinha-website-[a-z0-9-]+\.vercel\.app$/;
+```
+
+which still admits both real preview forms (`-<hash>-<scope>` and
+`-git-<branch>-<scope>`) and shuts out everybody else's. It drops the bare
+`abhijit-sinha-website.vercel.app` alias, which is correct: that hostname 308s
+to the apex and serves no page, so nothing has it as an origin.
+
+`track`, `verify-lead` and `publish-site` are redeployed with `--no-verify-jwt`.
+**`submit-lead` is not touched** — its source is not in this repo and it is the
+only working lead path; `verify-lead` calls it server-to-server, so its own CORS
+is not in the browser path and needs no change.
+
+`publish-site`'s `corsFor` returns a literal `'null'` origin where the other two
+return `null` and 403. That is safe (`'null'` matches no real browser origin,
+and CORS is not the authorisation boundary there) and it was left as-is rather
+than restructuring a live function for symmetry — but it now carries a comment
+saying so, which is the actual fix for "three copies that have drifted".
+
+## The database schema is now in version control
+
+`supabase/migrations/` was empty. The RLS policies and `is_admin()` are not one
+layer of the admin panel's protection — they **are** the protection, because the
+site is static and has no server to enforce anything. That boundary lived only
+in the Supabase dashboard: no diff, no review trail, and no way to notice a
+policy being dropped or widened.
+
+`supabase/schema.sql` is now a committed snapshot of the public schema: ten
+tables, their CHECK constraints, fourteen functions, eleven triggers, every RLS
+policy, and the `retention-purges` cron job. No data — no leads, no analytics
+rows, and none of the addresses in `admin_allowlist`.
+
+**It is deliberately not in `supabase/migrations/`.** A file there is something
+`supabase db push` will try to execute against the live database, which is the
+opposite of what a reference snapshot should invite. The live database stays the
+source of truth; this file follows it, and exists to be read and diffed.
+
+Two absences in it are load-bearing and worth knowing before anyone "fixes"
+them: `leads` has **no INSERT policy**, so nothing but the `submit-lead`
+service_role key can write a lead; and `analytics_salt` has RLS enabled with
+**no policies at all**, so nothing reachable through the API can read the salt
+that makes `session_hash` irreversible.
+
+## Governance files
+
+`SECURITY.md` (a private reporting route — the repo previously had none, so a
+finder's only channel was a public issue) and `LICENSE` (explicitly proprietary,
+not open source; the statutory disclosures in this repo are specific to this ARN
+and must not be reused by another distributor). No `CODEOWNERS` — pointless with
+one maintainer.
+
+## Still open from this pass
+
+- **Delete the GitHub Pages site** in Settings → Pages (see above). This is the
+  only finding here with a real compliance edge.
+- **Turn on Vercel Deployment Protection for the Preview environment.**
+  Requiring PRs means every PR now builds a public preview of a
+  regulated-content site. Vercel adds `X-Robots-Tag: noindex` to previews
+  automatically, but authentication on previews is the durable answer, and it is
+  a dashboard setting.
+- **Secret scanning validity checks and non-provider patterns** would not enable
+  via the API — the `PATCH` returns 200 and the values stay `disabled`, which
+  usually means the feature is not offered on this repo's plan. Worth a look in
+  Settings → Code security.

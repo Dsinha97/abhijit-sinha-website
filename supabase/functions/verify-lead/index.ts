@@ -24,7 +24,15 @@ const DEFAULT_ORIGINS = [
   'http://localhost:4321',
   'http://localhost:3000',
 ];
-const VERCEL_PREVIEW = /^https:\/\/[a-z0-9-]+\.vercel\.app$/;
+// Preview deployments of THIS project only. The previous form was
+// /^https:\/\/[a-z0-9-]+\.vercel\.app$/, which matched every vercel.app
+// subdomain on earth — anyone could deploy a page at evil-thing.vercel.app and
+// pass this origin check. Anchoring on the project name keeps real previews
+// working (both the `-<hash>-<scope>` and `-git-<branch>-<scope>` forms) and
+// shuts out everyone else's. It matters most on verify-lead, which forwards
+// unverified when TURNSTILE_SECRET_KEY is unset: in that state this regex is
+// the only barrier left.
+const VERCEL_PREVIEW = /^https:\/\/abhijit-sinha-website-[a-z0-9-]+\.vercel\.app$/;
 
 const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 
