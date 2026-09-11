@@ -58,3 +58,7 @@ public/images/video-thumbs/
 # Written by scripts/hooks/post-commit for the wiki-ingest skill; a local
 # scratch marker, not shared state.
 docs/wiki/.pending-ingest
+
+# Machine-local Claude Code agent state, not project source.
+.agents/
+AGENTS.md
