@@ -185,7 +185,7 @@ export type CommissionRow = {
   year2Plus: string;
 };
 
-// Sourced from the Aug–Sep 2026 AMC brokerage rate cards held in
+// Sourced from the Oct–Dec 2026 AMC brokerage rate cards held in
 // `Important Docs/Commission Structure/`. Those PDFs are sensitive and are never
 // committed — see CLAUDE.md. Figures are BASE trail commission per annum,
 // EXCLUDING GST, taken as the min/max across every scheme row in all cards on
@@ -253,7 +253,7 @@ export const commissionSchedule: CommissionRow[] = [
 
 // The period the published commission ranges above were derived from. Shown on
 // /disclosures so a visitor can see how current the figures are.
-export const commissionPeriod = '1 August 2026 to 30 September 2026';
+export const commissionPeriod = '1 October 2026 to 31 December 2026';
 
 // AMCs Abhijit is empanelled with. Sourced from
 // `Important Docs/Commission Structure/Empanelment List.xlsx`, which records all
