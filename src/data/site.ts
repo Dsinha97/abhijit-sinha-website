@@ -213,41 +213,41 @@ export const commissionSchedule: CommissionRow[] = [
     assetClass: 'Equity Schemes',
     subCategories:
       'Large Cap, Large & Mid Cap, Mid Cap, Small Cap, Multi Cap, Flexi Cap, Focused, Value, Quant, ELSS, Sectoral & Thematic',
-    year1: '0.25% - 1.25%',
-    year2Plus: '0.24% - 1.17%',
+    year1: '0.10% - 1.45%',
+    year2Plus: '0.10% - 1.45%',
   },
   {
     assetClass: 'Hybrid Schemes',
     subCategories:
       'Aggressive Hybrid, Balanced Advantage / Dynamic Asset Allocation, Multi-Asset Allocation, Equity Savings, Conservative Hybrid, Arbitrage',
-    year1: '0.25% - 1.16%',
-    year2Plus: '0.25% - 1.16%',
+    year1: '0.17% - 1.10%',
+    year2Plus: '0.17% - 1.10%',
   },
   {
     assetClass: 'Solution-Oriented Schemes',
     subCategories: "Retirement funds and Children's funds (lock-in applies)",
-    year1: '0.51% - 1.11%',
-    year2Plus: '0.51% - 1.11%',
+    year1: '0.75% - 1.10%',
+    year2Plus: '0.75% - 1.10%',
   },
   {
     assetClass: 'Debt & Fixed Income',
     subCategories:
       'Corporate Bond, Banking & PSU, Credit Risk, Short / Medium / Long Duration, Gilt, Dynamic Bond, Floater',
-    year1: '0.08% - 0.81%',
-    year2Plus: '0.08% - 0.76%',
+    year1: '0.05% - 0.95%',
+    year2Plus: '0.05% - 0.95%',
   },
   {
     assetClass: 'Liquid & Cash Management',
     subCategories: 'Overnight, Liquid, Money Market, Ultra Short Duration, Low Duration',
-    year1: '0.02% - 0.55%',
-    year2Plus: '0.02% - 0.55%',
+    year1: '0.04% - 0.21%',
+    year2Plus: '0.04% - 0.21%',
   },
   {
     assetClass: 'Passive, Index & Fund-of-Funds',
     subCategories:
       'Index Funds, ETF Fund-of-Funds, Gold & Silver FoFs, Overseas and Multi-Asset Fund-of-Funds',
-    year1: '0.03% - 0.85%',
-    year2Plus: '0.03% - 0.85%',
+    year1: '0.07% - 0.85%',
+    year2Plus: '0.07% - 0.85%',
   },
 ];
 
