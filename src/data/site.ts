@@ -304,7 +304,7 @@ export const empanelledAmcs: AmcPartner[] = [
   // 4.96:1 — width-limited by the tile in practice
   { name: 'DSP Mutual Fund', logo: 'images/amc/dsp.png', maxH: 'max-h-9', rateCardOnFile: true },
   // 5.05:1
-  { name: 'Edelweiss Mutual Fund', logo: 'images/amc/edelweiss.png', maxH: 'max-h-9', rateCardOnFile: false },
+  { name: 'Edelweiss Mutual Fund', logo: 'images/amc/edelweiss.png', maxH: 'max-h-9', rateCardOnFile: true },
   // 2.93:1
   { name: 'HDFC Mutual Fund', logo: 'images/amc/hdfc.png', maxH: 'max-h-10', rateCardOnFile: false },
   // 2.05:1 — the most compact mark, so it gets the most height
@@ -314,7 +314,7 @@ export const empanelledAmcs: AmcPartner[] = [
   // 2.97:1
   { name: 'Kotak Mahindra Mutual Fund', logo: 'images/amc/kotak.png', maxH: 'max-h-10', rateCardOnFile: false },
   // 2.45:1
-  { name: 'Motilal Oswal Mutual Fund', logo: 'images/amc/motilal-oswal.png', maxH: 'max-h-11', rateCardOnFile: false },
+  { name: 'Motilal Oswal Mutual Fund', logo: 'images/amc/motilal-oswal.png', maxH: 'max-h-11', rateCardOnFile: true },
   // 2.54:1
   { name: 'Nippon India Mutual Fund', logo: 'images/amc/nippon-india.png', maxH: 'max-h-11', rateCardOnFile: true },
   // 2.32:1 — lowercase 'quant' is the AMC's own styling, not a typo.
@@ -322,7 +322,7 @@ export const empanelledAmcs: AmcPartner[] = [
   // 5.22:1
   { name: 'SBI Mutual Fund', logo: 'images/amc/sbi.png', maxH: 'max-h-9', rateCardOnFile: false },
   // 2.55:1
-  { name: 'UTI Mutual Fund', logo: 'images/amc/uti.png', maxH: 'max-h-11', rateCardOnFile: false },
+  { name: 'UTI Mutual Fund', logo: 'images/amc/uti.png', maxH: 'max-h-11', rateCardOnFile: true },
   // 4.42:1
   { name: 'WhiteOak Capital Mutual Fund', logo: 'images/amc/whiteoak-capital.png', maxH: 'max-h-9', rateCardOnFile: true },
 ];
