@@ -192,7 +192,7 @@ export type CommissionRow = {
 // file, with the minimum rounded down and the maximum rounded up to 2 d.p. so
 // the published range always encloses the actual rates.
 //
-// These ranges cover `rateCardAmcs` ONLY — the six AMCs flagged
+// These ranges cover `rateCardAmcs` ONLY — the ten AMCs flagged
 // `rateCardOnFile` below — NOT the full fourteen-AMC empanelment. Widening the
 // list of AMCs named beside this table without first re-deriving the figures
 // from their rate cards would make a statutory claim the documents do not
@@ -220,8 +220,8 @@ export const commissionSchedule: CommissionRow[] = [
     assetClass: 'Hybrid Schemes',
     subCategories:
       'Aggressive Hybrid, Balanced Advantage / Dynamic Asset Allocation, Multi-Asset Allocation, Equity Savings, Conservative Hybrid, Arbitrage',
-    year1: '0.17% - 1.10%',
-    year2Plus: '0.17% - 1.10%',
+    year1: '0.15% - 1.10%',
+    year2Plus: '0.15% - 1.10%',
   },
   {
     assetClass: 'Solution-Oriented Schemes',
@@ -239,15 +239,15 @@ export const commissionSchedule: CommissionRow[] = [
   {
     assetClass: 'Liquid & Cash Management',
     subCategories: 'Overnight, Liquid, Money Market, Ultra Short Duration, Low Duration',
-    year1: '0.04% - 0.21%',
-    year2Plus: '0.04% - 0.21%',
+    year1: '0.04% - 0.39%',
+    year2Plus: '0.04% - 0.39%',
   },
   {
     assetClass: 'Passive, Index & Fund-of-Funds',
     subCategories:
       'Index Funds, ETF Fund-of-Funds, Gold & Silver FoFs, Overseas and Multi-Asset Fund-of-Funds',
-    year1: '0.07% - 0.85%',
-    year2Plus: '0.07% - 0.85%',
+    year1: '0.05% - 0.85%',
+    year2Plus: '0.05% - 0.85%',
   },
 ];
 
@@ -312,7 +312,7 @@ export const empanelledAmcs: AmcPartner[] = [
   // 2.01:1
   { name: 'ITI Mutual Fund', logo: 'images/amc/iti.png', maxH: 'max-h-12', rateCardOnFile: false },
   // 2.97:1
-  { name: 'Kotak Mahindra Mutual Fund', logo: 'images/amc/kotak.png', maxH: 'max-h-10', rateCardOnFile: false },
+  { name: 'Kotak Mahindra Mutual Fund', logo: 'images/amc/kotak.png', maxH: 'max-h-10', rateCardOnFile: true },
   // 2.45:1
   { name: 'Motilal Oswal Mutual Fund', logo: 'images/amc/motilal-oswal.png', maxH: 'max-h-11', rateCardOnFile: true },
   // 2.54:1

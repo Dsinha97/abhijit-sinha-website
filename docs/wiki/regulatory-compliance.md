@@ -83,8 +83,8 @@ Figures are base trail per annum excluding GST, taken as the min/max across ever
 minimums rounded down and maximums rounded up so the published range always encloses actual rates.
 
 **Coverage is a subset of empanelment, and the page says so.** As of 2026-09-03 the ARN is
-empanelled with **fourteen** AMCs but only **six** rate cards are on file — Axis, DSP, ICICI
-Prudential, Nippon India, quant, WhiteOak Capital. `site.ts` tracks this with `rateCardOnFile` per
+empanelled with **fourteen** AMCs but only **ten** rate cards are on file — Axis, DSP, Edelweiss, ICICI
+Prudential, Kotak Mahindra, Motilal Oswal, Nippon India, quant, UTI, WhiteOak Capital. `site.ts` tracks this with `rateCardOnFile` per
 AMC and derives `rateCardAmcs` from it; only that list may be named beside the commission table, and
 the page states outright that the remaining AMCs' schemes are not reflected in the ranges. Naming
 all fourteen would assert a derivation from documents that do not exist. See
