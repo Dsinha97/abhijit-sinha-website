@@ -220,7 +220,7 @@ export const commissionSchedule: CommissionRow[] = [
     assetClass: 'Hybrid Schemes',
     subCategories:
       'Aggressive Hybrid, Balanced Advantage / Dynamic Asset Allocation, Multi-Asset Allocation, Equity Savings, Conservative Hybrid, Arbitrage',
-    year1: '0.15% - 1.10%',
+    year1: '0.15% - 1.15%',
     year2Plus: '0.15% - 1.10%',
   },
   {
@@ -239,15 +239,15 @@ export const commissionSchedule: CommissionRow[] = [
   {
     assetClass: 'Liquid & Cash Management',
     subCategories: 'Overnight, Liquid, Money Market, Ultra Short Duration, Low Duration',
-    year1: '0.04% - 0.39%',
-    year2Plus: '0.04% - 0.39%',
+    year1: '0.04% - 0.21%',
+    year2Plus: '0.04% - 0.21%',
   },
   {
     assetClass: 'Passive, Index & Fund-of-Funds',
     subCategories:
       'Index Funds, ETF Fund-of-Funds, Gold & Silver FoFs, Overseas and Multi-Asset Fund-of-Funds',
-    year1: '0.05% - 0.85%',
-    year2Plus: '0.05% - 0.85%',
+    year1: '0.07% - 0.85%',
+    year2Plus: '0.07% - 0.85%',
   },
 ];
 
