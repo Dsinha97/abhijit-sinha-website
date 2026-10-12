@@ -192,7 +192,7 @@ export type CommissionRow = {
 // file, with the minimum rounded down and the maximum rounded up to 2 d.p. so
 // the published range always encloses the actual rates.
 //
-// These ranges cover `rateCardAmcs` ONLY — the ten AMCs flagged
+// These ranges cover `rateCardAmcs` ONLY — the nine AMCs flagged
 // `rateCardOnFile` below — NOT the full fourteen-AMC empanelment. Widening the
 // list of AMCs named beside this table without first re-deriving the figures
 // from their rate cards would make a statutory claim the documents do not
@@ -221,20 +221,20 @@ export const commissionSchedule: CommissionRow[] = [
     subCategories:
       'Aggressive Hybrid, Balanced Advantage / Dynamic Asset Allocation, Multi-Asset Allocation, Equity Savings, Conservative Hybrid, Arbitrage',
     year1: '0.15% - 1.15%',
-    year2Plus: '0.15% - 1.10%',
+    year2Plus: '0.15% - 1.05%',
   },
   {
     assetClass: 'Solution-Oriented Schemes',
     subCategories: "Retirement funds and Children's funds (lock-in applies)",
-    year1: '0.75% - 1.10%',
-    year2Plus: '0.75% - 1.10%',
+    year1: '0.55% - 1.11%',
+    year2Plus: '0.55% - 1.11%',
   },
   {
     assetClass: 'Debt & Fixed Income',
     subCategories:
       'Corporate Bond, Banking & PSU, Credit Risk, Short / Medium / Long Duration, Gilt, Dynamic Bond, Floater',
-    year1: '0.05% - 0.95%',
-    year2Plus: '0.05% - 0.95%',
+    year1: '0.03% - 0.95%',
+    year2Plus: '0.03% - 0.95%',
   },
   {
     assetClass: 'Liquid & Cash Management',
@@ -246,8 +246,8 @@ export const commissionSchedule: CommissionRow[] = [
     assetClass: 'Passive, Index & Fund-of-Funds',
     subCategories:
       'Index Funds, ETF Fund-of-Funds, Gold & Silver FoFs, Overseas and Multi-Asset Fund-of-Funds',
-    year1: '0.07% - 0.85%',
-    year2Plus: '0.07% - 0.85%',
+    year1: '0.03% - 0.85%',
+    year2Plus: '0.03% - 0.85%',
   },
 ];
 
@@ -300,7 +300,7 @@ export const empanelledAmcs: AmcPartner[] = [
   // Swap in a larger file if one turns up; nothing else needs changing.
   { name: 'Aditya Birla Sun Life Mutual Fund', logo: 'images/amc/aditya-birla-sun-life.png', maxH: 'max-h-11', rateCardOnFile: false },
   // 5.93:1
-  { name: 'Axis Mutual Fund', logo: 'images/amc/axis.png', maxH: 'max-h-9', rateCardOnFile: true },
+  { name: 'Axis Mutual Fund', logo: 'images/amc/axis.png', maxH: 'max-h-9', rateCardOnFile: false },
   // 4.96:1 — width-limited by the tile in practice
   { name: 'DSP Mutual Fund', logo: 'images/amc/dsp.png', maxH: 'max-h-9', rateCardOnFile: true },
   // 5.05:1
