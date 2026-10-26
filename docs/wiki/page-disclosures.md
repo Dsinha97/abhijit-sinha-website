@@ -47,7 +47,7 @@ Source: [disclosures.md](../sources/disclosures.md). Title: "Regulatory Disclosu
   is a distribution arrangement; listing it claims nothing about rates.
 - `rateCardAmcs` — the subset with `rateCardOnFile: true`, meaning that AMC's current brokerage
   rate card is actually held in `Important Docs/Commission Structure/` and its scheme rates are
-  inside `commissionSchedule`. Nine as of 2026-10-12 (Axis dropped — no Oct–Dec card received): DSP, Edelweiss, ICICI Prudential, Kotak Mahindra,
+  inside `commissionSchedule`. Ten as of 2026-10-26 (Axis restored once its Oct–Dec card arrived): Axis, DSP, Edelweiss, ICICI Prudential, Kotak Mahindra,
   Motilal Oswal, Nippon India, quant, UTI, WhiteOak Capital.
 
 They were one list until 2026-09-03. Publishing the full empanelment while `empanelledAmcs` still
