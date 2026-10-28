@@ -1,3 +1,19 @@
+---
+title: "Page: Schedule"
+type: page
+tags: [schedule, calendly]
+sources:
+  - sources/schedule.md
+  - sources/homepage.md
+related:
+  - contact-channels.md
+  - page-homepage.md
+  - regulatory-compliance.md
+  - security-hardening.md
+  - seo-and-metadata.md
+updated: 2026-10-28
+---
+
 # Page: Schedule (`/schedule`)
 
 Sources: [schedule.md](../sources/schedule.md) (primary), corroborated by the appended blueprint in [homepage.md](../sources/homepage.md). Title: "Schedule a Meeting \| Abhijit Sinha (ARN-367596)".
@@ -30,3 +46,7 @@ Both Google links are **plain anchors, not embeds**. That is the same contract t
 Shared statutory footer plus: "Need immediate assistance? Email ... or call ...", registered details (ARN, email, phone, copyright, and the full office address).
 
 Related: [contact-channels](contact-channels.md) · [page-homepage](page-homepage.md) · [regulatory-compliance](regulatory-compliance.md) · [seo-and-metadata](seo-and-metadata.md)
+
+## Sources
+
+Original specs, kept as provenance and not more current than this page: [schedule.md](../sources/schedule.md), [homepage.md](../sources/homepage.md). Where this page and a spec disagree, check the shipped code first (see `AGENTS.md`). Evidence: primary (the owner's design specs).

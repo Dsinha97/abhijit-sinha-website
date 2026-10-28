@@ -1,3 +1,22 @@
+---
+title: "Regulatory Compliance"
+type: policy
+tags: [compliance, sebi, amfi]
+sources:
+  - sources/design-overview.md
+  - sources/disclosures.md
+  - sources/homepage.md
+  - sources/privacy-policy_terms.md
+related:
+  - contact-channels.md
+  - design-system.md
+  - legal-copy.md
+  - page-disclosures.md
+  - page-investor-services.md
+  - page-solutions.md
+updated: 2026-10-28
+---
+
 # Regulatory Compliance
 
 Abhijit Sinha operates as an AMFI-registered Mutual Fund Distributor, not an investment adviser — every page on the site must reflect this distinction and carry the same identifiers, in the same wording, without drift. Sources: [design-overview.md](../sources/design-overview.md), [disclosures.md](../sources/disclosures.md), [homepage.md](../sources/homepage.md), [privacy-policy_terms.md](../sources/privacy-policy_terms.md).
@@ -106,3 +125,7 @@ investment, capped at ₹2,000, payable after one year), which is a real payment
 connection with an investment and was previously undisclosed.
 
 **These figures go stale when new rate cards arrive.** Re-derive them rather than editing by hand.
+
+## Sources
+
+Original specs, kept as provenance and not more current than this page: [design-overview.md](../sources/design-overview.md), [disclosures.md](../sources/disclosures.md), [homepage.md](../sources/homepage.md), [privacy-policy_terms.md](../sources/privacy-policy_terms.md). Where this page and a spec disagree, check the shipped code first (see `AGENTS.md`). Evidence: primary (the owner's design specs).

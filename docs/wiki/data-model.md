@@ -1,3 +1,15 @@
+---
+title: "Data Model (Supabase)"
+type: system
+tags: [supabase, rls, edge-functions]
+related:
+  - admin-dashboard.md
+  - contact-channels.md
+  - deployment-domain.md
+  - security-hardening.md
+updated: 2026-10-28
+---
+
 # Data Model (Supabase)
 
 Schema backing the [admin dashboard](admin-dashboard.md). Project `cebfypcoyqiegwuahmun`, region India.
@@ -220,3 +232,7 @@ and it is what CodeQL flagged as incomplete URL substring sanitization on its
 first run. Real WhatsApp clicks were never affected either way: the floating
 button carries `data-track="whatsapp"` and is matched by the explicit branch
 before this one is reached.
+
+## Sources
+
+Live Supabase schema and `supabase/schema.sql` (a snapshot, never executed), `supabase/functions/` for `track`, `verify-lead`, `publish-site`; history in [log.md](log.md) (2026-08-28, 2026-09-03, 2026-09-06). Evidence: primary. The live database is the source of truth.

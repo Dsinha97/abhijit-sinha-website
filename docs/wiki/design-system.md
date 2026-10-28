@@ -1,3 +1,18 @@
+---
+title: "Design System"
+type: design
+tags: [design, tailwind, layout]
+sources:
+  - sources/design-overview.md
+related:
+  - contact-channels.md
+  - mobile-viewport-pitfalls.md
+  - page-disclosures.md
+  - regulatory-compliance.md
+  - site-architecture.md
+updated: 2026-10-28
+---
+
 # Design System
 
 The visual identity for abhijitsinha.in projects stability, clarity, and institutional trust with a modern, lightweight feel — appropriate for a regulated financial-services distributor. Source: [design-overview.md](../sources/design-overview.md).
@@ -91,3 +106,7 @@ The current page's nav link gets a persistent visual indicator, distinct from ho
 **Gotcha for anyone touching this:** comparing `Astro.url.pathname` against a nav `href` needs two independent normalizations, not one — `import.meta.env.BASE_URL` isn't guaranteed to have a trailing slash, and Astro's static output gives nested pages a trailing slash that the homepage doesn't have. Skipping either produces a `//solutions` or `/solutions/` that silently never matches `/solutions`. See the comment above `isActiveNavItem` in `Header.astro` for the exact fix.
 
 Related: [site-architecture](site-architecture.md) · [regulatory-compliance](regulatory-compliance.md)
+
+## Sources
+
+Original specs, kept as provenance and not more current than this page: [design-overview.md](../sources/design-overview.md). Where this page and a spec disagree, check the shipped code first (see `AGENTS.md`). Evidence: primary (the owner's design specs).

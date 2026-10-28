@@ -1,3 +1,16 @@
+---
+title: "Security hardening"
+type: system
+tags: [security, csp, supply-chain]
+related:
+  - admin-dashboard.md
+  - contact-channels.md
+  - data-model.md
+  - deployment-domain.md
+  - legal-copy.md
+updated: 2026-10-28
+---
+
 # Security hardening
 
 What was audited on 2026-09-03, what shipped, and the rules that keep it true.
@@ -442,3 +455,7 @@ than a gate — but it was right that the line was wrong, and the fix was three
 lines. Verified: zero open code-scanning alerts on `main` afterwards.
 
 See [data-model](data-model.md) for what this changes about `link_kind`.
+
+## Sources
+
+The 2026-09-03 and 2026-09-06 audits, `vercel.json`, `supabase/functions/`, GitHub repository settings; see [log.md](log.md) (2026-09-03, 2026-09-06, 2026-09-07). Evidence: primary (each control verified live).

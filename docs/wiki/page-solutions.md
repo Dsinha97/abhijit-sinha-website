@@ -1,3 +1,16 @@
+---
+title: "Page: Solutions"
+type: page
+tags: [solutions, calculators]
+sources:
+  - sources/solutions.md
+related:
+  - calculators.md
+  - regulatory-compliance.md
+  - site-architecture.md
+updated: 2026-10-28
+---
+
 # Page: Solutions (`/solutions`)
 
 Source: [solutions.md](../sources/solutions.md). Title: "Mutual Fund Solutions & Asset Allocation \| Abhijit Sinha (ARN-367596)".
@@ -24,3 +37,7 @@ Source: [solutions.md](../sources/solutions.md). Title: "Mutual Fund Solutions &
 This page is also the mount point for the SIP/Goal calculators — see [calculators](calculators.md) for the full spec and formulas.
 
 Related: [regulatory-compliance](regulatory-compliance.md) · [calculators](calculators.md) · [site-architecture](site-architecture.md)
+
+## Sources
+
+Original specs, kept as provenance and not more current than this page: [solutions.md](../sources/solutions.md). Where this page and a spec disagree, check the shipped code first (see `AGENTS.md`). Evidence: primary (the owner's design specs).

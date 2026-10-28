@@ -1,3 +1,15 @@
+---
+title: "Calculators"
+type: page
+tags: [calculators, solutions]
+sources:
+  - sources/calculator.md
+related:
+  - page-solutions.md
+  - regulatory-compliance.md
+updated: 2026-10-28
+---
+
 # Calculators (SIP Growth, Goal Planner & Lump Sum Planner)
 
 Source: [calculator.md](../sources/calculator.md), mounted on [page-solutions](page-solutions.md).
@@ -79,3 +91,7 @@ the code.)
 - The results panel must carry a "these figures are illustrative, not a guarantee of returns" disclaimer per [regulatory-compliance](regulatory-compliance.md) — the source spec code omits this, but the site's compliance rules require it near any numeric projection.
 
 Related: [page-solutions](page-solutions.md) · [regulatory-compliance](regulatory-compliance.md)
+
+## Sources
+
+Original specs, kept as provenance and not more current than this page: [calculator.md](../sources/calculator.md). Where this page and a spec disagree, check the shipped code first (see `AGENTS.md`). Evidence: primary (the owner's design specs).

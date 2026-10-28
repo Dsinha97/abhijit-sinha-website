@@ -1,3 +1,18 @@
+---
+title: "Page: Homepage"
+type: page
+tags: [homepage]
+sources:
+  - sources/homepage.md
+related:
+  - contact-channels.md
+  - page-schedule.md
+  - page-solutions.md
+  - regulatory-compliance.md
+  - site-architecture.md
+updated: 2026-10-28
+---
+
 # Page: Homepage (`/`)
 
 Source: [homepage.md](../sources/homepage.md). Shares the framework in [site-architecture](site-architecture.md).
@@ -22,3 +37,7 @@ Source: [homepage.md](../sources/homepage.md). Shares the framework in [site-arc
 The homepage source file also contains a full `/schedule` blueprint appended at the end (sections numbered "3." and beyond) — that content has been treated as the authoritative source for [page-schedule](page-schedule.md) instead, since a dedicated `schedule.md` source also exists and the two are consistent.
 
 Related: [site-architecture](site-architecture.md) · [page-solutions](page-solutions.md) · [page-schedule](page-schedule.md) · [contact-channels](contact-channels.md)
+
+## Sources
+
+Original specs, kept as provenance and not more current than this page: [homepage.md](../sources/homepage.md). Where this page and a spec disagree, check the shipped code first (see `AGENTS.md`). Evidence: primary (the owner's design specs).

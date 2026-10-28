@@ -1,3 +1,14 @@
+---
+title: "Knowledge Corner"
+type: page
+tags: [knowledge-corner, content, videos]
+related:
+  - admin-dashboard.md
+  - data-model.md
+  - regulatory-compliance.md
+updated: 2026-10-28
+---
+
 # Knowledge Corner (`/knowledge-corner`)
 
 Educational content hub, added 2026-09-01. Three content types, all managed from `/admin/knowledge`,
@@ -48,3 +59,7 @@ Hook. Content appears in about one to two minutes. Repeat presses within 60s are
 
 Related: [admin-dashboard](admin-dashboard.md) · [data-model](data-model.md) ·
 [regulatory-compliance](regulatory-compliance.md)
+
+## Sources
+
+Shipped code in `src/lib/knowledge.ts`, `src/lib/markdown.ts`, `src/lib/compliance-lint.ts` and `/admin/knowledge`; added 2026-09-01, see [log.md](log.md). Evidence: primary. No original spec exists in `docs/sources/`.

@@ -1,3 +1,10 @@
+---
+title: "Mobile viewport pitfalls"
+type: system
+tags: [mobile, layout, css]
+updated: 2026-10-28
+---
+
 # Mobile viewport pitfalls
 
 Written after a horizontal-scroll bug on `/knowledge-corner` that took five
@@ -109,3 +116,7 @@ locally until the device numbers pointed at them.
 
 And when the probe's own UI is fixed-position, anchor it with `left` + `100vw`
 too, or it reproduces the bug it is measuring.
+
+## Sources
+
+On-device probe and the five-deploy debugging of the 2026-09-02 horizontal-scroll bug; see [log.md](log.md) (2026-09-02). Evidence: primary (reproduced and fixed on a real phone).

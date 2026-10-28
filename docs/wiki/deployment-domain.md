@@ -1,3 +1,16 @@
+---
+title: "Deployment & Domain"
+type: system
+tags: [vercel, dns, domain]
+related:
+  - admin-dashboard.md
+  - data-model.md
+  - regulatory-compliance.md
+  - seo-and-metadata.md
+  - site-architecture.md
+updated: 2026-10-28
+---
+
 # Deployment & Domain
 
 The site is a static Astro build (no SSR adapter) deployed on **Vercel**, which builds and deploys from `main` on every push. GitHub Pages was the original target and is fully retired: `.github/workflows/deploy.yml` is deleted and the repo's Pages source is set to **None**.
@@ -281,3 +294,7 @@ The admin panel, analytics and Knowledge Corner add three things the runbook abo
 
 Post-cutover verification gains two checks: `/knowledge-corner` and one article URL must both return
 200 and show their content in **view-source**, and `dist/sitemap-0.xml` must contain no `/admin` URL.
+
+## Sources
+
+Vercel project settings, GoDaddy DNS, `vercel.json` and `astro.config.mjs`; the 2026-09-03 cutover entries in [log.md](log.md). Evidence: primary (executed and verified live).

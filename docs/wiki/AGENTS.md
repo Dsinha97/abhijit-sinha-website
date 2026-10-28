@@ -1,8 +1,28 @@
+---
+title: "Operating instructions for docs/wiki/"
+type: rules
+tags: [wiki, conventions]
+sources:
+  - sources/design-overview.md
+related:
+  - index.md
+  - log.md
+updated: 2026-10-28
+---
+
 # Operating instructions for docs/wiki/
+
+Second-brain conventions: v2
 
 Governs how any agent (Claude or otherwise) maintains `docs/wiki/`. Scoped to this
 folder — it does not override the root `CLAUDE.md`, and where the two disagree,
 `CLAUDE.md` wins.
+
+**Load the `second-brain` skill before any request that touches `docs/`** (ingest, answer from the
+wiki, tidy, audit). The skill does not always load on its own, which is why its key rules are
+written into this file. Where the skill's defaults and this file differ, this file wins.
+The vault root for the skill's helper script is `docs/`; run
+`python -I <skill folder>/scripts/check_vault.py docs all` from the repo root.
 
 Ported from the FPL App project's wiki contract, with one deliberate inversion —
 see "Who wins" below. Do not re-import that version wholesale; the authority
@@ -28,6 +48,20 @@ schema. A wiki claim contradicted by shipped code is a wiki bug.
 <!-- RETRO fills this in over time. Each line is a rule learned from a correction the owner gave
 Claude while working in docs/wiki/ specifically — not a general repo rule, those belong in root
 CLAUDE.md. Empty until the first RETRO pass has something to add. -->
+
+- **Page frontmatter.** Every topic page starts with `title`, `type`, `tags`, `sources`, `related`,
+  `updated`. `type` is one of `page` (one site route), `system` (architecture, data, deploy,
+  security), `policy` (compliance, legal copy), `design`, `backlog`, `rules`. `related` mirrors the
+  page's outbound `.md` links; `sources` lists paths relative to `docs/`.
+- **Sources section.** Every page ends with `## Sources`. Pages that describe shipped behaviour
+  rather than a spec cite the code path or system and the `log.md` entry, not just a spec file.
+- **Evidence.** `docs/wiki/.manifest.json` records a hash and an `evidence` level per file in
+  `docs/sources/`. The competitive-benchmarking document is `second-hand`: say so on any page that
+  leans on it, and keep that source out of git (see `improvement-backlog.md`).
+- **Log lines are short.** One entry per ingest, about 300 characters: date, source, evidence,
+  what was left unread, pages touched. Narrative belongs in the commit or PR. Existing long entries
+  stay as they are; never rewrite history.
+- **Page counts live in `index.md` only.** Do not hard-code them here.
 
 ## The jobs
 
@@ -57,6 +91,18 @@ Answer from the wiki first and name the page you used ("— see
 `mobile-viewport-pitfalls.md`"). If the wiki does not cover it, say so plainly
 rather than improvising, then go read the code and say that is what you are
 doing — a gap you had to fill from source is a gap worth writing up next ingest.
+
+Work outward from `index.md`: the page that covers the topic, then at most two more link hops.
+Whenever you looked at wiki pages to answer, finish with these two lines, even for a short answer:
+
+```
+Pages used: <wiki pages opened, as links>
+Linked but not opened: <titles those pages link to that you did not open, or none>
+```
+
+If the wiki does not cover the question, say so first and still end with the footer. When an answer
+combines several pages into something no single page states, offer once to save it as a page
+(marked as a synthesis, not a new source).
 
 ### TIDY
 
@@ -122,3 +168,8 @@ cp scripts/hooks/post-commit .git/hooks/post-commit && chmod +x .git/hooks/post-
 If the hook or the marker file is missing, `git log` since `log.md`'s last dated
 entry is the fallback for "what changed". The hook is optional — the skill works
 without it.
+
+## Sources
+
+- Ported from the FPL App project's wiki contract (see "Who wins" above for the inverted authority model).
+- Skill conventions: `second-brain` skill, v2.

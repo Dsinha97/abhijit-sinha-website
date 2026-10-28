@@ -1,3 +1,24 @@
+---
+title: "Contact Channels"
+type: system
+tags: [contact, whatsapp, forms]
+sources:
+  - sources/whatsapp-contact.md
+  - sources/homepage.md
+  - sources/schedule.md
+  - sources/investor-services.md
+related:
+  - admin-dashboard.md
+  - data-model.md
+  - legal-copy.md
+  - page-investor-services.md
+  - page-schedule.md
+  - regulatory-compliance.md
+  - security-hardening.md
+  - seo-and-metadata.md
+updated: 2026-10-28
+---
+
 # Contact Channels
 
 How a visitor reaches Abhijit across the site. Sources: [whatsapp-contact.md](../sources/whatsapp-contact.md), [homepage.md](../sources/homepage.md), [schedule.md](../sources/schedule.md), [investor-services.md](../sources/investor-services.md).
@@ -78,3 +99,7 @@ The listing has **zero reviews**, which is why the "Review us on Google" CTA exi
 **Link-out only, no map embed.** All three Google URLs are ordinary top-level navigations, so nothing reaches Google until a visitor clicks — the same contract `SchedulerEmbed.astro` and `VideoCard.astro` keep, and the reason `vercel.json` needs no Google host and the Privacy Policy §5.4 third-party-embed promise is untouched. Adding a map iframe later would break all three of those at once and would require `frame-src https://www.google.com` in the CSP — see [security-hardening](security-hardening.md).
 
 Identifiers live in `googleBusiness` in `site.ts`: place ID `ChIJ9zAUWBnB5zsRUORqF5Cp7OA` (CID `16207515595332838480`), with prebuilt profile, directions and write-review URLs. Related: [seo-and-metadata](seo-and-metadata.md).
+
+## Sources
+
+Original specs, kept as provenance and not more current than this page: [whatsapp-contact.md](../sources/whatsapp-contact.md), [homepage.md](../sources/homepage.md), [schedule.md](../sources/schedule.md), [investor-services.md](../sources/investor-services.md). Where this page and a spec disagree, check the shipped code first (see `AGENTS.md`). Evidence: primary (the owner's design specs).

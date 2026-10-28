@@ -1,3 +1,27 @@
+---
+title: "Site Architecture"
+type: system
+tags: [routes, navigation, layout]
+sources:
+  - sources/design-overview.md
+  - sources/homepage.md
+  - sources/seo-tools.md
+  - sources/whatsapp-contact.md
+related:
+  - contact-channels.md
+  - design-system.md
+  - legal-copy.md
+  - page-disclosures.md
+  - page-homepage.md
+  - page-investor-services.md
+  - page-knowledge-corner.md
+  - page-schedule.md
+  - page-solutions.md
+  - regulatory-compliance.md
+  - seo-and-metadata.md
+updated: 2026-10-28
+---
+
 # Site Architecture
 
 Route map, navigation, and the shared framework every page mounts. Sources: [design-overview.md](../sources/design-overview.md), [homepage.md](../sources/homepage.md), [seo-tools.md](../sources/seo-tools.md), [whatsapp-contact.md](../sources/whatsapp-contact.md).
@@ -44,3 +68,7 @@ The specs reference `logo.jpg` / `banner.jpg`, but the actual files in `Images/`
 Related: [design-system](design-system.md) · [seo-and-metadata](seo-and-metadata.md) · [contact-channels](contact-channels.md)
 
 - [page-knowledge-corner](page-knowledge-corner.md) — `/knowledge-corner` and `/knowledge-corner/[slug]`: articles, click-to-load videos, curated links, and the article publishing compliance control.
+
+## Sources
+
+Original specs, kept as provenance and not more current than this page: [design-overview.md](../sources/design-overview.md), [homepage.md](../sources/homepage.md), [seo-tools.md](../sources/seo-tools.md), [whatsapp-contact.md](../sources/whatsapp-contact.md). Where this page and a spec disagree, check the shipped code first (see `AGENTS.md`). Evidence: primary (the owner's design specs).
