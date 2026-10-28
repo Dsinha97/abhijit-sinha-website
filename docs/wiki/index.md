@@ -27,6 +27,6 @@ Synthesized map of the design specs for abhijitsinha.in, an AMFI-registered Mutu
 
 `Images/` (site assets) and `Important Docs/` (ARN registration & NISM certificate PDFs — sensitive, excluded) are outside this wiki's scope by design. So is the competitive-benchmarking source document, which names real competing firms alongside criticism of their regulatory disclosures and is `.gitignore`d for that reason — its usable half is distilled, competitors unnamed, in [Improvement Backlog](improvement-backlog.md). See [Regulatory Compliance](regulatory-compliance.md#sensitive-source-documents--handling-rule).
 
-See [log.md](log.md) for the change history.
+See [log.md](log.md) for the change history, and [AGENTS.md](AGENTS.md) for how this wiki is maintained.
 
 - [page-knowledge-corner](page-knowledge-corner.md) — `/knowledge-corner` and `/knowledge-corner/[slug]`: articles, click-to-load videos, curated links, and the article publishing compliance control.

@@ -1,0 +1,62 @@
+{
+  "sources/Competitive Analysis and Improvement Suggestions.md": {
+    "hash": "sha256:ec9418ade2a7e834a3b80933c05920bec1968dea1dd2941143423ecb33ab0b7e",
+    "last_ingested": "2026-09-07",
+    "evidence": "second-hand"
+  },
+  "sources/calculator.md": {
+    "hash": "sha256:5814ca5774d8ebbf75e497461ab0b446e100f7945eaaaf2e33466b17d4b832cc",
+    "last_ingested": "2026-08-26",
+    "evidence": "primary"
+  },
+  "sources/design-overview.md": {
+    "hash": "sha256:a41bcff268bcc433907dbdd5a719a4b757b4ee635c7f1147f543f83ff461120e",
+    "last_ingested": "2026-08-26",
+    "evidence": "primary"
+  },
+  "sources/disclosures.md": {
+    "hash": "sha256:42974291db4a95e3fea02dfb93af0bfe47cef5e072d62580fa2d847892cc7f02",
+    "last_ingested": "2026-08-26",
+    "evidence": "primary"
+  },
+  "sources/file-structure.md": {
+    "hash": "sha256:47c279838902802fa7afa797b0f6843841c1012cb354046e55123e7e3ed908d5",
+    "last_ingested": "2026-08-26",
+    "evidence": "primary"
+  },
+  "sources/homepage.md": {
+    "hash": "sha256:bc15cb7b3bfa2ac1e702c6de4c171d3dd3e78e9c86c535bc1b9b680732a8a4a4",
+    "last_ingested": "2026-08-26",
+    "evidence": "primary"
+  },
+  "sources/investor-services.md": {
+    "hash": "sha256:1b97ed678dca131055ac26b7eb8d302f137cb70d51668466817a50f49e07f1a4",
+    "last_ingested": "2026-08-26",
+    "evidence": "primary"
+  },
+  "sources/privacy-policy_terms.md": {
+    "hash": "sha256:51e5805c8dacf02edd9ddb431161731703cd2b049eebcc8bb5314d4b9c3f3a30",
+    "last_ingested": "2026-08-26",
+    "evidence": "primary"
+  },
+  "sources/schedule.md": {
+    "hash": "sha256:f85f1629f7f7121aa472ecc5e6d1116ba0da425b951b325b058e3682ac922f0b",
+    "last_ingested": "2026-08-26",
+    "evidence": "primary"
+  },
+  "sources/seo-tools.md": {
+    "hash": "sha256:dc0f2cb3a9b209bf388178f111f0d3a24ee6a746872e5422c5996abb16bbce11",
+    "last_ingested": "2026-08-26",
+    "evidence": "primary"
+  },
+  "sources/solutions.md": {
+    "hash": "sha256:67f8401737e3a9e624ebafb33de15fcd0177cff4d5d3b63e956657f1ede61b41",
+    "last_ingested": "2026-08-26",
+    "evidence": "primary"
+  },
+  "sources/whatsapp-contact.md": {
+    "hash": "sha256:f6cfbb62b9bee783521739f078013ec739209c827c9f161255b4c590b194b834",
+    "last_ingested": "2026-08-26",
+    "evidence": "primary"
+  }
+}

@@ -1,3 +1,16 @@
+---
+title: "Page: Investor Services"
+type: page
+tags: [investor-services]
+sources:
+  - sources/investor-services.md
+related:
+  - contact-channels.md
+  - page-disclosures.md
+  - regulatory-compliance.md
+updated: 2026-10-28
+---
+
 # Page: Investor Services (`/investor-services`)
 
 Source: [investor-services.md](../sources/investor-services.md). Title: "Investor Services & Support Desk \| Abhijit Sinha (ARN-367596)".
@@ -15,3 +28,7 @@ Source: [investor-services.md](../sources/investor-services.md). Title: "Investo
 6. **Statutory footer** — shared.
 
 Related: [regulatory-compliance](regulatory-compliance.md) · [contact-channels](contact-channels.md) · [page-disclosures](page-disclosures.md)
+
+## Sources
+
+Original specs, kept as provenance and not more current than this page: [investor-services.md](../sources/investor-services.md). Where this page and a spec disagree, check the shipped code first (see `AGENTS.md`). Evidence: primary (the owner's design specs).

@@ -1,3 +1,17 @@
+---
+title: "Legal Copy: Privacy Policy & Terms of Use"
+type: policy
+tags: [legal, privacy, terms]
+sources:
+  - sources/privacy-policy_terms.md
+related:
+  - contact-channels.md
+  - data-model.md
+  - regulatory-compliance.md
+  - security-hardening.md
+updated: 2026-10-28
+---
+
 # Legal Copy: Privacy Policy & Terms of Use
 
 Source: [privacy-policy_terms.md](../sources/privacy-policy_terms.md).
@@ -56,3 +70,7 @@ See [contact-channels](contact-channels.md) for the Turnstile mechanics and
 - **Contact:** `support@abhijitsinha.in`, and the full official address — Sector 35E, Kharghar, Navi Mumbai, Panvel, Maharashtra 410210 (was the bare city until 2026-09-06). The ARN in this list was hardcoded in `terms.astro` and now reads from `site.ts` like every other identifier.
 
 Related: [regulatory-compliance](regulatory-compliance.md) · [contact-channels](contact-channels.md) · [security-hardening](security-hardening.md) · [data-model](data-model.md)
+
+## Sources
+
+Original specs, kept as provenance and not more current than this page: [privacy-policy_terms.md](../sources/privacy-policy_terms.md). Where this page and a spec disagree, check the shipped code first (see `AGENTS.md`). Evidence: primary (the owner's design specs).

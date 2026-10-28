@@ -1,3 +1,14 @@
+---
+title: "Admin Dashboard"
+type: system
+tags: [admin, supabase, auth]
+related:
+  - contact-channels.md
+  - data-model.md
+  - regulatory-compliance.md
+updated: 2026-10-28
+---
+
 # Admin Dashboard
 
 Authenticated dashboard at `/admin` where Abhijit reads incoming requests and edits the non-regulatory content of the site without touching git.
@@ -175,3 +186,7 @@ raw wording.
 
 Note the free-tier default SMTP is rate-limited to a handful of emails per hour; repeated sign-in
 attempts will start failing with a rate-limit message, which the form also translates.
+
+## Sources
+
+Shipped code under `src/pages/admin/` and `src/scripts/`, and the live Supabase project; build history in [log.md](log.md) (2026-08-28, 2026-09-03). Evidence: primary (our own shipped behaviour). Phase sections are the original build plan; the status update at the top and shipped code override them.

@@ -1,3 +1,23 @@
+---
+title: "Improvement Backlog"
+type: backlog
+tags: [backlog, competitive-benchmarking]
+sources:
+  - sources/Competitive Analysis and Improvement Suggestions.md
+related:
+  - calculators.md
+  - contact-channels.md
+  - mobile-viewport-pitfalls.md
+  - page-disclosures.md
+  - page-knowledge-corner.md
+  - page-schedule.md
+  - regulatory-compliance.md
+  - security-hardening.md
+  - seo-and-metadata.md
+  - site-architecture.md
+updated: 2026-10-28
+---
+
 # Improvement Backlog
 
 Distilled 2026-09-07 from a competitive-benchmarking document that reviewed
@@ -121,3 +141,7 @@ Schedule on `/disclosures`.
 Related: [regulatory-compliance](regulatory-compliance.md) ·
 [seo-and-metadata](seo-and-metadata.md) · [contact-channels](contact-channels.md) ·
 [site-architecture](site-architecture.md)
+
+## Sources
+
+Distilled 2026-09-07 from a competitive-benchmarking document that is `.gitignore`d because it names real competing firms. Evidence: second-hand (a review of other firms). No competitor is named on this page. See [log.md](log.md) (2026-09-07).

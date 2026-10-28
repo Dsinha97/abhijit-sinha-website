@@ -1,3 +1,17 @@
+---
+title: "Page: Disclosures"
+type: page
+tags: [disclosures, commission, compliance]
+sources:
+  - sources/disclosures.md
+related:
+  - contact-channels.md
+  - design-system.md
+  - page-investor-services.md
+  - regulatory-compliance.md
+updated: 2026-10-28
+---
+
 # Page: Disclosures (`/disclosures`)
 
 Source: [disclosures.md](../sources/disclosures.md). Title: "Regulatory Disclosures & Commission Structure \| Abhijit Sinha (ARN-367596)".
@@ -58,3 +72,7 @@ table**, and the flag flips only after the figures are re-derived. This is now a
 `CLAUDE.md`. Provenance and method: [regulatory-compliance](regulatory-compliance.md#commission-disclosure-provenance).
 
 Related: [regulatory-compliance](regulatory-compliance.md) · [design-system](design-system.md) · [page-investor-services](page-investor-services.md) · [contact-channels](contact-channels.md)
+
+## Sources
+
+Original specs, kept as provenance and not more current than this page: [disclosures.md](../sources/disclosures.md). Where this page and a spec disagree, check the shipped code first (see `AGENTS.md`). Evidence: primary (the owner's design specs).

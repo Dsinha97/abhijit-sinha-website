@@ -1,3 +1,18 @@
+---
+title: "SEO & Metadata"
+type: system
+tags: [seo, json-ld, sitemap]
+sources:
+  - sources/seo-tools.md
+related:
+  - contact-channels.md
+  - deployment-domain.md
+  - regulatory-compliance.md
+  - security-hardening.md
+  - site-architecture.md
+updated: 2026-10-28
+---
+
 # SEO & Metadata
 
 Source: [seo-tools.md](../sources/seo-tools.md).
@@ -58,3 +73,7 @@ The default `FinancialService` node gained the fields that make it usable as a l
 **No `aggregateRating` and no `review`, deliberately.** The listing has no reviews. Rating markup with nothing behind it is a Google structured-data penalty, and on a regulated-content site it is a misrepresentation. Add these only if real review data is ever fetched — which would need the Places API, a server, a key, and a `connect-src` widening in `vercel.json`.
 
 The `ld+json` block remains the one inline `<script>` tolerated in `dist/` under the enforcing CSP, because browsers do not execute it — see [security-hardening](security-hardening.md). Extending it raises no CSP question; embedding a Google map would (`frame-src https://www.google.com`), which is why the site links out to Google instead.
+
+## Sources
+
+Original specs, kept as provenance and not more current than this page: [seo-tools.md](../sources/seo-tools.md). Where this page and a spec disagree, check the shipped code first (see `AGENTS.md`). Evidence: primary (the owner's design specs).
