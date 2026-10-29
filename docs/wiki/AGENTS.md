@@ -62,6 +62,9 @@ CLAUDE.md. Empty until the first RETRO pass has something to add. -->
   what was left unread, pages touched. Narrative belongs in the commit or PR. Existing long entries
   stay as they are; never rewrite history.
 - **Page counts live in `index.md` only.** Do not hard-code them here.
+- **Start every wiki task from a current `main`.** `main` is protected and PRs are squash-merged, so
+  local `main` is behind after each merge. Before branching, run `git checkout main && git pull`,
+  then branch from there.
 
 ## The jobs
 
