@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/helpers/require-wiki-ingest.cjs\"",
+            "timeout": 15,
+            "statusMessage": "Checking the wiki was ingested"
+          }
+        ]
+      },
+      {
+        "matcher": "PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/.claude/helpers/require-wiki-ingest.cjs\"",
+            "timeout": 15,
+            "statusMessage": "Checking the wiki was ingested"
+          }
+        ]
+      }
+    ]
+  }
+}
