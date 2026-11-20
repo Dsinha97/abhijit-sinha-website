@@ -85,6 +85,29 @@ Oxford Navy `#0F172A` primary, off-white surfaces, 8–12px rounded corners, no 
 - `Images/` — the asset source (`logo.png`, `banner.png`, `banner-mobile.jpeg`, `profile-pic.jpg`, `Buffet-quote.jpeg`). Note: specs reference `.jpg` filenames for logo/banner — the real files are `.png`; use the real filenames.
 - **`Important Docs/`** (ARN registration & NISM certificate PDFs) — **sensitive. Never commit, never copy into `public/` or any build output.** Their factual contents (identifiers already listed above) may be read and transcribed as text; the PDF files themselves stay local only and are `.gitignore`d.
 
+## Agents
+
+Read-only subagents in `.claude/agents/`: `wiki-retriever`, `history-retriever`, `code-retriever` and
+`planner`. `/plan-build` runs the three retrievers in parallel, hands their results to the planner, and the
+main session executes its plan. After the planner, run `worker` per ticket and `reviewer` after every
+worker; coding briefs may go to Antigravity. A reviewer runs `compliance-check` on any ticket that touches
+copy or `src/`. Agents never push, open a PR or merge: a merge to `main` deploys. Agents other than Claude never edit
+`src/data/site.ts`, `Footer.astro`, `vercel.json`, `supabase/**`, `.env*`, `.github/`, `.claude/`, `docs/` or
+`CLAUDE.md`, never write copy, disclosure or legal text, and never open `.env*`, `Important Docs/` or
+`plans-private/` (a Gemini-model agent opens only the one brief its prompt names). The root `AGENTS.md` is
+gitignored here (machine-local); it carries the fuller multi-agent rules, but a clone sees only this section.
+
+## Decisions and learning
+
+Jobs: DECISIONS and RETRO. Detail: `plans-private/Decisions/CONVENTIONS.md` (gitignored; the repo is public).
+
+- A decision or gotcha is only registered after the user's verdict. A choice made unasked is
+  logged `Decision (Claude): ...` in `docs/wiki/log.md` and stays `pending` until acknowledged.
+- The scanner reads `docs/wiki/log.md` and proposes candidates in a local inbox. It never
+  promotes anything and never edits CLAUDE.md.
+- RETRO: turn recurring corrections into one-line rules, show the diff, wait for a yes.
+- Compliance rules in this file stay here; the register adds the why and a revisit trigger.
+
 ## Deploy
 
 Push to `main` triggers a Vercel build and deploy (`npm run build` → `dist/`). There is no GitHub Actions workflow and no GitHub Pages source — do not reintroduce either; a second live copy of a regulated-content site is a compliance problem, not just an SEO one. Code scanning therefore uses **CodeQL default setup**, which runs from repo settings with no workflow file committed; Actions is restricted to GitHub-owned actions so that setup can run and nothing else can.

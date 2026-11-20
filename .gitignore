@@ -62,3 +62,6 @@ docs/wiki/.pending-ingest
 # Machine-local Claude Code agent state, not project source.
 .agents/
 AGENTS.md
+
+# Local agent runs, decisions and gotchas: never committed (repo is public)
+plans-private/
